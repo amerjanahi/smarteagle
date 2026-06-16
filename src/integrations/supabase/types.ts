@@ -368,6 +368,7 @@ export type Database = {
           building: string
           created_at: string
           floor: number | null
+          handover_date: string | null
           id: string
           is_occupied: boolean
           monthly_service_charge: number
@@ -381,6 +382,7 @@ export type Database = {
           building: string
           created_at?: string
           floor?: number | null
+          handover_date?: string | null
           id?: string
           is_occupied?: boolean
           monthly_service_charge?: number
@@ -394,6 +396,7 @@ export type Database = {
           building?: string
           created_at?: string
           floor?: number | null
+          handover_date?: string | null
           id?: string
           is_occupied?: boolean
           monthly_service_charge?: number
