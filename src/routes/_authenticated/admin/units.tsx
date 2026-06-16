@@ -201,7 +201,8 @@ function UnitsPage() {
               <TableHead>Building</TableHead>
               <TableHead className="text-right">Floor</TableHead>
               <TableHead className="text-right">BR</TableHead>
-              <TableHead className="text-right">Area (m²)</TableHead>
+              <TableHead className="text-right">Land (m²)</TableHead>
+              <TableHead className="text-right">Built-up (m²)</TableHead>
               <TableHead className="text-right">Service charge</TableHead>
               <TableHead>Handover</TableHead>
               <TableHead>Status</TableHead>
@@ -209,10 +210,10 @@ function UnitsPage() {
           </TableHeader>
           <TableBody>
             {list.isLoading && (
-              <TableRow><TableCell colSpan={8} className="py-10 text-center text-muted-foreground">Loading units…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={9} className="py-10 text-center text-muted-foreground">Loading units…</TableCell></TableRow>
             )}
             {!list.isLoading && (list.data?.rows.length ?? 0) === 0 && (
-              <TableRow><TableCell colSpan={8} className="py-10 text-center text-muted-foreground">No units match these filters.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={9} className="py-10 text-center text-muted-foreground">No units match these filters.</TableCell></TableRow>
             )}
             {(list.data?.rows ?? []).map((u) => (
               <TableRow key={u.id} className="cursor-pointer" onClick={() => setSelectedId(u.id)}>
@@ -220,7 +221,8 @@ function UnitsPage() {
                 <TableCell className="text-muted-foreground">{u.building ?? "—"}</TableCell>
                 <TableCell className="text-right tabular-nums">{u.floor ?? "—"}</TableCell>
                 <TableCell className="text-right tabular-nums">{u.bedrooms ?? "—"}</TableCell>
-                <TableCell className="text-right tabular-nums">{u.area_sqm ?? "—"}</TableCell>
+                <TableCell className="text-right tabular-nums">{u.land_area_sqm ?? "—"}</TableCell>
+                <TableCell className="text-right tabular-nums">{u.built_up_area_sqm ?? u.area_sqm ?? "—"}</TableCell>
                 <TableCell className="text-right tabular-nums">{fmtBHD(u.monthly_service_charge)}</TableCell>
                 <TableCell className="text-muted-foreground">{fmtDate(u.handover_date)}</TableCell>
                 <TableCell>
@@ -262,7 +264,8 @@ function UnitsPage() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <Field label="Floor" value={detail.data.unit.floor ?? "—"} />
                 <Field label="Bedrooms" value={detail.data.unit.bedrooms ?? "—"} />
-                <Field label="Area" value={detail.data.unit.area_sqm ? `${detail.data.unit.area_sqm} m²` : "—"} />
+                <Field label="Land area" value={detail.data.unit.land_area_sqm ? `${detail.data.unit.land_area_sqm} m²` : "—"} />
+                <Field label="Built-up area" value={detail.data.unit.built_up_area_sqm ? `${detail.data.unit.built_up_area_sqm} m²` : "—"} />
                 <Field label="Service charge" value={fmtBHD(detail.data.unit.monthly_service_charge)} />
                 <Field label="Handover date" value={fmtDate(detail.data.unit.handover_date)} />
                 <Field
