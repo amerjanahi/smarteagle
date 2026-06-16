@@ -17,6 +17,7 @@ import { Route as AuthenticatedPortalRouteRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedPortalIndexRouteImport } from './routes/_authenticated/portal/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin/units'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminSalesRouteImport } from './routes/_authenticated/admin/sales'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
@@ -62,6 +63,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
+  id: '/units',
+  path: '/units',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/portal/': typeof AuthenticatedPortalIndexRoute
 }
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/portal': typeof AuthenticatedPortalIndexRoute
 }
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/portal/': typeof AuthenticatedPortalIndexRoute
 }
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/admin/expenses'
     | '/admin/sales'
     | '/admin/settings'
+    | '/admin/units'
     | '/admin/'
     | '/portal/'
   fileRoutesByTo: FileRoutesByTo
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/admin/expenses'
     | '/admin/sales'
     | '/admin/settings'
+    | '/admin/units'
     | '/admin'
     | '/portal'
   id:
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/sales'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/units'
     | '/_authenticated/admin/'
     | '/_authenticated/portal/'
   fileRoutesById: FileRoutesById
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/units': {
+      id: '/_authenticated/admin/units'
+      path: '/units'
+      fullPath: '/admin/units'
+      preLoaderRoute: typeof AuthenticatedAdminUnitsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -247,6 +266,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminSalesRoute: typeof AuthenticatedAdminSalesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -255,6 +275,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
     AuthenticatedAdminSalesRoute: AuthenticatedAdminSalesRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+    AuthenticatedAdminUnitsRoute: AuthenticatedAdminUnitsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
