@@ -408,11 +408,13 @@ export type Database = {
           area_sqm: number | null
           bedrooms: number | null
           building: string
+          built_up_area_sqm: number | null
           created_at: string
           floor: number | null
           handover_date: string | null
           id: string
           is_occupied: boolean
+          land_area_sqm: number | null
           monthly_service_charge: number
           notes: string | null
           unit_number: string
@@ -422,11 +424,13 @@ export type Database = {
           area_sqm?: number | null
           bedrooms?: number | null
           building: string
+          built_up_area_sqm?: number | null
           created_at?: string
           floor?: number | null
           handover_date?: string | null
           id?: string
           is_occupied?: boolean
+          land_area_sqm?: number | null
           monthly_service_charge?: number
           notes?: string | null
           unit_number: string
@@ -436,11 +440,13 @@ export type Database = {
           area_sqm?: number | null
           bedrooms?: number | null
           building?: string
+          built_up_area_sqm?: number | null
           created_at?: string
           floor?: number | null
           handover_date?: string | null
           id?: string
           is_occupied?: boolean
+          land_area_sqm?: number | null
           monthly_service_charge?: number
           notes?: string | null
           unit_number?: string
