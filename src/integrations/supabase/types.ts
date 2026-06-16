@@ -122,6 +122,48 @@ export type Database = {
         }
         Relationships: []
       }
+      expenses: {
+        Row: {
+          amount: number
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          description: string
+          expense_date: string
+          id: string
+          is_paid: boolean
+          notes: string | null
+          updated_at: string
+          vendor: string | null
+        }
+        Insert: {
+          amount: number
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          description: string
+          expense_date?: string
+          id?: string
+          is_paid?: boolean
+          notes?: string | null
+          updated_at?: string
+          vendor?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          expense_date?: string
+          id?: string
+          is_paid?: boolean
+          notes?: string | null
+          updated_at?: string
+          vendor?: string | null
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
@@ -504,6 +546,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "resident"
+      expense_category:
+        | "admin"
+        | "security"
+        | "utility"
+        | "fm"
+        | "maintenance"
+        | "other"
       invoice_status: "unpaid" | "paid" | "partial" | "cancelled" | "overdue"
       maintenance_priority: "low" | "normal" | "high" | "urgent"
       maintenance_status: "pending" | "in_progress" | "completed" | "cancelled"
@@ -643,6 +692,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "resident"],
+      expense_category: [
+        "admin",
+        "security",
+        "utility",
+        "fm",
+        "maintenance",
+        "other",
+      ],
       invoice_status: ["unpaid", "paid", "partial", "cancelled", "overdue"],
       maintenance_priority: ["low", "normal", "high", "urgent"],
       maintenance_status: ["pending", "in_progress", "completed", "cancelled"],

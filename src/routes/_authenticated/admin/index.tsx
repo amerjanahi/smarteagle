@@ -10,6 +10,11 @@ import {
   FileText,
   AlertCircle,
   CalendarIcon,
+  Briefcase,
+  ShieldCheck,
+  Zap,
+  Sparkles,
+  Receipt,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -31,26 +36,44 @@ const bhd = new Intl.NumberFormat("en-BH", {
 const fmtBHD = (n: number) => `BHD ${bhd.format(n)}`;
 const fmtPct = (n: number) => `${n.toFixed(1)}%`;
 
-type Preset = { label: string; range: () => DateRange };
+type PresetKey = "month" | "quarter" | "year" | "ytd" | "custom";
 const today = () => new Date();
-const presets: Preset[] = [
-  { label: "This month", range: () => ({ from: startOfMonth(today()), to: today() }) },
-  { label: "Last 3 months", range: () => ({ from: startOfMonth(subMonths(today(), 2)), to: today() }) },
-  { label: "Last 12 months", range: () => ({ from: startOfMonth(subMonths(today(), 11)), to: today() }) },
-  { label: "Year to date", range: () => ({ from: startOfYear(today()), to: today() }) },
+const PRESETS: { key: PresetKey; label: string; range: () => DateRange }[] = [
+  { key: "month", label: "This month", range: () => ({ from: startOfMonth(today()), to: today() }) },
+  { key: "quarter", label: "Last 3 months", range: () => ({ from: startOfMonth(subMonths(today(), 2)), to: today() }) },
+  { key: "year", label: "Last 12 months", range: () => ({ from: startOfMonth(subMonths(today(), 11)), to: today() }) },
+  { key: "ytd", label: "Year to date", range: () => ({ from: startOfYear(today()), to: today() }) },
 ];
 
-function AdminDashboard() {
-  const [range, setRange] = useState<DateRange>(() => presets[2].range());
+type ExpenseCategory = "admin" | "security" | "utility" | "fm" | "maintenance" | "other";
 
-  const fromISO = useMemo(
-    () => (range.from ? format(range.from, "yyyy-MM-dd") : null),
-    [range.from],
-  );
-  const toISO = useMemo(
-    () => (range.to ? format(range.to, "yyyy-MM-dd") : fromISO),
-    [range.to, fromISO],
-  );
+const CATEGORY_META: Record<ExpenseCategory, { label: string; icon: typeof Briefcase; tone: string }> = {
+  admin:       { label: "Admin",       icon: Briefcase,   tone: "text-blue-600" },
+  security:    { label: "Security",    icon: ShieldCheck, tone: "text-rose-600" },
+  utility:     { label: "Utility",     icon: Zap,         tone: "text-amber-600" },
+  fm:          { label: "FM",          icon: Sparkles,    tone: "text-emerald-600" },
+  maintenance: { label: "Maintenance", icon: Wallet,      tone: "text-violet-600" },
+  other:       { label: "Other",       icon: Receipt,     tone: "text-muted-foreground" },
+};
+
+function AdminDashboard() {
+  const [presetKey, setPresetKey] = useState<PresetKey>("year");
+  const [range, setRange] = useState<DateRange>(() => PRESETS[2].range());
+
+  function applyPreset(key: PresetKey) {
+    setPresetKey(key);
+    const p = PRESETS.find((x) => x.key === key);
+    if (p) setRange(p.range());
+  }
+
+  function applyCustom(r: DateRange | undefined) {
+    if (!r) return;
+    setRange(r);
+    setPresetKey("custom");
+  }
+
+  const fromISO = useMemo(() => (range.from ? format(range.from, "yyyy-MM-dd") : null), [range.from]);
+  const toISO = useMemo(() => (range.to ? format(range.to, "yyyy-MM-dd") : fromISO), [range.to, fromISO]);
 
   const stats = useQuery({
     queryKey: ["admin-stats", fromISO, toISO],
@@ -60,17 +83,19 @@ function AdminDashboard() {
       const to = toISO!;
       const toEndIso = `${to}T23:59:59.999Z`;
 
-      const [unitsRes, residentsRes, invoicesRes, paymentsRes] = await Promise.all([
+      const [unitsRes, residentsRes, invoicesRes, paymentsRes, expensesRes] = await Promise.all([
         supabase.from("units").select("id, handover_date"),
         supabase.from("residents").select("unit_id, move_in_date, move_out_date"),
         supabase.from("invoices").select("amount, period_start").gte("period_start", from).lte("period_start", to),
         supabase.from("payments").select("amount, paid_at").gte("paid_at", `${from}T00:00:00.000Z`).lte("paid_at", toEndIso),
+        supabase.from("expenses").select("amount, category, expense_date").gte("expense_date", from).lte("expense_date", to),
       ]);
 
       const u = (unitsRes.data ?? []) as Array<{ id: string; handover_date: string | null }>;
       const r = (residentsRes.data ?? []) as Array<{ unit_id: string; move_in_date: string | null; move_out_date: string | null }>;
       const inv = (invoicesRes.data ?? []) as Array<{ amount: number }>;
       const pay = (paymentsRes.data ?? []) as Array<{ amount: number }>;
+      const exp = (expensesRes.data ?? []) as Array<{ amount: number; category: ExpenseCategory }>;
 
       const totalUnits = u.length;
       const handed = u.filter((x) => x.handover_date && x.handover_date <= to).length;
@@ -89,6 +114,16 @@ function AdminDashboard() {
       const invoiced = inv.reduce((s, i) => s + Number(i.amount), 0);
       const collected = pay.reduce((s, p) => s + Number(p.amount), 0);
 
+      const byCategory: Record<ExpenseCategory, number> = {
+        admin: 0, security: 0, utility: 0, fm: 0, maintenance: 0, other: 0,
+      };
+      let expensesTotal = 0;
+      for (const e of exp) {
+        const amt = Number(e.amount);
+        byCategory[e.category] = (byCategory[e.category] ?? 0) + amt;
+        expensesTotal += amt;
+      }
+
       return {
         totalUnits,
         handed,
@@ -99,103 +134,92 @@ function AdminDashboard() {
         collected,
         outstanding: Math.max(0, invoiced - collected),
         collectionRate: invoiced > 0 ? (collected / invoiced) * 100 : 0,
+        expensesTotal,
+        byCategory,
+        netCashflow: collected - expensesTotal,
       };
     },
   });
 
   const s = stats.data;
 
-  const rateCards = [
-    {
-      label: "Handover rate",
-      value: s ? fmtPct(s.handoverRate) : "—",
-      sub: s ? `${s.handed} of ${s.totalUnits} units handed over` : "—",
-      icon: KeyRound,
-    },
-    {
-      label: "Occupancy rate",
-      value: s ? fmtPct(s.occupancyRate) : "—",
-      sub: s ? `${s.occupied} of ${s.totalUnits} units occupied` : "—",
-      icon: Building2,
-    },
-    {
-      label: "Collection rate",
-      value: s ? fmtPct(s.collectionRate) : "—",
-      sub: s ? `${fmtBHD(s.collected)} of ${fmtBHD(s.invoiced)}` : "—",
-      icon: TrendingUp,
-    },
-  ];
-
-  const amountCards = [
-    { label: "Invoiced", value: s ? fmtBHD(s.invoiced) : "—", icon: FileText },
-    { label: "Collected", value: s ? fmtBHD(s.collected) : "—", icon: Wallet },
-    { label: "Outstanding", value: s ? fmtBHD(s.outstanding) : "—", icon: AlertCircle },
-  ];
-
   const rangeLabel =
     range.from && range.to
       ? `${format(range.from, "dd MMM yyyy")} — ${format(range.to, "dd MMM yyyy")}`
       : "Pick a date range";
 
+  const rateCards = [
+    { label: "Handover rate", value: s ? fmtPct(s.handoverRate) : "—", sub: s ? `${s.handed} of ${s.totalUnits} units` : "—", icon: KeyRound },
+    { label: "Occupancy rate", value: s ? fmtPct(s.occupancyRate) : "—", sub: s ? `${s.occupied} of ${s.totalUnits} units` : "—", icon: Building2 },
+    { label: "Collection rate", value: s ? fmtPct(s.collectionRate) : "—", sub: s ? `${fmtBHD(s.collected)} / ${fmtBHD(s.invoiced)}` : "—", icon: TrendingUp },
+  ];
+
+  const financeCards = [
+    { label: "Invoiced", value: s ? fmtBHD(s.invoiced) : "—", icon: FileText },
+    { label: "Collected", value: s ? fmtBHD(s.collected) : "—", icon: Wallet },
+    { label: "Outstanding", value: s ? fmtBHD(s.outstanding) : "—", icon: AlertCircle },
+    { label: "Total expenses", value: s ? fmtBHD(s.expensesTotal) : "—", icon: Receipt },
+    { label: "Net cashflow", value: s ? fmtBHD(s.netCashflow) : "—", icon: TrendingUp, accent: s && s.netCashflow < 0 ? "text-rose-600" : "text-emerald-600" },
+  ];
+
+  const categoryOrder: ExpenseCategory[] = ["admin", "security", "utility", "fm", "maintenance", "other"];
+
   return (
     <div className="space-y-8">
-      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <header className="space-y-4">
         <div>
           <h2 className="font-display text-2xl font-bold tracking-tight">Welcome back</h2>
-          <p className="text-sm text-muted-foreground">
-            Performance and finance for the selected period.
-          </p>
+          <p className="text-sm text-muted-foreground">Performance and finance for the selected period.</p>
         </div>
 
-        <Popover>
-          <PopoverTrigger asChild>
+        <div className="flex flex-wrap items-center gap-2">
+          {PRESETS.map((p) => (
             <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal md:w-[320px]",
-                !range.from && "text-muted-foreground",
-              )}
+              key={p.key}
+              type="button"
+              size="sm"
+              variant={presetKey === p.key ? "default" : "outline"}
+              onClick={() => applyPreset(p.key)}
+              className="rounded-full"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {rangeLabel}
+              {p.label}
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <div className="flex flex-col gap-1 border-b border-border p-2 sm:flex-row">
-              {presets.map((p) => (
-                <Button
-                  key={p.label}
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start"
-                  onClick={() => setRange(p.range())}
-                >
-                  {p.label}
-                </Button>
-              ))}
-            </div>
-            <Calendar
-              mode="range"
-              selected={range}
-              onSelect={(r) => r && setRange(r)}
-              numberOfMonths={2}
-              defaultMonth={range.from ?? new Date()}
-              className={cn("p-3 pointer-events-auto")}
-            />
-          </PopoverContent>
-        </Popover>
+          ))}
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                size="sm"
+                variant={presetKey === "custom" ? "default" : "outline"}
+                className="rounded-full"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {presetKey === "custom" ? rangeLabel : "Custom range"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="range"
+                selected={range}
+                onSelect={applyCustom}
+                numberOfMonths={2}
+                defaultMonth={range.from ?? new Date()}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+
+          <span className="ml-auto hidden text-xs text-muted-foreground md:inline">
+            Showing {rangeLabel}
+          </span>
+        </div>
       </header>
 
       <section>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Performance
-        </h3>
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Performance</h3>
         <div className="grid gap-4 md:grid-cols-3">
           {rateCards.map((c) => (
-            <div
-              key={c.label}
-              className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
-            >
+            <div key={c.label} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{c.label}</p>
                 <c.icon className="h-4 w-4 text-muted-foreground" />
@@ -208,22 +232,41 @@ function AdminDashboard() {
       </section>
 
       <section>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Finance (BHD)
-        </h3>
-        <div className="grid gap-4 md:grid-cols-3">
-          {amountCards.map((c) => (
-            <div
-              key={c.label}
-              className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
-            >
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Finance (BHD)</h3>
+        <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
+          {financeCards.map((c) => (
+            <div key={c.label} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{c.label}</p>
                 <c.icon className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="mt-2 font-display text-2xl font-bold tabular-nums">{c.value}</p>
+              <p className={cn("mt-2 font-display text-xl font-bold tabular-nums", c.accent)}>{c.value}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Expenses by category</h3>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {categoryOrder.map((key) => {
+            const meta = CATEGORY_META[key];
+            const value = s?.byCategory[key] ?? 0;
+            const share = s && s.expensesTotal > 0 ? (value / s.expensesTotal) * 100 : 0;
+            return (
+              <div key={key} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">{meta.label}</p>
+                  <meta.icon className={cn("h-4 w-4", meta.tone)} />
+                </div>
+                <p className="mt-2 font-display text-xl font-bold tabular-nums">{s ? fmtBHD(value) : "—"}</p>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div className={cn("h-full rounded-full bg-primary")} style={{ width: `${Math.min(100, share)}%` }} />
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{fmtPct(share)} of total</p>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
