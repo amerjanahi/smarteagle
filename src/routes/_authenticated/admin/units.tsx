@@ -58,12 +58,79 @@ type Resident = {
 
 const PAGE_SIZE = 100;
 
+type ColumnKey =
+  | "unit_number" | "building" | "floor" | "bedrooms"
+  | "land_area_sqm" | "built_up_area_sqm" | "monthly_service_charge"
+  | "handover_date" | "is_occupied";
+
+type ColumnDef = {
+  key: ColumnKey;
+  label: string;
+  align?: "left" | "right";
+  required?: boolean;
+  render: (u: Unit) => React.ReactNode;
+};
+
+const COLUMNS: ColumnDef[] = [
+  { key: "unit_number", label: "Unit", required: true, render: (u) => <span className="font-medium">{u.unit_number}</span> },
+  { key: "building", label: "Building", render: (u) => <span className="text-muted-foreground">{u.building ?? "—"}</span> },
+  { key: "floor", label: "Floor", align: "right", render: (u) => u.floor ?? "—" },
+  { key: "bedrooms", label: "BR", align: "right", render: (u) => u.bedrooms ?? "—" },
+  { key: "land_area_sqm", label: "Land (m²)", align: "right", render: (u) => u.land_area_sqm ?? "—" },
+  { key: "built_up_area_sqm", label: "Built-up (m²)", align: "right", render: (u) => u.built_up_area_sqm ?? u.area_sqm ?? "—" },
+  { key: "monthly_service_charge", label: "Service charge", align: "right", render: (u) => fmtBHD(u.monthly_service_charge) },
+  { key: "handover_date", label: "Handover", render: (u) => <span className="text-muted-foreground">{fmtDate(u.handover_date)}</span> },
+  {
+    key: "is_occupied", label: "Status",
+    render: (u) => (
+      <Badge variant={u.is_occupied ? "default" : "secondary"} className={cn(u.is_occupied ? "bg-emerald-600 hover:bg-emerald-600" : "")}>
+        {u.is_occupied ? "Occupied" : "Vacant"}
+      </Badge>
+    ),
+  },
+];
+
+const DEFAULT_VISIBLE: ColumnKey[] = COLUMNS.map((c) => c.key);
+const STORAGE_KEY = "admin.units.columns.v1";
+
+function loadVisible(): ColumnKey[] {
+  if (typeof window === "undefined") return DEFAULT_VISIBLE;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_VISIBLE;
+    const parsed = JSON.parse(raw) as ColumnKey[];
+    const valid = parsed.filter((k) => COLUMNS.some((c) => c.key === k));
+    const required = COLUMNS.filter((c) => c.required).map((c) => c.key);
+    return Array.from(new Set([...required, ...valid]));
+  } catch {
+    return DEFAULT_VISIBLE;
+  }
+}
+
 function UnitsPage() {
   const [search, setSearch] = useState("");
   const [building, setBuilding] = useState<string>("all");
   const [occupancy, setOccupancy] = useState<"all" | "occupied" | "vacant">("all");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
+
+  useEffect(() => {
+    try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(visible)); } catch { /* ignore */ }
+  }, [visible]);
+
+  const visibleSet = useMemo(() => new Set(visible), [visible]);
+  const activeColumns = useMemo(() => COLUMNS.filter((c) => visibleSet.has(c.key)), [visibleSet]);
+
+  function toggleColumn(key: ColumnKey, on: boolean) {
+    const col = COLUMNS.find((c) => c.key === key);
+    if (col?.required) return;
+    setVisible((prev) => {
+      const set = new Set(prev);
+      if (on) set.add(key); else set.delete(key);
+      return COLUMNS.map((c) => c.key).filter((k) => set.has(k));
+    });
+  }
 
   const buildings = useQuery({
     queryKey: ["unit-buildings"],
