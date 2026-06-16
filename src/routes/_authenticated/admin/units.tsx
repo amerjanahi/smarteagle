@@ -261,6 +261,40 @@ function UnitsPage() {
               <SelectItem value="vacant">Vacant</SelectItem>
             </SelectContent>
           </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-10">
+                <Columns3 className="mr-2 h-4 w-4" />
+                Columns
+                <Badge variant="secondary" className="ml-2 px-1.5 py-0 text-xs tabular-nums">
+                  {activeColumns.length}/{COLUMNS.length}
+                </Badge>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Visible columns</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {COLUMNS.map((c) => (
+                <DropdownMenuCheckboxItem
+                  key={c.key}
+                  checked={visibleSet.has(c.key)}
+                  disabled={c.required}
+                  onCheckedChange={(on) => toggleColumn(c.key, on)}
+                  onSelect={(e) => e.preventDefault()}
+                >
+                  {c.label}{c.required ? " (required)" : ""}
+                </DropdownMenuCheckboxItem>
+              ))}
+              <DropdownMenuSeparator />
+              <button
+                type="button"
+                className="w-full px-2 py-1.5 text-left text-sm hover:bg-accent rounded-sm"
+                onClick={() => setVisible(DEFAULT_VISIBLE)}
+              >
+                Reset to default
+              </button>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -268,42 +302,25 @@ function UnitsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Unit</TableHead>
-              <TableHead>Building</TableHead>
-              <TableHead className="text-right">Floor</TableHead>
-              <TableHead className="text-right">BR</TableHead>
-              <TableHead className="text-right">Land (m²)</TableHead>
-              <TableHead className="text-right">Built-up (m²)</TableHead>
-              <TableHead className="text-right">Service charge</TableHead>
-              <TableHead>Handover</TableHead>
-              <TableHead>Status</TableHead>
+              {activeColumns.map((c) => (
+                <TableHead key={c.key} className={c.align === "right" ? "text-right" : ""}>{c.label}</TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {list.isLoading && (
-              <TableRow><TableCell colSpan={9} className="py-10 text-center text-muted-foreground">Loading units…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">Loading units…</TableCell></TableRow>
             )}
             {!list.isLoading && (list.data?.rows.length ?? 0) === 0 && (
-              <TableRow><TableCell colSpan={9} className="py-10 text-center text-muted-foreground">No units match these filters.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">No units match these filters.</TableCell></TableRow>
             )}
             {(list.data?.rows ?? []).map((u) => (
               <TableRow key={u.id} className="cursor-pointer" onClick={() => setSelectedId(u.id)}>
-                <TableCell className="font-medium">{u.unit_number}</TableCell>
-                <TableCell className="text-muted-foreground">{u.building ?? "—"}</TableCell>
-                <TableCell className="text-right tabular-nums">{u.floor ?? "—"}</TableCell>
-                <TableCell className="text-right tabular-nums">{u.bedrooms ?? "—"}</TableCell>
-                <TableCell className="text-right tabular-nums">{u.land_area_sqm ?? "—"}</TableCell>
-                <TableCell className="text-right tabular-nums">{u.built_up_area_sqm ?? u.area_sqm ?? "—"}</TableCell>
-                <TableCell className="text-right tabular-nums">{fmtBHD(u.monthly_service_charge)}</TableCell>
-                <TableCell className="text-muted-foreground">{fmtDate(u.handover_date)}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={u.is_occupied ? "default" : "secondary"}
-                    className={cn(u.is_occupied ? "bg-emerald-600 hover:bg-emerald-600" : "")}
-                  >
-                    {u.is_occupied ? "Occupied" : "Vacant"}
-                  </Badge>
-                </TableCell>
+                {activeColumns.map((c) => (
+                  <TableCell key={c.key} className={cn(c.align === "right" && "text-right tabular-nums")}>
+                    {c.render(u)}
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
           </TableBody>
