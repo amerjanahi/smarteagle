@@ -33,6 +33,8 @@ type Unit = {
   floor: number | null;
   bedrooms: number | null;
   area_sqm: number | null;
+  land_area_sqm: number | null;
+  built_up_area_sqm: number | null;
   monthly_service_charge: number | null;
   handover_date: string | null;
   is_occupied: boolean;
@@ -50,7 +52,7 @@ type Resident = {
   is_active: boolean;
 };
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 100;
 
 function UnitsPage() {
   const [search, setSearch] = useState("");
@@ -75,7 +77,7 @@ function UnitsPage() {
     queryFn: async () => {
       let q = supabase
         .from("units")
-        .select("id, building, unit_number, floor, bedrooms, area_sqm, monthly_service_charge, handover_date, is_occupied, notes", { count: "exact" })
+        .select("id, building, unit_number, floor, bedrooms, area_sqm, land_area_sqm, built_up_area_sqm, monthly_service_charge, handover_date, is_occupied, notes", { count: "exact" })
         .order("building", { ascending: true })
         .order("unit_number", { ascending: true })
         .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
