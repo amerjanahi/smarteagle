@@ -463,6 +463,16 @@ function ResidentsPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <ResidentFormDialog open={formOpen} onOpenChange={setFormOpen} initial={editing} />
+      <ConfirmDeleteDialog
+        open={!!deletingId}
+        onOpenChange={(o) => !o && setDeletingId(null)}
+        title="Delete resident?"
+        description="This permanently removes the resident record. This action cannot be undone."
+        busy={del.isPending}
+        onConfirm={() => deletingId && del.mutate(deletingId)}
+      />
     </div>
   );
 }
