@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Home, Users, KeyRound, Wallet, Columns3 } from "lucide-react";
+import { Search, Home, Users, KeyRound, Wallet, Columns3, Plus, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { UnitFormDialog, type UnitFormValues } from "@/components/admin/UnitFormDialog";
+import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -114,6 +117,41 @@ function UnitsPage() {
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<UnitFormValues | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const qc = useQueryClient();
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("units").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Unit deleted");
+      qc.invalidateQueries({ queryKey: ["units"] });
+      qc.invalidateQueries({ queryKey: ["units-stats"] });
+      setDeletingId(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function openAdd() { setEditing(null); setFormOpen(true); }
+  function openEdit(u: Unit) {
+    setEditing({
+      id: u.id,
+      building: u.building,
+      unit_number: u.unit_number,
+      floor: u.floor,
+      bedrooms: u.bedrooms,
+      land_area_sqm: u.land_area_sqm,
+      built_up_area_sqm: u.built_up_area_sqm,
+      monthly_service_charge: u.monthly_service_charge,
+      handover_date: u.handover_date,
+      notes: u.notes,
+    });
+    setFormOpen(true);
+  }
 
   useEffect(() => {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(visible)); } catch { /* ignore */ }
@@ -295,6 +333,9 @@ function UnitsPage() {
               </button>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button size="sm" className="h-10" onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add unit
+          </Button>
         </div>
       </div>
 
@@ -305,14 +346,15 @@ function UnitsPage() {
               {activeColumns.map((c) => (
                 <TableHead key={c.key} className={c.align === "right" ? "text-right" : ""}>{c.label}</TableHead>
               ))}
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {list.isLoading && (
-              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">Loading units…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length + 1} className="py-10 text-center text-muted-foreground">Loading units…</TableCell></TableRow>
             )}
             {!list.isLoading && (list.data?.rows.length ?? 0) === 0 && (
-              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">No units match these filters.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length + 1} className="py-10 text-center text-muted-foreground">No units match these filters.</TableCell></TableRow>
             )}
             {(list.data?.rows ?? []).map((u) => (
               <TableRow key={u.id} className="cursor-pointer" onClick={() => setSelectedId(u.id)}>
@@ -321,6 +363,14 @@ function UnitsPage() {
                     {c.render(u)}
                   </TableCell>
                 ))}
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(u)} aria-label="Edit">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeletingId(u.id)} aria-label="Delete">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -401,6 +451,16 @@ function UnitsPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <UnitFormDialog open={formOpen} onOpenChange={setFormOpen} initial={editing} />
+      <ConfirmDeleteDialog
+        open={!!deletingId}
+        onOpenChange={(o) => !o && setDeletingId(null)}
+        title="Delete unit?"
+        description="This permanently removes the unit and any related records. This action cannot be undone."
+        busy={del.isPending}
+        onConfirm={() => deletingId && del.mutate(deletingId)}
+      />
     </div>
   );
 }

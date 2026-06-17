@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Users, UserCheck, Home, KeyRound, Columns3, Mail, Phone } from "lucide-react";
+import { Search, Users, UserCheck, Home, KeyRound, Columns3, Mail, Phone, Plus, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { ResidentFormDialog, type ResidentFormValues } from "@/components/admin/ResidentFormDialog";
+import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -121,6 +124,40 @@ function ResidentsPage() {
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<ResidentFormValues | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const qc = useQueryClient();
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("residents").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Resident deleted");
+      qc.invalidateQueries({ queryKey: ["residents"] });
+      qc.invalidateQueries({ queryKey: ["residents-stats"] });
+      setDeletingId(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function openAdd() { setEditing(null); setFormOpen(true); }
+  function openEdit(r: ResidentRow) {
+    setEditing({
+      id: r.id,
+      unit_id: r.unit_id,
+      full_name: r.full_name,
+      email: r.email,
+      phone: r.phone,
+      resident_type: r.resident_type,
+      move_in_date: r.move_in_date,
+      move_out_date: r.move_out_date,
+      is_active: r.is_active,
+    });
+    setFormOpen(true);
+  }
 
   useEffect(() => {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(visible)); } catch { /* ignore */ }
@@ -317,6 +354,9 @@ function ResidentsPage() {
               </button>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button size="sm" className="h-10" onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add resident
+          </Button>
         </div>
       </div>
 
@@ -327,14 +367,15 @@ function ResidentsPage() {
               {activeColumns.map((c) => (
                 <TableHead key={c.key} className={c.align === "right" ? "text-right" : ""}>{c.label}</TableHead>
               ))}
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {list.isLoading && (
-              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">Loading residents…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length + 1} className="py-10 text-center text-muted-foreground">Loading residents…</TableCell></TableRow>
             )}
             {!list.isLoading && (list.data?.rows.length ?? 0) === 0 && (
-              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">No residents match these filters.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length + 1} className="py-10 text-center text-muted-foreground">No residents match these filters.</TableCell></TableRow>
             )}
             {(list.data?.rows ?? []).map((r) => (
               <TableRow key={r.id} className="cursor-pointer" onClick={() => setSelectedId(r.id)}>
@@ -343,6 +384,14 @@ function ResidentsPage() {
                     {c.render(r)}
                   </TableCell>
                 ))}
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(r)} aria-label="Edit">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeletingId(r.id)} aria-label="Delete">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -414,6 +463,16 @@ function ResidentsPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <ResidentFormDialog open={formOpen} onOpenChange={setFormOpen} initial={editing} />
+      <ConfirmDeleteDialog
+        open={!!deletingId}
+        onOpenChange={(o) => !o && setDeletingId(null)}
+        title="Delete resident?"
+        description="This permanently removes the resident record. This action cannot be undone."
+        busy={del.isPending}
+        onConfirm={() => deletingId && del.mutate(deletingId)}
+      />
     </div>
   );
 }
