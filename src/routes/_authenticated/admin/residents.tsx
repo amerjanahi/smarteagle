@@ -354,6 +354,9 @@ function ResidentsPage() {
               </button>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button size="sm" className="h-10" onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add resident
+          </Button>
         </div>
       </div>
 
@@ -364,14 +367,15 @@ function ResidentsPage() {
               {activeColumns.map((c) => (
                 <TableHead key={c.key} className={c.align === "right" ? "text-right" : ""}>{c.label}</TableHead>
               ))}
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {list.isLoading && (
-              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">Loading residents…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length + 1} className="py-10 text-center text-muted-foreground">Loading residents…</TableCell></TableRow>
             )}
             {!list.isLoading && (list.data?.rows.length ?? 0) === 0 && (
-              <TableRow><TableCell colSpan={activeColumns.length} className="py-10 text-center text-muted-foreground">No residents match these filters.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={activeColumns.length + 1} className="py-10 text-center text-muted-foreground">No residents match these filters.</TableCell></TableRow>
             )}
             {(list.data?.rows ?? []).map((r) => (
               <TableRow key={r.id} className="cursor-pointer" onClick={() => setSelectedId(r.id)}>
@@ -380,6 +384,14 @@ function ResidentsPage() {
                     {c.render(r)}
                   </TableCell>
                 ))}
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(r)} aria-label="Edit">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeletingId(r.id)} aria-label="Delete">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
