@@ -451,6 +451,16 @@ function UnitsPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <UnitFormDialog open={formOpen} onOpenChange={setFormOpen} initial={editing} />
+      <ConfirmDeleteDialog
+        open={!!deletingId}
+        onOpenChange={(o) => !o && setDeletingId(null)}
+        title="Delete unit?"
+        description="This permanently removes the unit and any related records. This action cannot be undone."
+        busy={del.isPending}
+        onConfirm={() => deletingId && del.mutate(deletingId)}
+      />
     </div>
   );
 }
