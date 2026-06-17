@@ -58,10 +58,10 @@ export function UnitFormDialog({
         notes: v.notes?.trim() || null,
       };
       if (isEdit && initial?.id) {
-        const { error } = await supabase.from("units").update(payload).eq("id", initial.id);
+        const { error } = await supabase.from("units").update(payload as never).eq("id", initial.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("units").insert(payload);
+        const { error } = await supabase.from("units").insert(payload as never);
         if (error) throw error;
       }
     },
