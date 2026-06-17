@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      amenities: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          description: string | null
+          hourly_rate: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          hourly_rate?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          hourly_rate?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      amenity_bookings: {
+        Row: {
+          amenity_id: string
+          created_at: string
+          ends_at: string
+          id: string
+          notes: string | null
+          requested_by: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["booking_status"]
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amenity_id: string
+          created_at?: string
+          ends_at: string
+          id?: string
+          notes?: string | null
+          requested_by?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amenity_id?: string
+          created_at?: string
+          ends_at?: string
+          id?: string
+          notes?: string | null
+          requested_by?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amenity_bookings_amenity_id_fkey"
+            columns: ["amenity_id"]
+            isOneToOne: false
+            referencedRelation: "amenities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amenity_bookings_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           body: string
@@ -552,6 +639,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "resident"
+      booking_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "cancelled"
+        | "completed"
       expense_category:
         | "admin"
         | "security"
@@ -698,6 +791,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "resident"],
+      booking_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "cancelled",
+        "completed",
+      ],
       expense_category: [
         "admin",
         "security",
