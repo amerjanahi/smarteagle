@@ -117,6 +117,41 @@ function UnitsPage() {
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<UnitFormValues | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const qc = useQueryClient();
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("units").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Unit deleted");
+      qc.invalidateQueries({ queryKey: ["units"] });
+      qc.invalidateQueries({ queryKey: ["units-stats"] });
+      setDeletingId(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function openAdd() { setEditing(null); setFormOpen(true); }
+  function openEdit(u: Unit) {
+    setEditing({
+      id: u.id,
+      building: u.building,
+      unit_number: u.unit_number,
+      floor: u.floor,
+      bedrooms: u.bedrooms,
+      land_area_sqm: u.land_area_sqm,
+      built_up_area_sqm: u.built_up_area_sqm,
+      monthly_service_charge: u.monthly_service_charge,
+      handover_date: u.handover_date,
+      notes: u.notes,
+    });
+    setFormOpen(true);
+  }
 
   useEffect(() => {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(visible)); } catch { /* ignore */ }
