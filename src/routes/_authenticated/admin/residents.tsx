@@ -124,6 +124,40 @@ function ResidentsPage() {
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<ResidentFormValues | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const qc = useQueryClient();
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("residents").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Resident deleted");
+      qc.invalidateQueries({ queryKey: ["residents"] });
+      qc.invalidateQueries({ queryKey: ["residents-stats"] });
+      setDeletingId(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function openAdd() { setEditing(null); setFormOpen(true); }
+  function openEdit(r: ResidentRow) {
+    setEditing({
+      id: r.id,
+      unit_id: r.unit_id,
+      full_name: r.full_name,
+      email: r.email,
+      phone: r.phone,
+      resident_type: r.resident_type,
+      move_in_date: r.move_in_date,
+      move_out_date: r.move_out_date,
+      is_active: r.is_active,
+    });
+    setFormOpen(true);
+  }
 
   useEffect(() => {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(visible)); } catch { /* ignore */ }
