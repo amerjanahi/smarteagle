@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Home, FileText, Wrench, UserPlus, Bell, LogOut } from "lucide-react";
+import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +12,7 @@ const tabs = [
   { to: "/portal/invoices", label: "Invoices", icon: FileText },
   { to: "/portal/maintenance", label: "Repairs", icon: Wrench },
   { to: "/portal/visitors", label: "Visitors", icon: UserPlus },
-  { to: "/portal/announcements", label: "News", icon: Bell },
+  { to: "/portal/more", label: "More", icon: MoreHorizontal },
 ] as const;
 
 function PortalShell() {
