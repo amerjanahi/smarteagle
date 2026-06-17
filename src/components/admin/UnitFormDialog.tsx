@@ -47,7 +47,7 @@ export function UnitFormDialog({
   const save = useMutation({
     mutationFn: async (v: UnitFormValues) => {
       const payload = {
-        building: v.building?.trim() || null,
+        building: (v.building?.trim() || ""),
         unit_number: v.unit_number.trim(),
         floor: v.floor,
         bedrooms: v.bedrooms,
