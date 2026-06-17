@@ -333,6 +333,9 @@ function UnitsPage() {
               </button>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button size="sm" className="h-10" onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add unit
+          </Button>
         </div>
       </div>
 
