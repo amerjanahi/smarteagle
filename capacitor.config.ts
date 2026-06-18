@@ -16,7 +16,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
  * so you can iterate without rebuilding. Remove it for production builds.
  */
 const config: CapacitorConfig = {
-  appId: 'app.lovable.31346ca5ceb04306',
+  appId: 'app.lovable.hayyresident',
   appName: 'Hayy Resident',
   webDir: 'dist',
   server: {
