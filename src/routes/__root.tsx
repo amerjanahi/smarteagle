@@ -82,6 +82,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "A unified community portal for residents and building admins." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Hayy — Community Management" },
+      { name: "twitter:description", content: "A unified community portal for residents and building admins." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2dd163d3-5654-4b89-8fae-25b067fd3c6c/id-preview-96e51e26--31346ca5-ceb0-4306-8a99-82d7520a5bb7.lovable.app-1781882912733.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2dd163d3-5654-4b89-8fae-25b067fd3c6c/id-preview-96e51e26--31346ca5-ceb0-4306-8a99-82d7520a5bb7.lovable.app-1781882912733.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
