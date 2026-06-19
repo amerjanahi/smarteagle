@@ -20,7 +20,7 @@ const config: CapacitorConfig = {
   appName: 'Hayy Resident',
   webDir: 'dist',
   server: {
-    url: 'https://31346ca5-ceb0-4306-8a99-82d7520a5bb7.lovableproject.com?forceHideBadge=true',
+    url: 'https://smarteagle.lovable.app?forceHideBadge=true',
     cleartext: true,
   },
 };
