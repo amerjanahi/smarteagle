@@ -271,8 +271,3 @@ function drawStatement(page: PDFPage, font: PDFFont, bold: PDFFont, accent: any,
   page.drawText(money(balance), { x: 380, y: tableY - 14, size: 14, font: bold, color: primary });
 }
 
-function fmtDate(d: string | Date | null | undefined) {
-  if (!d) return "";
-  const dt = typeof d === "string" ? new Date(d) : d;
-  return dt.toISOString().slice(0, 10);
-}

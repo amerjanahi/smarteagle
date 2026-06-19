@@ -131,7 +131,8 @@ export const createInvoice = createServerFn({ method: "POST" })
         tax_amount: +tax.toFixed(2),
         currency: data.currency ?? "AED",
         status: "unpaid",
-      })
+        invoice_number: "", // trigger fills this in
+      } as any)
       .select("id").single();
     if (error) throw new Error(error.message);
     if (items.length) {
@@ -203,7 +204,8 @@ export const recordPayment = createServerFn({ method: "POST" })
         paid_by_user_id: context.userId,
         paid_at: data.paid_at ?? new Date().toISOString(),
         notes: data.notes,
-      })
+        receipt_number: "", // trigger fills this in
+      } as any)
       .select("id").single();
     if (error) throw new Error(error.message);
 
@@ -244,7 +246,8 @@ export const issueCreditNote = createServerFn({ method: "POST" })
         status: "issued",
         applied_amount: 0,
         balance: data.amount,
-      })
+        credit_note_number: "", // trigger fills this in
+      } as any)
       .select("id").single();
     if (error) throw new Error(error.message);
     if (data.line_items?.length) {
@@ -399,7 +402,7 @@ export const generateDocumentPdf = createServerFn({ method: "POST" })
       docData = { unit, invoices, credits, payments: unitPayments, from: data.from, to: data.to };
     }
 
-    const bytes = await generatePdf(data.kind, docData, template ?? null);
+    const bytes = await generatePdf(data.kind, docData, (template as any) ?? null);
     return { base64: Buffer.from(bytes).toString("base64"), filename: filenameFor(data.kind, docData) };
   });
 
