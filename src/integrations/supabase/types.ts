@@ -454,12 +454,19 @@ export type Database = {
         Row: {
           amount: number
           amount_paid: number
+          attachments: Json
           created_at: string
           currency: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
           description: string | null
+          discount_amount: number
           due_date: string
           id: string
           invoice_number: string
+          notes: string | null
+          payment_terms: string | null
           period_end: string | null
           period_start: string | null
           status: Database["public"]["Enums"]["invoice_status"]
@@ -473,12 +480,19 @@ export type Database = {
         Insert: {
           amount: number
           amount_paid?: number
+          attachments?: Json
           created_at?: string
           currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           description?: string | null
+          discount_amount?: number
           due_date: string
           id?: string
           invoice_number: string
+          notes?: string | null
+          payment_terms?: string | null
           period_end?: string | null
           period_start?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
@@ -492,12 +506,19 @@ export type Database = {
         Update: {
           amount?: number
           amount_paid?: number
+          attachments?: Json
           created_at?: string
           currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           description?: string | null
+          discount_amount?: number
           due_date?: string
           id?: string
           invoice_number?: string
+          notes?: string | null
+          payment_terms?: string | null
           period_end?: string | null
           period_start?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
