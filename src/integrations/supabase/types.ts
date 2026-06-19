@@ -128,9 +128,88 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          after_json: Json | null
+          before_json: Json | null
+          created_at: string
+          id: string
+          record_id: string | null
+          table_name: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          after_json?: Json | null
+          before_json?: Json | null
+          created_at?: string
+          id?: string
+          record_id?: string | null
+          table_name: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          after_json?: Json | null
+          before_json?: Json | null
+          created_at?: string
+          id?: string
+          record_id?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
+      credit_note_line_items: {
+        Row: {
+          created_at: string
+          credit_note_id: string
+          description: string
+          id: string
+          line_total: number
+          position: number
+          quantity: number
+          tax_rate: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          credit_note_id: string
+          description: string
+          id?: string
+          line_total?: number
+          position?: number
+          quantity?: number
+          tax_rate?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          credit_note_id?: string
+          description?: string
+          id?: string
+          line_total?: number
+          position?: number
+          quantity?: number
+          tax_rate?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_note_line_items_credit_note_id_fkey"
+            columns: ["credit_note_id"]
+            isOneToOne: false
+            referencedRelation: "credit_notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       credit_notes: {
         Row: {
           amount: number
+          applied_amount: number
+          balance: number
           created_at: string
           credit_note_number: string
           id: string
@@ -138,10 +217,13 @@ export type Database = {
           issued_at: string
           issued_by: string | null
           reason: string
+          status: string
           unit_id: string
         }
         Insert: {
           amount: number
+          applied_amount?: number
+          balance?: number
           created_at?: string
           credit_note_number: string
           id?: string
@@ -149,10 +231,13 @@ export type Database = {
           issued_at?: string
           issued_by?: string | null
           reason: string
+          status?: string
           unit_id: string
         }
         Update: {
           amount?: number
+          applied_amount?: number
+          balance?: number
           created_at?: string
           credit_note_number?: string
           id?: string
@@ -160,6 +245,7 @@ export type Database = {
           issued_at?: string
           issued_by?: string | null
           reason?: string
+          status?: string
           unit_id?: string
         }
         Relationships: [
@@ -178,6 +264,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      document_counters: {
+        Row: {
+          doc_type: string
+          last_number: number
+          year: number
+        }
+        Insert: {
+          doc_type: string
+          last_number?: number
+          year: number
+        }
+        Update: {
+          doc_type?: string
+          last_number?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      document_templates: {
+        Row: {
+          accent_color: string
+          created_at: string
+          created_by: string | null
+          fields_json: Json
+          footer_text: string | null
+          header_text: string | null
+          id: string
+          is_default: boolean
+          layout: string
+          logo_url: string | null
+          name: string
+          primary_color: string
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string
+          created_at?: string
+          created_by?: string | null
+          fields_json?: Json
+          footer_text?: string | null
+          header_text?: string | null
+          id?: string
+          is_default?: boolean
+          layout?: string
+          logo_url?: string | null
+          name: string
+          primary_color?: string
+          template_type: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string
+          created_at?: string
+          created_by?: string | null
+          fields_json?: Json
+          footer_text?: string | null
+          header_text?: string | null
+          id?: string
+          is_default?: boolean
+          layout?: string
+          logo_url?: string | null
+          name?: string
+          primary_color?: string
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       documents: {
         Row: {
@@ -251,11 +406,56 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_line_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          line_total: number
+          position: number
+          quantity: number
+          tax_rate: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          line_total?: number
+          position?: number
+          quantity?: number
+          tax_rate?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          line_total?: number
+          position?: number
+          quantity?: number
+          tax_rate?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount: number
           amount_paid: number
           created_at: string
+          currency: string
           description: string | null
           due_date: string
           id: string
@@ -263,13 +463,18 @@ export type Database = {
           period_end: string | null
           period_start: string | null
           status: Database["public"]["Enums"]["invoice_status"]
+          subtotal: number
+          tax_amount: number
           unit_id: string
           updated_at: string
+          voided_at: string | null
+          voided_by: string | null
         }
         Insert: {
           amount: number
           amount_paid?: number
           created_at?: string
+          currency?: string
           description?: string | null
           due_date: string
           id?: string
@@ -277,13 +482,18 @@ export type Database = {
           period_end?: string | null
           period_start?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          tax_amount?: number
           unit_id: string
           updated_at?: string
+          voided_at?: string | null
+          voided_by?: string | null
         }
         Update: {
           amount?: number
           amount_paid?: number
           created_at?: string
+          currency?: string
           description?: string | null
           due_date?: string
           id?: string
@@ -291,8 +501,12 @@ export type Database = {
           period_end?: string | null
           period_start?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          tax_amount?: number
           unit_id?: string
           updated_at?: string
+          voided_at?: string | null
+          voided_by?: string | null
         }
         Relationships: [
           {
@@ -357,8 +571,51 @@ export type Database = {
           },
         ]
       }
+      payment_allocations: {
+        Row: {
+          amount_applied: number
+          created_at: string
+          created_by: string | null
+          id: string
+          invoice_id: string
+          payment_id: string
+        }
+        Insert: {
+          amount_applied: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_id: string
+          payment_id: string
+        }
+        Update: {
+          amount_applied?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_id?: string
+          payment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_allocations_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_allocations_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
+          allocated_amount: number
           amount: number
           created_at: string
           gateway_provider: string
@@ -370,8 +627,10 @@ export type Database = {
           paid_by_user_id: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           receipt_number: string
+          unallocated_amount: number
         }
         Insert: {
+          allocated_amount?: number
           amount: number
           created_at?: string
           gateway_provider?: string
@@ -383,8 +642,10 @@ export type Database = {
           paid_by_user_id?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"]
           receipt_number: string
+          unallocated_amount?: number
         }
         Update: {
+          allocated_amount?: number
           amount?: number
           created_at?: string
           gateway_provider?: string
@@ -396,6 +657,7 @@ export type Database = {
           paid_by_user_id?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"]
           receipt_number?: string
+          unallocated_amount?: number
         }
         Relationships: [
           {
@@ -629,6 +891,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_sales: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -636,9 +899,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      next_document_number: {
+        Args: { _doc_type: string; _prefix: string }
+        Returns: string
+      }
     }
     Enums: {
-      app_role: "admin" | "resident"
+      app_role: "admin" | "resident" | "accountant" | "viewer"
       booking_status:
         | "pending"
         | "approved"
@@ -790,7 +1057,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "resident"],
+      app_role: ["admin", "resident", "accountant", "viewer"],
       booking_status: [
         "pending",
         "approved",

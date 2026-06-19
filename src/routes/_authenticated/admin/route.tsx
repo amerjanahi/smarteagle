@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
-  TrendingUp, Wallet, Settings,
+  TrendingUp, Wallet, Settings, FileSignature, ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -34,11 +34,14 @@ const groups = [
   {
     label: "Finance",
     items: [
-      { to: "/admin/sales", label: "Sales", icon: TrendingUp },
-      { to: "/admin/expenses", label: "Expenses", icon: Wallet },
+      { to: "/admin/sales", label: "Sales Hub", icon: TrendingUp },
       { to: "/admin/invoices", label: "Invoices", icon: FileText },
       { to: "/admin/payments", label: "Payments", icon: CreditCard },
       { to: "/admin/credit-notes", label: "Credit Notes", icon: Receipt },
+      { to: "/admin/statements", label: "Statements", icon: FileSignature },
+      { to: "/admin/templates", label: "Templates", icon: Settings },
+      { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
+      { to: "/admin/expenses", label: "Expenses", icon: Wallet },
       { to: "/admin/reports", label: "Reports", icon: BarChart3 },
     ],
   },
