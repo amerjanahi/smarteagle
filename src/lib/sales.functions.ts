@@ -106,6 +106,13 @@ export const createInvoice = createServerFn({ method: "POST" })
     period_end?: string | null;
     due_date: string;
     currency?: string;
+    discount_amount?: number;
+    payment_terms?: string | null;
+    notes?: string | null;
+    customer_name?: string | null;
+    customer_email?: string | null;
+    customer_phone?: string | null;
+    attachments?: { name: string; url: string }[];
     line_items: LineItemInput[];
   }) => d)
   .handler(async ({ context, data }) => {
@@ -117,7 +124,8 @@ export const createInvoice = createServerFn({ method: "POST" })
       subtotal += lineSub; tax += lineTax;
       return { ...li, position: i + 1, line_total: +(lineSub + lineTax).toFixed(2) };
     });
-    const amount = +(subtotal + tax).toFixed(2);
+    const discount = Number(data.discount_amount ?? 0);
+    const amount = +Math.max(subtotal + tax - discount, 0).toFixed(2);
     const { data: inv, error } = await context.supabase
       .from("invoices")
       .insert({
@@ -129,9 +137,16 @@ export const createInvoice = createServerFn({ method: "POST" })
         amount,
         subtotal: +subtotal.toFixed(2),
         tax_amount: +tax.toFixed(2),
+        discount_amount: discount,
+        payment_terms: data.payment_terms,
+        notes: data.notes,
+        customer_name: data.customer_name,
+        customer_email: data.customer_email,
+        customer_phone: data.customer_phone,
+        attachments: data.attachments ?? [],
         currency: data.currency ?? "AED",
         status: "unpaid",
-        invoice_number: "", // trigger fills this in
+        invoice_number: "",
       } as any)
       .select("id").single();
     if (error) throw new Error(error.message);
