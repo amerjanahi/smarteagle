@@ -1,58 +1,68 @@
-# Community Management Platform — Rebuild Plan
+## Sales Module Enhancement
 
-Porting the uploaded Expo + FastAPI/MongoDB project to Lovable's stack: **TanStack Start (React web) + Lovable Cloud (Postgres + Auth)**. Single web app, role-based routing — residents get a mobile-first portal, admins get a desktop sidebar portal.
+Build out a complete sales/billing workflow on top of the existing `invoices`, `payments`, and `credit_notes` tables, with line-item support, payment allocation across multiple invoices, customizable document templates, PDF generation, statements, and an audit trail.
 
-## Recommendation on backend
+### 1. Database changes (migration)
 
-Use **Lovable Cloud** (Postgres + built-in email auth). It's the supported path here, gives us RLS for resident/admin separation, and removes the need to host FastAPI/MongoDB. Mock SMS-OTP and payment gateways stay mocked behind a thin abstraction, exactly like the PRD describes — easy to swap later.
+**New tables**
+- `invoice_line_items` — invoice_id, description, quantity, unit_price, tax_rate, line_total
+- `credit_note_line_items` — same shape, tied to credit_notes
+- `payment_allocations` — payment_id, invoice_id, amount_applied (lets one payment cover multiple invoices)
+- `document_templates` — type (invoice/credit_note/receipt/statement), name, logo_url, primary_color, header_text, footer_text, fields_json (which columns to show), layout (compact/standard/detailed), is_default
+- `audit_log` — table_name, record_id, action (insert/update/delete/issue/void/allocate), actor_user_id, before_json, after_json, created_at
 
-## Phased delivery
+**Column additions**
+- `invoices`: tax_amount, subtotal, balance_due (generated), currency, voided_at, voided_by
+- `credit_notes`: status (draft/issued/applied/void), applied_amount, balance (remaining credit)
+- `payments`: allocated_amount, unallocated_amount (for over-payments → customer credit)
+- `residents`/units: customer_balance view (computed)
 
-I'll ship in 4 phases. After each phase the app is usable end-to-end for what's built so far.
+**Triggers**
+- Recompute invoice `amount_paid`/`status` from `payment_allocations` (not from `payments` directly)
+- Recompute credit-note `applied_amount`/`balance` when allocations or invoice changes happen
+- Write to `audit_log` on every insert/update/delete to invoices, payments, credit_notes, allocations
+- Auto-generate sequential `invoice_number`, `receipt_number`, `credit_note_number` per year
 
-### Phase 1 — Foundation (this turn)
-- Enable Lovable Cloud
-- Design system (mobile-first tokens, admin sidebar tokens, brand colors)
-- DB schema + RLS + seed migration: `profiles`, `user_roles` (app_role enum: admin, resident), `units`, `residents`, `invoices`, `payments`, `credit_notes`, `maintenance_requests`, `visitors`, `announcements`, `documents`
-- Seed: admin@test.com + 4 residents, 5 units across Tower A/B, sample invoices
-- Auth: email + password (mock-OTP UX preserved as a labeled "demo login" using seeded accounts; real OTP deferred)
-- Role-based route shell: `/` redirects to `/portal` (residents) or `/admin` (admins)
-- `_authenticated/` gate via the managed Supabase integration layout
+**RBAC**
+- Add roles `accountant` and `viewer` to existing `app_role` enum
+- Helper: `can_manage_sales(user_id)` = admin OR accountant
+- Policies: viewers read-only; accountants create/edit drafts; admins void/delete
 
-### Phase 2 — Resident portal (mobile-first)
-Routes under `/portal/*`:
-- Dashboard (outstanding balance, quick actions)
-- Invoices list + detail + one-tap mock pay
-- Maintenance requests (create with photo upload to Cloud Storage, list, status)
-- Visitors (create request, QR code, list)
-- Announcements + Documents
+### 2. Server functions (`src/lib/sales.functions.ts`)
 
-### Phase 3 — Admin portal (desktop sidebar, 9 modules)
-Routes under `/admin/*`, RBAC-gated:
-1. Dashboard — financial KPIs, collection rate, recent payments, overdue alerts
-2. Units — CRUD
-3. Residents — CRUD, auto-updates unit occupancy via trigger
-4. Invoices — filters, bulk generate, clone, delete
-5. Payments — receipt #, gateway provider, method
-6. Credit Notes — auto-numbered CN-YYYYMMDD-XXXX
-7. Reports — collection by building, aging buckets, occupancy
-8. Maintenance — list, status updates, vendor assignment
-9. Visitors — approve/reject queue
+All under `requireSupabaseAuth` + role check:
+- `createInvoice` / `updateInvoice` / `voidInvoice` (with line items)
+- `recordPayment` (with allocations array; auto-allocate FIFO if not specified)
+- `issueCreditNote` / `applyCreditNote` (allocate to invoices)
+- `getCustomerStatement` (unit_id, date range → invoices, payments, credits, running balance)
+- `generateInvoicePdf` / `generateReceiptPdf` / `generateCreditNotePdf` / `generateStatementPdf` (returns base64 PDF using `pdf-lib`, applies selected template)
+- `listTemplates` / `saveTemplate` / `uploadLogo` (admin only)
 
-### Phase 4 — Polish
-- Empty states, loading skeletons, error boundaries on every route
-- SEO: per-route head() metadata, sitemap.xml, robots.txt
-- Responsive QA across breakpoints
+### 3. UI — `/admin/sales/*`
 
-## Technical notes
+- `/admin/sales` — dashboard: outstanding receivables, aged debtors, recent activity
+- `/admin/sales/invoices` — list, filter by status/unit/date; create/edit drawer with line items, tax, preview
+- `/admin/sales/payments` — record payment, pick customer, allocate across open invoices, print receipt
+- `/admin/sales/credit-notes` — issue/apply credit notes
+- `/admin/sales/statements` — pick customer + date range, preview & download PDF, email
+- `/admin/sales/templates` — template editor (logo upload, color picker, toggle fields, header/footer, live preview)
+- `/admin/sales/audit` — searchable audit log (admin only)
 
-- **Server functions** in `src/lib/*.functions.ts` for all data access; admin client loaded inside handlers only.
-- **RLS**: residents see only their own units/invoices/etc via `auth.uid()`; admins use `has_role(auth.uid(), 'admin')` security-definer function.
-- **Payments/OTP**: kept as mock with a `gateway_provider` column so AFS/EasyPay/BenefitPay can be wired later without schema changes.
-- **No native-mobile features**: QR codes rendered as SVG in-page; photo upload uses Cloud Storage instead of Expo's image picker.
+### 4. Storage
+- New private bucket `sales-documents` for logos and generated PDFs
+- RLS: admins/accountants read+write, residents read only their own receipts/invoices
 
-## Out of scope (per PRD's future roadmap)
-Real payment gateway, real SMS OTP, multi-tenant, Arabic/bilingual, push notifications, Power BI, bank reconciliation, PDF/Excel export, scheduled email reports.
+### Out of scope (ask separately if needed)
+- Email delivery of PDFs (needs Resend setup)
+- Online payment gateway integration (Stripe/Paddle)
+- Multi-currency conversion rates
+- Recurring invoice schedules
 
-## What I'll build right now if you approve
-Just **Phase 1** — foundation, schema, seed data, auth, and role-based routing shell with placeholder dashboards. Then I'll check in before starting Phase 2.
+### Order of work
+1. Migration (schema + RBAC + triggers + audit)
+2. Server functions + PDF generation
+3. Admin UI screens
+4. Template editor
+5. Resident-side: view own invoices/receipts/statements
+
+Approve and I'll start with the migration.
