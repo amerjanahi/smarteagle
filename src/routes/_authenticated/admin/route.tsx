@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
-  ShoppingBag, Briefcase, Truck,
+  ShoppingBag, Truck,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -59,7 +59,6 @@ function AdminShell() {
 
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
-  const [financeOpen, setFinanceOpen] = useState(inSales || inPurch);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
 
@@ -152,25 +151,10 @@ function AdminShell() {
               <SidebarGroupLabel>Finance</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <Collapsible open={financeOpen} onOpenChange={setFinanceOpen}>
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton isActive={inSales || inPurch} className="justify-between">
-                          <span className="flex items-center gap-2">
-                            <Briefcase className="h-4 w-4" />
-                            <span>Finance</span>
-                          </span>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${financeOpen ? "rotate-180" : ""}`} />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
-                          {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                  <SidebarMenuSub>
+                    {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
+                    {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
+                  </SidebarMenuSub>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
