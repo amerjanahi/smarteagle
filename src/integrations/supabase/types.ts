@@ -18,71 +18,116 @@ export type Database = {
         Row: {
           capacity: number | null
           created_at: string
+          deposit_amount: number
           description: string | null
           hourly_rate: number
           id: string
+          image_url: string | null
           is_active: boolean
           name: string
+          portal_bookable: boolean
+          requires_approval: boolean
           updated_at: string
+          vat_rate: number
         }
         Insert: {
           capacity?: number | null
           created_at?: string
+          deposit_amount?: number
           description?: string | null
           hourly_rate?: number
           id?: string
+          image_url?: string | null
           is_active?: boolean
           name: string
+          portal_bookable?: boolean
+          requires_approval?: boolean
           updated_at?: string
+          vat_rate?: number
         }
         Update: {
           capacity?: number | null
           created_at?: string
+          deposit_amount?: number
           description?: string | null
           hourly_rate?: number
           id?: string
+          image_url?: string | null
           is_active?: boolean
           name?: string
+          portal_bookable?: boolean
+          requires_approval?: boolean
           updated_at?: string
+          vat_rate?: number
         }
         Relationships: []
       }
       amenity_bookings: {
         Row: {
           amenity_id: string
+          base_amount: number
           created_at: string
+          deposit_amount: number
           ends_at: string
+          extras: Json
+          extras_amount: number
+          hours: number | null
           id: string
           notes: string | null
+          payment_status: string | null
+          purpose: Database["public"]["Enums"]["booking_purpose"]
           requested_by: string | null
           starts_at: string
           status: Database["public"]["Enums"]["booking_status"]
+          total_amount: number
           unit_id: string | null
           updated_at: string
+          vat_amount: number
+          vat_rate: number
         }
         Insert: {
           amenity_id: string
+          base_amount?: number
           created_at?: string
+          deposit_amount?: number
           ends_at: string
+          extras?: Json
+          extras_amount?: number
+          hours?: number | null
           id?: string
           notes?: string | null
+          payment_status?: string | null
+          purpose?: Database["public"]["Enums"]["booking_purpose"]
           requested_by?: string | null
           starts_at: string
           status?: Database["public"]["Enums"]["booking_status"]
+          total_amount?: number
           unit_id?: string | null
           updated_at?: string
+          vat_amount?: number
+          vat_rate?: number
         }
         Update: {
           amenity_id?: string
+          base_amount?: number
           created_at?: string
+          deposit_amount?: number
           ends_at?: string
+          extras?: Json
+          extras_amount?: number
+          hours?: number | null
           id?: string
           notes?: string | null
+          payment_status?: string | null
+          purpose?: Database["public"]["Enums"]["booking_purpose"]
           requested_by?: string | null
           starts_at?: string
           status?: Database["public"]["Enums"]["booking_status"]
+          total_amount?: number
           unit_id?: string | null
           updated_at?: string
+          vat_amount?: number
+          vat_rate?: number
         }
         Relationships: [
           {
@@ -1305,12 +1350,15 @@ export type Database = {
     Enums: {
       app_role: "admin" | "resident" | "accountant" | "viewer"
       approval_status: "draft" | "pending" | "approved" | "rejected"
+      booking_purpose: "personal" | "commercial" | "event" | "wedding"
       booking_status:
         | "pending"
         | "approved"
         | "rejected"
         | "cancelled"
         | "completed"
+        | "confirmed"
+        | "paid"
       expense_category:
         | "admin"
         | "security"
@@ -1464,12 +1512,15 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "resident", "accountant", "viewer"],
       approval_status: ["draft", "pending", "approved", "rejected"],
+      booking_purpose: ["personal", "commercial", "event", "wedding"],
       booking_status: [
         "pending",
         "approved",
         "rejected",
         "cancelled",
         "completed",
+        "confirmed",
+        "paid",
       ],
       expense_category: [
         "admin",
