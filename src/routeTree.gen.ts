@@ -40,6 +40,7 @@ import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
 import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
+import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -216,6 +217,12 @@ const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminAmenitiesRoute =
+  AuthenticatedAdminAmenitiesRouteImport.update({
+    id: '/amenities',
+    path: '/amenities',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
+  '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -253,6 +261,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -287,6 +296,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
+  '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/portal'
+    | '/admin/amenities'
     | '/admin/audit'
     | '/admin/credit-notes'
     | '/admin/expenses'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
+    | '/admin/amenities'
     | '/admin/audit'
     | '/admin/credit-notes'
     | '/admin/expenses'
@@ -384,6 +396,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/portal'
+    | '/_authenticated/admin/amenities'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/credit-notes'
     | '/_authenticated/admin/expenses'
@@ -637,10 +650,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/amenities': {
+      id: '/_authenticated/admin/amenities'
+      path: '/amenities'
+      fullPath: '/admin/amenities'
+      preLoaderRoute: typeof AuthenticatedAdminAmenitiesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAmenitiesRoute: typeof AuthenticatedAdminAmenitiesRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminCreditNotesRoute: typeof AuthenticatedAdminCreditNotesRoute
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
@@ -662,6 +683,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAmenitiesRoute: AuthenticatedAdminAmenitiesRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminCreditNotesRoute: AuthenticatedAdminCreditNotesRoute,
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
