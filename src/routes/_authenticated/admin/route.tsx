@@ -31,6 +31,7 @@ const propertyGroup: NavGroup = { label: "Property", items: [
 const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
+  { to: "/admin/amenity-bookings", label: "Bookings", icon: Sparkles },
 ];
 const sysGroup: NavGroup = { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] };
 
@@ -66,11 +67,8 @@ function AdminShell() {
 
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
-  const inComms = commsItems.some((i) => pathname === i.to);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
-  const [commsOpen, setCommsOpen] = useState(inComms);
-  const [coaActive] = useState(false);
 
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
@@ -177,7 +175,7 @@ function AdminShell() {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {/* Operations group with Communication submenu */}
+            {/* Operations group */}
             <SidebarGroup>
               <SidebarGroupLabel>Operations</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -192,9 +190,25 @@ function AdminShell() {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
-                  <SidebarMenuSub>
-                    {renderSubsection("Communication", Megaphone, commsItems, commsOpen, setCommsOpen)}
-                  </SidebarMenuSub>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Communication — top-level group */}
+            <SidebarGroup>
+              <SidebarGroupLabel>Communication</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {commsItems.map((item) => (
+                    <SidebarMenuItem key={item.to}>
+                      <SidebarMenuButton asChild isActive={pathname === item.to}>
+                        <Link to={item.to}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
