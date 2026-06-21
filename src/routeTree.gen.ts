@@ -24,12 +24,17 @@ import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authe
 import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_authenticated/portal/calculator'
 import { Route as AuthenticatedPortalAnnouncementsRouteImport } from './routes/_authenticated/portal/announcements'
 import { Route as AuthenticatedPortalAmenitiesRouteImport } from './routes/_authenticated/portal/amenities'
+import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin/vendors'
+import { Route as AuthenticatedAdminVendorPaymentsRouteImport } from './routes/_authenticated/admin/vendor-payments'
 import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin/units'
 import { Route as AuthenticatedAdminTemplatesRouteImport } from './routes/_authenticated/admin/templates'
 import { Route as AuthenticatedAdminStatementsRouteImport } from './routes/_authenticated/admin/statements'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminSalesRouteImport } from './routes/_authenticated/admin/sales'
 import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authenticated/admin/residents'
+import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
+import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
+import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
@@ -118,6 +123,18 @@ const AuthenticatedPortalAmenitiesRoute =
     path: '/amenities',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
+const AuthenticatedAdminVendorsRoute =
+  AuthenticatedAdminVendorsRouteImport.update({
+    id: '/vendors',
+    path: '/vendors',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminVendorPaymentsRoute =
+  AuthenticatedAdminVendorPaymentsRouteImport.update({
+    id: '/vendor-payments',
+    path: '/vendor-payments',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
   id: '/units',
   path: '/units',
@@ -150,6 +167,24 @@ const AuthenticatedAdminResidentsRoute =
   AuthenticatedAdminResidentsRouteImport.update({
     id: '/residents',
     path: '/residents',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPurchasesRoute =
+  AuthenticatedAdminPurchasesRouteImport.update({
+    id: '/purchases',
+    path: '/purchases',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPurchaseReportsRoute =
+  AuthenticatedAdminPurchaseReportsRouteImport.update({
+    id: '/purchase-reports',
+    path: '/purchase-reports',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPurchaseInvoicesRoute =
+  AuthenticatedAdminPurchaseInvoicesRouteImport.update({
+    id: '/purchase-invoices',
+    path: '/purchase-invoices',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminPaymentsRoute =
@@ -193,12 +228,17 @@ export interface FileRoutesByFullPath {
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
+  '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
+  '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/statements': typeof AuthenticatedAdminStatementsRoute
   '/admin/templates': typeof AuthenticatedAdminTemplatesRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
+  '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -218,12 +258,17 @@ export interface FileRoutesByTo {
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
+  '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
+  '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/statements': typeof AuthenticatedAdminStatementsRoute
   '/admin/templates': typeof AuthenticatedAdminTemplatesRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
+  '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -247,12 +292,17 @@ export interface FileRoutesById {
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
+  '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
+  '/_authenticated/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/_authenticated/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/_authenticated/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/statements': typeof AuthenticatedAdminStatementsRoute
   '/_authenticated/admin/templates': typeof AuthenticatedAdminTemplatesRoute
   '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/_authenticated/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
+  '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/_authenticated/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/_authenticated/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/_authenticated/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -276,12 +326,17 @@ export interface FileRouteTypes {
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/payments'
+    | '/admin/purchase-invoices'
+    | '/admin/purchase-reports'
+    | '/admin/purchases'
     | '/admin/residents'
     | '/admin/sales'
     | '/admin/settings'
     | '/admin/statements'
     | '/admin/templates'
     | '/admin/units'
+    | '/admin/vendor-payments'
+    | '/admin/vendors'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -301,12 +356,17 @@ export interface FileRouteTypes {
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/payments'
+    | '/admin/purchase-invoices'
+    | '/admin/purchase-reports'
+    | '/admin/purchases'
     | '/admin/residents'
     | '/admin/sales'
     | '/admin/settings'
     | '/admin/statements'
     | '/admin/templates'
     | '/admin/units'
+    | '/admin/vendor-payments'
+    | '/admin/vendors'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -329,12 +389,17 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/invoices'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/purchase-invoices'
+    | '/_authenticated/admin/purchase-reports'
+    | '/_authenticated/admin/purchases'
     | '/_authenticated/admin/residents'
     | '/_authenticated/admin/sales'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/statements'
     | '/_authenticated/admin/templates'
     | '/_authenticated/admin/units'
+    | '/_authenticated/admin/vendor-payments'
+    | '/_authenticated/admin/vendors'
     | '/_authenticated/portal/amenities'
     | '/_authenticated/portal/announcements'
     | '/_authenticated/portal/calculator'
@@ -460,6 +525,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalAmenitiesRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
+    '/_authenticated/admin/vendors': {
+      id: '/_authenticated/admin/vendors'
+      path: '/vendors'
+      fullPath: '/admin/vendors'
+      preLoaderRoute: typeof AuthenticatedAdminVendorsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/vendor-payments': {
+      id: '/_authenticated/admin/vendor-payments'
+      path: '/vendor-payments'
+      fullPath: '/admin/vendor-payments'
+      preLoaderRoute: typeof AuthenticatedAdminVendorPaymentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/units': {
       id: '/_authenticated/admin/units'
       path: '/units'
@@ -500,6 +579,27 @@ declare module '@tanstack/react-router' {
       path: '/residents'
       fullPath: '/admin/residents'
       preLoaderRoute: typeof AuthenticatedAdminResidentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/purchases': {
+      id: '/_authenticated/admin/purchases'
+      path: '/purchases'
+      fullPath: '/admin/purchases'
+      preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/purchase-reports': {
+      id: '/_authenticated/admin/purchase-reports'
+      path: '/purchase-reports'
+      fullPath: '/admin/purchase-reports'
+      preLoaderRoute: typeof AuthenticatedAdminPurchaseReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/purchase-invoices': {
+      id: '/_authenticated/admin/purchase-invoices'
+      path: '/purchase-invoices'
+      fullPath: '/admin/purchase-invoices'
+      preLoaderRoute: typeof AuthenticatedAdminPurchaseInvoicesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/payments': {
@@ -546,12 +646,17 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminInvoicesRoute: typeof AuthenticatedAdminInvoicesRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
+  AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
+  AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
   AuthenticatedAdminResidentsRoute: typeof AuthenticatedAdminResidentsRoute
   AuthenticatedAdminSalesRoute: typeof AuthenticatedAdminSalesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminStatementsRoute: typeof AuthenticatedAdminStatementsRoute
   AuthenticatedAdminTemplatesRoute: typeof AuthenticatedAdminTemplatesRoute
   AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
+  AuthenticatedAdminVendorPaymentsRoute: typeof AuthenticatedAdminVendorPaymentsRoute
+  AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -562,12 +667,20 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
     AuthenticatedAdminInvoicesRoute: AuthenticatedAdminInvoicesRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+    AuthenticatedAdminPurchaseInvoicesRoute:
+      AuthenticatedAdminPurchaseInvoicesRoute,
+    AuthenticatedAdminPurchaseReportsRoute:
+      AuthenticatedAdminPurchaseReportsRoute,
+    AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
     AuthenticatedAdminResidentsRoute: AuthenticatedAdminResidentsRoute,
     AuthenticatedAdminSalesRoute: AuthenticatedAdminSalesRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminStatementsRoute: AuthenticatedAdminStatementsRoute,
     AuthenticatedAdminTemplatesRoute: AuthenticatedAdminTemplatesRoute,
     AuthenticatedAdminUnitsRoute: AuthenticatedAdminUnitsRoute,
+    AuthenticatedAdminVendorPaymentsRoute:
+      AuthenticatedAdminVendorPaymentsRoute,
+    AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
