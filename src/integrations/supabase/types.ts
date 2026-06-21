@@ -367,6 +367,10 @@ export type Database = {
       expenses: {
         Row: {
           amount: number
+          approval_status: Database["public"]["Enums"]["approval_status"]
+          approved_at: string | null
+          approved_by: string | null
+          attachments: Json
           category: Database["public"]["Enums"]["expense_category"]
           created_at: string
           created_by: string | null
@@ -375,11 +379,20 @@ export type Database = {
           id: string
           is_paid: boolean
           notes: string | null
+          paid_at: string | null
+          payment_method: string | null
+          reference: string | null
+          total_amount: number | null
           updated_at: string
+          vat_amount: number
           vendor: string | null
         }
         Insert: {
           amount: number
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
+          attachments?: Json
           category: Database["public"]["Enums"]["expense_category"]
           created_at?: string
           created_by?: string | null
@@ -388,11 +401,20 @@ export type Database = {
           id?: string
           is_paid?: boolean
           notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          total_amount?: number | null
           updated_at?: string
+          vat_amount?: number
           vendor?: string | null
         }
         Update: {
           amount?: number
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
+          attachments?: Json
           category?: Database["public"]["Enums"]["expense_category"]
           created_at?: string
           created_by?: string | null
@@ -401,7 +423,12 @@ export type Database = {
           id?: string
           is_paid?: boolean
           notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          total_amount?: number | null
           updated_at?: string
+          vat_amount?: number
           vendor?: string | null
         }
         Relationships: []
@@ -720,6 +747,98 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_invoices: {
+        Row: {
+          amount_paid: number
+          approval_status: Database["public"]["Enums"]["approval_status"]
+          approved_at: string | null
+          approved_by: string | null
+          attachments: Json
+          balance_due: number
+          bill_number: string
+          category: Database["public"]["Enums"]["expense_category"] | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount_amount: number
+          due_date: string | null
+          id: string
+          issue_date: string
+          notes: string | null
+          payment_terms: string | null
+          reference: string | null
+          status: Database["public"]["Enums"]["purchase_invoice_status"]
+          subtotal: number
+          total_amount: number
+          updated_at: string
+          vat_amount: number
+          vendor_id: string | null
+          vendor_name: string
+        }
+        Insert: {
+          amount_paid?: number
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
+          attachments?: Json
+          balance_due?: number
+          bill_number: string
+          category?: Database["public"]["Enums"]["expense_category"] | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_amount?: number
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          payment_terms?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["purchase_invoice_status"]
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string
+          vat_amount?: number
+          vendor_id?: string | null
+          vendor_name: string
+        }
+        Update: {
+          amount_paid?: number
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
+          attachments?: Json
+          balance_due?: number
+          bill_number?: string
+          category?: Database["public"]["Enums"]["expense_category"] | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_amount?: number
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          payment_terms?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["purchase_invoice_status"]
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string
+          vat_amount?: number
+          vendor_id?: string | null
+          vendor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_invoices_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       residents: {
         Row: {
           created_at: string
@@ -845,6 +964,111 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_payments: {
+        Row: {
+          amount: number
+          attachments: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          method: string | null
+          notes: string | null
+          payment_date: string
+          payment_number: string
+          purchase_invoice_id: string | null
+          reference: string | null
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          amount: number
+          attachments?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          method?: string | null
+          notes?: string | null
+          payment_date?: string
+          payment_number: string
+          purchase_invoice_id?: string | null
+          reference?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          amount?: number
+          attachments?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          method?: string | null
+          notes?: string | null
+          payment_date?: string
+          payment_number?: string
+          purchase_invoice_id?: string | null
+          reference?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payments_purchase_invoice_id_fkey"
+            columns: ["purchase_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_payments_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          phone: string | null
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          phone?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       visitors: {
         Row: {
           approved_at: string | null
@@ -927,6 +1151,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "resident" | "accountant" | "viewer"
+      approval_status: "draft" | "pending" | "approved" | "rejected"
       booking_status:
         | "pending"
         | "approved"
@@ -944,6 +1169,12 @@ export type Database = {
       maintenance_priority: "low" | "normal" | "high" | "urgent"
       maintenance_status: "pending" | "in_progress" | "completed" | "cancelled"
       payment_method: "card" | "bank_transfer" | "cash" | "cheque" | "mock"
+      purchase_invoice_status:
+        | "unpaid"
+        | "partial"
+        | "paid"
+        | "cancelled"
+        | "overdue"
       resident_type: "owner" | "tenant"
       visitor_status:
         | "pending"
@@ -1079,6 +1310,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "resident", "accountant", "viewer"],
+      approval_status: ["draft", "pending", "approved", "rejected"],
       booking_status: [
         "pending",
         "approved",
@@ -1098,6 +1330,13 @@ export const Constants = {
       maintenance_priority: ["low", "normal", "high", "urgent"],
       maintenance_status: ["pending", "in_progress", "completed", "cancelled"],
       payment_method: ["card", "bank_transfer", "cash", "cheque", "mock"],
+      purchase_invoice_status: [
+        "unpaid",
+        "partial",
+        "paid",
+        "cancelled",
+        "overdue",
+      ],
       resident_type: ["owner", "tenant"],
       visitor_status: [
         "pending",
