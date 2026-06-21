@@ -3,6 +3,7 @@ import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
+  ShoppingBag, Briefcase, Truck,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -21,44 +22,46 @@ export const Route = createFileRoute("/_authenticated/admin")({
 type NavItem = { to: string; label: string; icon: any };
 type NavGroup = { label: string; items: NavItem[] };
 
-const groups: NavGroup[] = [
-  { label: "Overview", items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard }] },
-  { label: "Property", items: [
-    { to: "/admin/units", label: "Units", icon: Home },
-    { to: "/admin/residents", label: "Residents", icon: Users },
-  ]},
-  { label: "Finance", items: [
-    { to: "/admin/expenses", label: "Expenses", icon: Wallet },
-    { to: "/admin/reports", label: "Reports", icon: BarChart3 },
-  ]},
-  { label: "Operations", items: [
-    { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
-    { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
-  ]},
-  { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] },
+const overviewGroup: NavGroup = { label: "Overview", items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard }] };
+const propertyGroup: NavGroup = { label: "Property", items: [
+  { to: "/admin/units", label: "Units", icon: Home },
+  { to: "/admin/residents", label: "Residents", icon: Users },
+]};
+const opsGroup: NavGroup = { label: "Operations", items: [
+  { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
+  { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
+]};
+const sysGroup: NavGroup = { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] };
+
+const salesItems: NavItem[] = [
+  { to: "/admin/sales", label: "Sales Hub", icon: TrendingUp },
+  { to: "/admin/invoices", label: "Invoices", icon: FileText },
+  { to: "/admin/credit-notes", label: "Credit Notes", icon: Receipt },
+  { to: "/admin/payments", label: "Receipts", icon: CreditCard },
+  { to: "/admin/statements", label: "Statements", icon: FileSignature },
+  { to: "/admin/templates", label: "Templates", icon: Settings },
+  { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
 ];
 
-const salesGroup = {
-  label: "Sales",
-  icon: TrendingUp,
-  items: [
-    { to: "/admin/sales", label: "Sales Hub", icon: TrendingUp },
-    { to: "/admin/invoices", label: "Invoices", icon: FileText },
-    { to: "/admin/credit-notes", label: "Credit Notes", icon: Receipt },
-    { to: "/admin/payments", label: "Receipts & Payments", icon: CreditCard },
-    { to: "/admin/statements", label: "Statements", icon: FileSignature },
-    { to: "/admin/templates", label: "Templates", icon: Settings },
-    { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
-  ],
-};
+const purchasesItems: NavItem[] = [
+  { to: "/admin/purchases", label: "Purchases Hub", icon: ShoppingBag },
+  { to: "/admin/expenses", label: "Expenses", icon: Wallet },
+  { to: "/admin/purchase-invoices", label: "Purchase Invoices", icon: FileText },
+  { to: "/admin/vendors", label: "Vendors", icon: Truck },
+  { to: "/admin/vendor-payments", label: "Payments", icon: CreditCard },
+  { to: "/admin/purchase-reports", label: "Reports", icon: BarChart3 },
+];
 
 function AdminShell() {
   const { user, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [salesOpen, setSalesOpen] = useState(
-    () => salesGroup.items.some((i) => pathname.startsWith(i.to))
-  );
+
+  const inSales = salesItems.some((i) => pathname === i.to);
+  const inPurch = purchasesItems.some((i) => pathname === i.to);
+  const [financeOpen, setFinanceOpen] = useState(inSales || inPurch);
+  const [salesOpen, setSalesOpen] = useState(inSales);
+  const [purchOpen, setPurchOpen] = useState(inPurch);
 
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
@@ -68,12 +71,6 @@ function AdminShell() {
     await signOut();
     navigate({ to: "/auth", replace: true });
   }
-
-  const overviewGroup = groups[0];
-  const propertyGroup = groups[1];
-  const financeGroup = groups[2];
-  const opsGroup = groups[3];
-  const sysGroup = groups[4];
 
   const renderGroup = (g: NavGroup) => (
     <SidebarGroup key={g.label}>
@@ -95,6 +92,42 @@ function AdminShell() {
     </SidebarGroup>
   );
 
+  const renderSubsection = (
+    label: string, icon: any, items: NavItem[], open: boolean, setOpen: (v: boolean) => void
+  ) => {
+    const Icon = icon;
+    const active = items.some((i) => pathname === i.to);
+    return (
+      <Collapsible open={open} onOpenChange={setOpen}>
+        <SidebarMenuSubItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuSubButton isActive={active} className="justify-between">
+              <span className="flex items-center gap-2">
+                <Icon className="h-3.5 w-3.5" />
+                <span>{label}</span>
+              </span>
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+            </SidebarMenuSubButton>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-2">
+              {items.map((item) => (
+                <li key={item.to}>
+                  <SidebarMenuSubButton asChild isActive={pathname === item.to} size="sm">
+                    <Link to={item.to}>
+                      <item.icon className="h-3.5 w-3.5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </li>
+              ))}
+            </ul>
+          </CollapsibleContent>
+        </SidebarMenuSubItem>
+      </Collapsible>
+    );
+  };
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -114,36 +147,26 @@ function AdminShell() {
             {renderGroup(overviewGroup)}
             {renderGroup(propertyGroup)}
 
-            {/* Collapsible Sales group */}
+            {/* Finance group with nested Sales + Purchases */}
             <SidebarGroup>
+              <SidebarGroupLabel>Finance</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <Collapsible open={salesOpen} onOpenChange={setSalesOpen} className="group/collapsible">
+                  <Collapsible open={financeOpen} onOpenChange={setFinanceOpen}>
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          isActive={salesGroup.items.some((i) => pathname === i.to)}
-                          className="justify-between"
-                        >
+                        <SidebarMenuButton isActive={inSales || inPurch} className="justify-between">
                           <span className="flex items-center gap-2">
-                            <salesGroup.icon className="h-4 w-4" />
-                            <span>{salesGroup.label}</span>
+                            <Briefcase className="h-4 w-4" />
+                            <span>Finance</span>
                           </span>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${salesOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown className={`h-4 w-4 transition-transform ${financeOpen ? "rotate-180" : ""}`} />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <SidebarMenuSub>
-                          {salesGroup.items.map((item) => (
-                            <SidebarMenuSubItem key={item.to}>
-                              <SidebarMenuSubButton asChild isActive={pathname === item.to}>
-                                <Link to={item.to}>
-                                  <item.icon className="h-3.5 w-3.5" />
-                                  <span>{item.label}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
+                          {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
+                          {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>
@@ -152,7 +175,6 @@ function AdminShell() {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {renderGroup(financeGroup)}
             {renderGroup(opsGroup)}
             {renderGroup(sysGroup)}
           </SidebarContent>
