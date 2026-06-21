@@ -67,11 +67,8 @@ function AdminShell() {
 
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
-  const inComms = commsItems.some((i) => pathname === i.to);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
-  const [commsOpen, setCommsOpen] = useState(inComms);
-  const [coaActive] = useState(false);
 
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
