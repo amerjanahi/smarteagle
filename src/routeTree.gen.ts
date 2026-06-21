@@ -24,6 +24,7 @@ import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authe
 import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_authenticated/portal/calculator'
 import { Route as AuthenticatedPortalAnnouncementsRouteImport } from './routes/_authenticated/portal/announcements'
 import { Route as AuthenticatedPortalAmenitiesRouteImport } from './routes/_authenticated/portal/amenities'
+import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin/visitors'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin/vendors'
 import { Route as AuthenticatedAdminVendorPaymentsRouteImport } from './routes/_authenticated/admin/vendor-payments'
 import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin/units'
@@ -124,6 +125,12 @@ const AuthenticatedPortalAmenitiesRoute =
     id: '/amenities',
     path: '/amenities',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedAdminVisitorsRoute =
+  AuthenticatedAdminVisitorsRouteImport.update({
+    id: '/visitors',
+    path: '/visitors',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminVendorsRoute =
   AuthenticatedAdminVendorsRouteImport.update({
@@ -255,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -287,6 +295,7 @@ export interface FileRoutesByTo {
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -323,6 +332,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/_authenticated/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/_authenticated/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/_authenticated/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/_authenticated/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/admin/units'
     | '/admin/vendor-payments'
     | '/admin/vendors'
+    | '/admin/visitors'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/admin/units'
     | '/admin/vendor-payments'
     | '/admin/vendors'
+    | '/admin/visitors'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -426,6 +438,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/units'
     | '/_authenticated/admin/vendor-payments'
     | '/_authenticated/admin/vendors'
+    | '/_authenticated/admin/visitors'
     | '/_authenticated/portal/amenities'
     | '/_authenticated/portal/announcements'
     | '/_authenticated/portal/calculator'
@@ -550,6 +563,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/portal/amenities'
       preLoaderRoute: typeof AuthenticatedPortalAmenitiesRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/admin/visitors': {
+      id: '/_authenticated/admin/visitors'
+      path: '/visitors'
+      fullPath: '/admin/visitors'
+      preLoaderRoute: typeof AuthenticatedAdminVisitorsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/vendors': {
       id: '/_authenticated/admin/vendors'
@@ -699,6 +719,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
   AuthenticatedAdminVendorPaymentsRoute: typeof AuthenticatedAdminVendorPaymentsRoute
   AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
+  AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -725,6 +746,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminVendorPaymentsRoute:
       AuthenticatedAdminVendorPaymentsRoute,
     AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
+    AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
