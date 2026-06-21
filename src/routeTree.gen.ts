@@ -24,6 +24,7 @@ import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authe
 import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_authenticated/portal/calculator'
 import { Route as AuthenticatedPortalAnnouncementsRouteImport } from './routes/_authenticated/portal/announcements'
 import { Route as AuthenticatedPortalAmenitiesRouteImport } from './routes/_authenticated/portal/amenities'
+import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin/visitors'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin/vendors'
 import { Route as AuthenticatedAdminVendorPaymentsRouteImport } from './routes/_authenticated/admin/vendor-payments'
 import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin/units'
@@ -36,10 +37,16 @@ import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
 import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
+import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
+import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_authenticated/admin/notice-groups'
+import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_authenticated/admin/maintenance'
 import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
 import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
+import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
+import { Route as AuthenticatedAdminBulkEmailRouteImport } from './routes/_authenticated/admin/bulk-email'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
+import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -123,6 +130,12 @@ const AuthenticatedPortalAmenitiesRoute =
     path: '/amenities',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
+const AuthenticatedAdminVisitorsRoute =
+  AuthenticatedAdminVisitorsRouteImport.update({
+    id: '/visitors',
+    path: '/visitors',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminVendorsRoute =
   AuthenticatedAdminVendorsRouteImport.update({
     id: '/vendors',
@@ -193,6 +206,24 @@ const AuthenticatedAdminPaymentsRoute =
     path: '/payments',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminNoticesRoute =
+  AuthenticatedAdminNoticesRouteImport.update({
+    id: '/notices',
+    path: '/notices',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminNoticeGroupsRoute =
+  AuthenticatedAdminNoticeGroupsRouteImport.update({
+    id: '/notice-groups',
+    path: '/notice-groups',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminMaintenanceRoute =
+  AuthenticatedAdminMaintenanceRouteImport.update({
+    id: '/maintenance',
+    path: '/maintenance',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminInvoicesRoute =
   AuthenticatedAdminInvoicesRouteImport.update({
     id: '/invoices',
@@ -211,11 +242,29 @@ const AuthenticatedAdminCreditNotesRoute =
     path: '/credit-notes',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminChartOfAccountsRoute =
+  AuthenticatedAdminChartOfAccountsRouteImport.update({
+    id: '/chart-of-accounts',
+    path: '/chart-of-accounts',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBulkEmailRoute =
+  AuthenticatedAdminBulkEmailRouteImport.update({
+    id: '/bulk-email',
+    path: '/bulk-email',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminAmenitiesRoute =
+  AuthenticatedAdminAmenitiesRouteImport.update({
+    id: '/amenities',
+    path: '/amenities',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -223,10 +272,16 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
+  '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
+  '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
+  '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
+  '/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
+  '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
@@ -239,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -253,10 +309,16 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
+  '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
+  '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
+  '/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
+  '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
@@ -269,6 +331,7 @@ export interface FileRoutesByTo {
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -287,10 +350,16 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
+  '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
+  '/_authenticated/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/_authenticated/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
+  '/_authenticated/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
+  '/_authenticated/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
+  '/_authenticated/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
@@ -303,6 +372,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/_authenticated/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/_authenticated/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/_authenticated/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/_authenticated/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -321,10 +391,16 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/portal'
+    | '/admin/amenities'
     | '/admin/audit'
+    | '/admin/bulk-email'
+    | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
     | '/admin/expenses'
     | '/admin/invoices'
+    | '/admin/maintenance'
+    | '/admin/notice-groups'
+    | '/admin/notices'
     | '/admin/payments'
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
@@ -337,6 +413,7 @@ export interface FileRouteTypes {
     | '/admin/units'
     | '/admin/vendor-payments'
     | '/admin/vendors'
+    | '/admin/visitors'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -351,10 +428,16 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
+    | '/admin/amenities'
     | '/admin/audit'
+    | '/admin/bulk-email'
+    | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
     | '/admin/expenses'
     | '/admin/invoices'
+    | '/admin/maintenance'
+    | '/admin/notice-groups'
+    | '/admin/notices'
     | '/admin/payments'
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
@@ -367,6 +450,7 @@ export interface FileRouteTypes {
     | '/admin/units'
     | '/admin/vendor-payments'
     | '/admin/vendors'
+    | '/admin/visitors'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -384,10 +468,16 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/portal'
+    | '/_authenticated/admin/amenities'
     | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/bulk-email'
+    | '/_authenticated/admin/chart-of-accounts'
     | '/_authenticated/admin/credit-notes'
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/invoices'
+    | '/_authenticated/admin/maintenance'
+    | '/_authenticated/admin/notice-groups'
+    | '/_authenticated/admin/notices'
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/purchase-invoices'
     | '/_authenticated/admin/purchase-reports'
@@ -400,6 +490,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/units'
     | '/_authenticated/admin/vendor-payments'
     | '/_authenticated/admin/vendors'
+    | '/_authenticated/admin/visitors'
     | '/_authenticated/portal/amenities'
     | '/_authenticated/portal/announcements'
     | '/_authenticated/portal/calculator'
@@ -525,6 +616,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalAmenitiesRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
+    '/_authenticated/admin/visitors': {
+      id: '/_authenticated/admin/visitors'
+      path: '/visitors'
+      fullPath: '/admin/visitors'
+      preLoaderRoute: typeof AuthenticatedAdminVisitorsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/vendors': {
       id: '/_authenticated/admin/vendors'
       path: '/vendors'
@@ -609,6 +707,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/notices': {
+      id: '/_authenticated/admin/notices'
+      path: '/notices'
+      fullPath: '/admin/notices'
+      preLoaderRoute: typeof AuthenticatedAdminNoticesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/notice-groups': {
+      id: '/_authenticated/admin/notice-groups'
+      path: '/notice-groups'
+      fullPath: '/admin/notice-groups'
+      preLoaderRoute: typeof AuthenticatedAdminNoticeGroupsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/maintenance': {
+      id: '/_authenticated/admin/maintenance'
+      path: '/maintenance'
+      fullPath: '/admin/maintenance'
+      preLoaderRoute: typeof AuthenticatedAdminMaintenanceRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/invoices': {
       id: '/_authenticated/admin/invoices'
       path: '/invoices'
@@ -630,6 +749,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCreditNotesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/chart-of-accounts': {
+      id: '/_authenticated/admin/chart-of-accounts'
+      path: '/chart-of-accounts'
+      fullPath: '/admin/chart-of-accounts'
+      preLoaderRoute: typeof AuthenticatedAdminChartOfAccountsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bulk-email': {
+      id: '/_authenticated/admin/bulk-email'
+      path: '/bulk-email'
+      fullPath: '/admin/bulk-email'
+      preLoaderRoute: typeof AuthenticatedAdminBulkEmailRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/audit': {
       id: '/_authenticated/admin/audit'
       path: '/audit'
@@ -637,14 +770,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/amenities': {
+      id: '/_authenticated/admin/amenities'
+      path: '/amenities'
+      fullPath: '/admin/amenities'
+      preLoaderRoute: typeof AuthenticatedAdminAmenitiesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAmenitiesRoute: typeof AuthenticatedAdminAmenitiesRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminBulkEmailRoute: typeof AuthenticatedAdminBulkEmailRoute
+  AuthenticatedAdminChartOfAccountsRoute: typeof AuthenticatedAdminChartOfAccountsRoute
   AuthenticatedAdminCreditNotesRoute: typeof AuthenticatedAdminCreditNotesRoute
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminInvoicesRoute: typeof AuthenticatedAdminInvoicesRoute
+  AuthenticatedAdminMaintenanceRoute: typeof AuthenticatedAdminMaintenanceRoute
+  AuthenticatedAdminNoticeGroupsRoute: typeof AuthenticatedAdminNoticeGroupsRoute
+  AuthenticatedAdminNoticesRoute: typeof AuthenticatedAdminNoticesRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
   AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
@@ -657,15 +803,23 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
   AuthenticatedAdminVendorPaymentsRoute: typeof AuthenticatedAdminVendorPaymentsRoute
   AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
+  AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAmenitiesRoute: AuthenticatedAdminAmenitiesRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+    AuthenticatedAdminBulkEmailRoute: AuthenticatedAdminBulkEmailRoute,
+    AuthenticatedAdminChartOfAccountsRoute:
+      AuthenticatedAdminChartOfAccountsRoute,
     AuthenticatedAdminCreditNotesRoute: AuthenticatedAdminCreditNotesRoute,
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
     AuthenticatedAdminInvoicesRoute: AuthenticatedAdminInvoicesRoute,
+    AuthenticatedAdminMaintenanceRoute: AuthenticatedAdminMaintenanceRoute,
+    AuthenticatedAdminNoticeGroupsRoute: AuthenticatedAdminNoticeGroupsRoute,
+    AuthenticatedAdminNoticesRoute: AuthenticatedAdminNoticesRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
     AuthenticatedAdminPurchaseInvoicesRoute:
       AuthenticatedAdminPurchaseInvoicesRoute,
@@ -681,6 +835,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminVendorPaymentsRoute:
       AuthenticatedAdminVendorPaymentsRoute,
     AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
+    AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 

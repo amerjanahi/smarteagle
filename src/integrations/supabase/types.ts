@@ -161,6 +161,50 @@ export type Database = {
         }
         Relationships: []
       }
+      chart_of_accounts: {
+        Row: {
+          account_type: string
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_type: string
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_type?: string
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chart_of_accounts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       credit_note_line_items: {
         Row: {
           created_at: string
@@ -619,6 +663,112 @@ export type Database = {
           },
         ]
       }
+      notice_group_members: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notice_group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "notice_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notice_groups: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notices: {
+        Row: {
+          audience: string
+          body: string
+          channel: string
+          created_at: string
+          group_id: string | null
+          id: string
+          recipient_count: number
+          sent_at: string
+          sent_by: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          body: string
+          channel?: string
+          created_at?: string
+          group_id?: string | null
+          id?: string
+          recipient_count?: number
+          sent_at?: string
+          sent_by?: string | null
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          body?: string
+          channel?: string
+          created_at?: string
+          group_id?: string | null
+          id?: string
+          recipient_count?: number
+          sent_at?: string
+          sent_by?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notices_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "notice_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_allocations: {
         Row: {
           amount_applied: number
@@ -1073,6 +1223,7 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
+          car_plate: string | null
           checked_in_at: string | null
           checked_out_at: string | null
           created_at: string
@@ -1090,6 +1241,7 @@ export type Database = {
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
+          car_plate?: string | null
           checked_in_at?: string | null
           checked_out_at?: string | null
           created_at?: string
@@ -1107,6 +1259,7 @@ export type Database = {
         Update: {
           approved_at?: string | null
           approved_by?: string | null
+          car_plate?: string | null
           checked_in_at?: string | null
           checked_out_at?: string | null
           created_at?: string
