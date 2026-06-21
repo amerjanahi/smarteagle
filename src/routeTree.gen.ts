@@ -37,6 +37,7 @@ import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
 import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
+import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
 import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_authenticated/admin/maintenance'
 import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
@@ -203,6 +204,12 @@ const AuthenticatedAdminPaymentsRoute =
     path: '/payments',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminNoticesRoute =
+  AuthenticatedAdminNoticesRouteImport.update({
+    id: '/notices',
+    path: '/notices',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminMaintenanceRoute =
   AuthenticatedAdminMaintenanceRouteImport.update({
     id: '/maintenance',
@@ -258,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
+  '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
@@ -292,6 +300,7 @@ export interface FileRoutesByTo {
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
+  '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
@@ -330,6 +339,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/_authenticated/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
+  '/_authenticated/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/maintenance'
+    | '/admin/notices'
     | '/admin/payments'
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
@@ -402,6 +413,7 @@ export interface FileRouteTypes {
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/maintenance'
+    | '/admin/notices'
     | '/admin/payments'
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
@@ -439,6 +451,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/invoices'
     | '/_authenticated/admin/maintenance'
+    | '/_authenticated/admin/notices'
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/purchase-invoices'
     | '/_authenticated/admin/purchase-reports'
@@ -668,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/notices': {
+      id: '/_authenticated/admin/notices'
+      path: '/notices'
+      fullPath: '/admin/notices'
+      preLoaderRoute: typeof AuthenticatedAdminNoticesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/maintenance': {
       id: '/_authenticated/admin/maintenance'
       path: '/maintenance'
@@ -728,6 +748,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminInvoicesRoute: typeof AuthenticatedAdminInvoicesRoute
   AuthenticatedAdminMaintenanceRoute: typeof AuthenticatedAdminMaintenanceRoute
+  AuthenticatedAdminNoticesRoute: typeof AuthenticatedAdminNoticesRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
   AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
@@ -754,6 +775,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
     AuthenticatedAdminInvoicesRoute: AuthenticatedAdminInvoicesRoute,
     AuthenticatedAdminMaintenanceRoute: AuthenticatedAdminMaintenanceRoute,
+    AuthenticatedAdminNoticesRoute: AuthenticatedAdminNoticesRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
     AuthenticatedAdminPurchaseInvoicesRoute:
       AuthenticatedAdminPurchaseInvoicesRoute,
