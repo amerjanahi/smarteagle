@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
 import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
 import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
+import { Route as AuthenticatedAdminBulkEmailRouteImport } from './routes/_authenticated/admin/bulk-email'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
 
@@ -247,6 +248,12 @@ const AuthenticatedAdminChartOfAccountsRoute =
     path: '/chart-of-accounts',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminBulkEmailRoute =
+  AuthenticatedAdminBulkEmailRouteImport.update({
+    id: '/bulk-email',
+    path: '/bulk-email',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -267,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -303,6 +311,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -343,6 +352,7 @@ export interface FileRoutesById {
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/_authenticated/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/_authenticated/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/portal'
     | '/admin/amenities'
     | '/admin/audit'
+    | '/admin/bulk-email'
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
     | '/admin/expenses'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/amenities'
     | '/admin/audit'
+    | '/admin/bulk-email'
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
     | '/admin/expenses'
@@ -458,6 +470,7 @@ export interface FileRouteTypes {
     | '/_authenticated/portal'
     | '/_authenticated/admin/amenities'
     | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/bulk-email'
     | '/_authenticated/admin/chart-of-accounts'
     | '/_authenticated/admin/credit-notes'
     | '/_authenticated/admin/expenses'
@@ -743,6 +756,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminChartOfAccountsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/bulk-email': {
+      id: '/_authenticated/admin/bulk-email'
+      path: '/bulk-email'
+      fullPath: '/admin/bulk-email'
+      preLoaderRoute: typeof AuthenticatedAdminBulkEmailRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/audit': {
       id: '/_authenticated/admin/audit'
       path: '/audit'
@@ -763,6 +783,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAmenitiesRoute: typeof AuthenticatedAdminAmenitiesRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminBulkEmailRoute: typeof AuthenticatedAdminBulkEmailRoute
   AuthenticatedAdminChartOfAccountsRoute: typeof AuthenticatedAdminChartOfAccountsRoute
   AuthenticatedAdminCreditNotesRoute: typeof AuthenticatedAdminCreditNotesRoute
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
@@ -790,6 +811,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminAmenitiesRoute: AuthenticatedAdminAmenitiesRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+    AuthenticatedAdminBulkEmailRoute: AuthenticatedAdminBulkEmailRoute,
     AuthenticatedAdminChartOfAccountsRoute:
       AuthenticatedAdminChartOfAccountsRoute,
     AuthenticatedAdminCreditNotesRoute: AuthenticatedAdminCreditNotesRoute,

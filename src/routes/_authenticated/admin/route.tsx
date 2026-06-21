@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
-  ShoppingBag, Truck,
+  ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -26,11 +26,12 @@ const overviewGroup: NavGroup = { label: "Overview", items: [{ to: "/admin", lab
 const propertyGroup: NavGroup = { label: "Property", items: [
   { to: "/admin/units", label: "Units", icon: Home },
   { to: "/admin/residents", label: "Residents", icon: Users },
+  { to: "/admin/amenities", label: "Amenities", icon: Sparkles },
 ]};
-const opsGroup: NavGroup = { label: "Operations", items: [
+const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
-]};
+];
 const sysGroup: NavGroup = { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] };
 
 const salesItems: NavItem[] = [
@@ -52,6 +53,12 @@ const purchasesItems: NavItem[] = [
   { to: "/admin/purchase-reports", label: "Reports", icon: BarChart3 },
 ];
 
+const commsItems: NavItem[] = [
+  { to: "/admin/notices", label: "Notices", icon: Megaphone },
+  { to: "/admin/notice-groups", label: "Groups", icon: Users },
+  { to: "/admin/bulk-email", label: "Bulk Email", icon: Mail },
+];
+
 function AdminShell() {
   const { user, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -59,8 +66,11 @@ function AdminShell() {
 
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
+  const inComms = commsItems.some((i) => pathname === i.to);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
+  const [commsOpen, setCommsOpen] = useState(inComms);
+  const [coaActive] = useState(false);
 
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
@@ -146,7 +156,7 @@ function AdminShell() {
             {renderGroup(overviewGroup)}
             {renderGroup(propertyGroup)}
 
-            {/* Finance group with nested Sales + Purchases */}
+            {/* Finance group */}
             <SidebarGroup>
               <SidebarGroupLabel>Finance</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -154,12 +164,41 @@ function AdminShell() {
                   <SidebarMenuSub>
                     {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
                     {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild isActive={pathname === "/admin/chart-of-accounts"}>
+                        <Link to="/admin/chart-of-accounts">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          <span>Chart of Accounts</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
                   </SidebarMenuSub>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {renderGroup(opsGroup)}
+            {/* Operations group with Communication submenu */}
+            <SidebarGroup>
+              <SidebarGroupLabel>Operations</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {opsItems.map((item) => (
+                    <SidebarMenuItem key={item.to}>
+                      <SidebarMenuButton asChild isActive={pathname === item.to}>
+                        <Link to={item.to}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                  <SidebarMenuSub>
+                    {renderSubsection("Communication", Megaphone, commsItems, commsOpen, setCommsOpen)}
+                  </SidebarMenuSub>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
             {renderGroup(sysGroup)}
           </SidebarContent>
           <SidebarFooter>
