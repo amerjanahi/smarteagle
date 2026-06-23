@@ -148,11 +148,8 @@ function AdminDashboard() {
       ? `${format(range.from, "dd MMM yyyy")} — ${format(range.to, "dd MMM yyyy")}`
       : "Pick a date range";
 
-  const rateCards = [
-    { label: "Handover rate", value: s ? fmtPct(s.handoverRate) : "—", sub: s ? `${s.handed} of ${s.totalUnits} units` : "—", icon: KeyRound },
-    { label: "Occupancy rate", value: s ? fmtPct(s.occupancyRate) : "—", sub: s ? `${s.occupied} of ${s.totalUnits} units` : "—", icon: Building2 },
-    { label: "Collection rate", value: s ? fmtPct(s.collectionRate) : "—", sub: s ? `${fmtBHD(s.collected)} / ${fmtBHD(s.invoiced)}` : "—", icon: TrendingUp },
-  ];
+  const occupancyCard = { label: "Occupancy rate", value: s ? fmtPct(s.occupancyRate) : "—", sub: s ? `${s.occupied} of ${s.totalUnits} units` : "—", icon: Building2 };
+  const handoverCard = { label: "Handover rate", value: s ? fmtPct(s.handoverRate) : "—", sub: s ? `${s.handed} of ${s.totalUnits} units` : "—", icon: KeyRound };
 
   const financeCards = [
     { label: "Invoiced", value: s ? fmtBHD(s.invoiced) : "—", icon: FileText },
@@ -163,6 +160,11 @@ function AdminDashboard() {
   ];
 
   const categoryOrder: ExpenseCategory[] = ["admin", "security", "utility", "fm", "maintenance", "other"];
+
+  // Donut math
+  const collectionPct = s ? Math.max(0, Math.min(100, s.collectionRate)) : 0;
+  const R = 52, C = 2 * Math.PI * R;
+  const dash = (collectionPct / 100) * C;
 
   return (
     <div className="space-y-8">
@@ -218,7 +220,43 @@ function AdminDashboard() {
       <section>
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Performance</h3>
         <div className="grid gap-4 md:grid-cols-3">
-          {rateCards.map((c) => (
+          {/* Collection Rate donut (replaces Handover rate card position) */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Collection rate</p>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="mt-3 flex items-center gap-4">
+              <div className="relative h-32 w-32 shrink-0">
+                <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+                  <circle cx="60" cy="60" r={R} fill="none" stroke="hsl(var(--muted))" strokeWidth="12" />
+                  <circle
+                    cx="60" cy="60" r={R} fill="none"
+                    stroke="hsl(var(--primary))" strokeWidth="12" strokeLinecap="round"
+                    strokeDasharray={`${dash} ${C - dash}`}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="font-display text-2xl font-bold tabular-nums">{fmtPct(collectionPct)}</span>
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Collected</span>
+                </div>
+              </div>
+              <div className="min-w-0 space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">Collected</span>
+                  <span className="ml-auto font-medium tabular-nums">{s ? fmtBHD(s.collected) : "—"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-muted" />
+                  <span className="text-muted-foreground">Invoiced</span>
+                  <span className="ml-auto font-medium tabular-nums">{s ? fmtBHD(s.invoiced) : "—"}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {[occupancyCard, handoverCard].map((c) => (
             <div key={c.label} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{c.label}</p>
