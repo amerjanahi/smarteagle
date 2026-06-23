@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
-import { Plus, Upload, ArrowLeftRight } from "lucide-react";
+import { Plus, Upload, ArrowLeftRight, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ApplyTransactionDialog, type ApplyTxn } from "@/components/admin/ApplyTransactionDialog";
 
 export const Route = createFileRoute("/_authenticated/admin/bank-transactions")({
   head: () => ({ meta: [{ title: "Bank Transactions — Hayy Admin" }] }),
