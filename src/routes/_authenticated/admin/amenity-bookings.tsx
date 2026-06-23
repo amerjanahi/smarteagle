@@ -218,12 +218,12 @@ function NewBookingDialog({ onClose }: { onClose: () => void }) {
         ends_at: new Date(ends).toISOString(),
         purpose, status, notes: notes || null,
         hours: calc?.hours ?? 0,
-        base_amount: calc?.baseAmount ?? 0,
-        extras_amount: calc?.extrasAmount ?? 0,
-        deposit_amount: calc?.depositAmount ?? 0,
+        base_amount: calc?.base ?? 0,
+        extras_amount: calc?.extras ?? 0,
+        deposit_amount: calc?.deposit ?? 0,
         vat_rate: amenity.vat_rate,
         vat_amount: calc?.vatAmount ?? 0,
-        total_amount: calc?.totalAmount ?? 0,
+        total_amount: calc?.total ?? 0,
         extras: [],
       };
       const { error } = await supabase.from("amenity_bookings").insert(payload);
@@ -265,10 +265,10 @@ function NewBookingDialog({ onClose }: { onClose: () => void }) {
       {calc && (
         <div className="rounded-md border border-border bg-muted/30 p-3 text-sm space-y-1">
           <div className="flex justify-between"><span>Hours</span><span>{calc.hours}</span></div>
-          <div className="flex justify-between"><span>Base</span><span>BHD {calc.baseAmount.toFixed(3)}</span></div>
-          <div className="flex justify-between"><span>Deposit</span><span>BHD {calc.depositAmount.toFixed(3)}</span></div>
+          <div className="flex justify-between"><span>Base</span><span>BHD {calc.base.toFixed(3)}</span></div>
+          <div className="flex justify-between"><span>Deposit</span><span>BHD {calc.deposit.toFixed(3)}</span></div>
           <div className="flex justify-between"><span>VAT</span><span>BHD {calc.vatAmount.toFixed(3)}</span></div>
-          <div className="flex justify-between font-bold border-t pt-1"><span>Total</span><span>BHD {calc.totalAmount.toFixed(3)}</span></div>
+          <div className="flex justify-between font-bold border-t pt-1"><span>Total</span><span>BHD {calc.total.toFixed(3)}</span></div>
         </div>
       )}
       <DialogFooter>
