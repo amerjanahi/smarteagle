@@ -198,10 +198,13 @@ function BankTxnsPage() {
           <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="applied">Applied</SelectItem>
+            <SelectItem value="partially_applied">Partially Applied</SelectItem>
             <SelectItem value="matched">Matched</SelectItem>
-            <SelectItem value="partial">Partial</SelectItem>
             <SelectItem value="unmatched">Unmatched</SelectItem>
             <SelectItem value="review">Review</SelectItem>
+            <SelectItem value="reversed">Reversed</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -215,12 +218,14 @@ function BankTxnsPage() {
               <TableHead>Description</TableHead>
               <TableHead className="hidden md:table-cell">Reference</TableHead>
               <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right hidden lg:table-cell">Applied</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody>
             {txns.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+              <TableRow><TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-8">
                 <ArrowLeftRight className="mx-auto mb-2 h-5 w-5 opacity-60" />No transactions
               </TableCell></TableRow>
             )}
@@ -233,24 +238,22 @@ function BankTxnsPage() {
                 <TableCell className={`text-right tabular-nums ${t.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}>
                   {t.direction === "in" ? "+" : "−"} {Number(t.amount).toFixed(3)}
                 </TableCell>
+                <TableCell className="text-right tabular-nums hidden lg:table-cell">{Number(t.applied_amount ?? 0).toFixed(3)}</TableCell>
                 <TableCell>
-                  <Select value={t.status} onValueChange={(v: any) => setStatus.mutate({ id: t.id, status: v })}>
-                    <SelectTrigger className={`h-7 w-[120px] border-0 ${STATUS_TONE[t.status]}`}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="matched">Matched</SelectItem>
-                      <SelectItem value="partial">Partial</SelectItem>
-                      <SelectItem value="unmatched">Unmatched</SelectItem>
-                      <SelectItem value="review">Review</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Badge className={`${STATUS_TONE[t.status] ?? ""} capitalize`} variant="outline">{t.status.replace("_"," ")}</Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button size="sm" variant="outline" onClick={() => setApplyTxn(t)}>
+                    <Link2 className="mr-1 h-3.5 w-3.5" /> Apply
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      <ApplyTransactionDialog txn={applyTxn} open={!!applyTxn} onOpenChange={(v) => !v && setApplyTxn(null)} />
     </div>
   );
 }
