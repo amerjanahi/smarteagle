@@ -200,10 +200,11 @@ function NewBookingDialog({ onClose }: { onClose: () => void }) {
 
   const amenity = amenities.find(a => a.id === amenityId);
   const resident = residents.find(r => r.id === residentId);
-  const calc = useMemo(() => amenity ? calculateBooking({
-    hourlyRate: Number(amenity.hourly_rate), startsAt: starts, endsAt: ends,
-    purpose, depositAmount: Number(amenity.deposit_amount), vatRate: Number(amenity.vat_rate), extras: [],
-  }) : null, [amenity, starts, ends, purpose]);
+  const hours = useMemo(() => hoursBetween(new Date(starts).toISOString(), new Date(ends).toISOString()), [starts, ends]);
+  const calc = useMemo(() => amenity ? calcBooking({
+    hourlyRate: Number(amenity.hourly_rate), hours, purpose,
+    deposit: Number(amenity.deposit_amount), vatRate: Number(amenity.vat_rate), extras: [],
+  }) : null, [amenity, hours, purpose]);
 
   const create = useMutation({
     mutationFn: async () => {
