@@ -45,6 +45,10 @@ import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
 import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
 import { Route as AuthenticatedAdminBulkEmailRouteImport } from './routes/_authenticated/admin/bulk-email'
+import { Route as AuthenticatedAdminBankTransactionsRouteImport } from './routes/_authenticated/admin/bank-transactions'
+import { Route as AuthenticatedAdminBankReconciliationRouteImport } from './routes/_authenticated/admin/bank-reconciliation'
+import { Route as AuthenticatedAdminBankBulkEntryRouteImport } from './routes/_authenticated/admin/bank-bulk-entry'
+import { Route as AuthenticatedAdminBankAccountsRouteImport } from './routes/_authenticated/admin/bank-accounts'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 import { Route as AuthenticatedAdminAmenityBookingsRouteImport } from './routes/_authenticated/admin/amenity-bookings'
 import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
@@ -255,6 +259,30 @@ const AuthenticatedAdminBulkEmailRoute =
     path: '/bulk-email',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminBankTransactionsRoute =
+  AuthenticatedAdminBankTransactionsRouteImport.update({
+    id: '/bank-transactions',
+    path: '/bank-transactions',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankReconciliationRoute =
+  AuthenticatedAdminBankReconciliationRouteImport.update({
+    id: '/bank-reconciliation',
+    path: '/bank-reconciliation',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankBulkEntryRoute =
+  AuthenticatedAdminBankBulkEntryRouteImport.update({
+    id: '/bank-bulk-entry',
+    path: '/bank-bulk-entry',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankAccountsRoute =
+  AuthenticatedAdminBankAccountsRouteImport.update({
+    id: '/bank-accounts',
+    path: '/bank-accounts',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -282,6 +310,10 @@ export interface FileRoutesByFullPath {
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/amenity-bookings': typeof AuthenticatedAdminAmenityBookingsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
+  '/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
+  '/admin/bank-reconciliation': typeof AuthenticatedAdminBankReconciliationRoute
+  '/admin/bank-transactions': typeof AuthenticatedAdminBankTransactionsRoute
   '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
@@ -320,6 +352,10 @@ export interface FileRoutesByTo {
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/amenity-bookings': typeof AuthenticatedAdminAmenityBookingsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
+  '/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
+  '/admin/bank-reconciliation': typeof AuthenticatedAdminBankReconciliationRoute
+  '/admin/bank-transactions': typeof AuthenticatedAdminBankTransactionsRoute
   '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
@@ -362,6 +398,10 @@ export interface FileRoutesById {
   '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/_authenticated/admin/amenity-bookings': typeof AuthenticatedAdminAmenityBookingsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
+  '/_authenticated/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
+  '/_authenticated/admin/bank-reconciliation': typeof AuthenticatedAdminBankReconciliationRoute
+  '/_authenticated/admin/bank-transactions': typeof AuthenticatedAdminBankTransactionsRoute
   '/_authenticated/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/_authenticated/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/_authenticated/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
@@ -404,6 +444,10 @@ export interface FileRouteTypes {
     | '/admin/amenities'
     | '/admin/amenity-bookings'
     | '/admin/audit'
+    | '/admin/bank-accounts'
+    | '/admin/bank-bulk-entry'
+    | '/admin/bank-reconciliation'
+    | '/admin/bank-transactions'
     | '/admin/bulk-email'
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
@@ -442,6 +486,10 @@ export interface FileRouteTypes {
     | '/admin/amenities'
     | '/admin/amenity-bookings'
     | '/admin/audit'
+    | '/admin/bank-accounts'
+    | '/admin/bank-bulk-entry'
+    | '/admin/bank-reconciliation'
+    | '/admin/bank-transactions'
     | '/admin/bulk-email'
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
@@ -483,6 +531,10 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/amenities'
     | '/_authenticated/admin/amenity-bookings'
     | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/bank-accounts'
+    | '/_authenticated/admin/bank-bulk-entry'
+    | '/_authenticated/admin/bank-reconciliation'
+    | '/_authenticated/admin/bank-transactions'
     | '/_authenticated/admin/bulk-email'
     | '/_authenticated/admin/chart-of-accounts'
     | '/_authenticated/admin/credit-notes'
@@ -776,6 +828,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBulkEmailRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/bank-transactions': {
+      id: '/_authenticated/admin/bank-transactions'
+      path: '/bank-transactions'
+      fullPath: '/admin/bank-transactions'
+      preLoaderRoute: typeof AuthenticatedAdminBankTransactionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-reconciliation': {
+      id: '/_authenticated/admin/bank-reconciliation'
+      path: '/bank-reconciliation'
+      fullPath: '/admin/bank-reconciliation'
+      preLoaderRoute: typeof AuthenticatedAdminBankReconciliationRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-bulk-entry': {
+      id: '/_authenticated/admin/bank-bulk-entry'
+      path: '/bank-bulk-entry'
+      fullPath: '/admin/bank-bulk-entry'
+      preLoaderRoute: typeof AuthenticatedAdminBankBulkEntryRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-accounts': {
+      id: '/_authenticated/admin/bank-accounts'
+      path: '/bank-accounts'
+      fullPath: '/admin/bank-accounts'
+      preLoaderRoute: typeof AuthenticatedAdminBankAccountsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/audit': {
       id: '/_authenticated/admin/audit'
       path: '/audit'
@@ -804,6 +884,10 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAmenitiesRoute: typeof AuthenticatedAdminAmenitiesRoute
   AuthenticatedAdminAmenityBookingsRoute: typeof AuthenticatedAdminAmenityBookingsRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminBankAccountsRoute: typeof AuthenticatedAdminBankAccountsRoute
+  AuthenticatedAdminBankBulkEntryRoute: typeof AuthenticatedAdminBankBulkEntryRoute
+  AuthenticatedAdminBankReconciliationRoute: typeof AuthenticatedAdminBankReconciliationRoute
+  AuthenticatedAdminBankTransactionsRoute: typeof AuthenticatedAdminBankTransactionsRoute
   AuthenticatedAdminBulkEmailRoute: typeof AuthenticatedAdminBulkEmailRoute
   AuthenticatedAdminChartOfAccountsRoute: typeof AuthenticatedAdminChartOfAccountsRoute
   AuthenticatedAdminCreditNotesRoute: typeof AuthenticatedAdminCreditNotesRoute
@@ -834,6 +918,12 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminAmenityBookingsRoute:
       AuthenticatedAdminAmenityBookingsRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+    AuthenticatedAdminBankAccountsRoute: AuthenticatedAdminBankAccountsRoute,
+    AuthenticatedAdminBankBulkEntryRoute: AuthenticatedAdminBankBulkEntryRoute,
+    AuthenticatedAdminBankReconciliationRoute:
+      AuthenticatedAdminBankReconciliationRoute,
+    AuthenticatedAdminBankTransactionsRoute:
+      AuthenticatedAdminBankTransactionsRoute,
     AuthenticatedAdminBulkEmailRoute: AuthenticatedAdminBulkEmailRoute,
     AuthenticatedAdminChartOfAccountsRoute:
       AuthenticatedAdminChartOfAccountsRoute,
