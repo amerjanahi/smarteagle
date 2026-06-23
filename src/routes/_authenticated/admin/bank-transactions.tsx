@@ -66,6 +66,7 @@ function BankTxnsPage() {
   const [accountFilter, setAccountFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
+  const [applyTxn, setApplyTxn] = useState<ApplyTxn | null>(null);
   const [form, setForm] = useState(emptyForm);
   const fileRef = useRef<HTMLInputElement>(null);
 
