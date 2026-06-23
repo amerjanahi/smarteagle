@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { PURPOSE_LABELS, calculateBooking } from "@/lib/booking-calculator";
+import { PURPOSE_LABELS, calcBooking, hoursBetween } from "@/lib/booking-calculator";
 
 export const Route = createFileRoute("/_authenticated/admin/amenity-bookings")({
   head: () => ({ meta: [{ title: "Amenity Bookings — Hayy Admin" }] }),
