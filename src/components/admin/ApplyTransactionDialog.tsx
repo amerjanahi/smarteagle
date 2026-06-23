@@ -108,8 +108,6 @@ export function ApplyTransactionDialog({
             const invStatus = paid >= Number(inv.amount) ? "paid" : paid > 0 ? "partial" : "unpaid";
             await (supabase.from("invoices").update({ amount_paid: paid, status: invStatus }).eq("id", targetId) as any);
           }
-        } else if (kind === "expense") {
-          await (supabase.from("expenses").update({ status: "paid" }).eq("id", targetId) as any);
         }
       }
     },
