@@ -1460,10 +1460,25 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "resident" | "accountant" | "viewer"
+      app_role:
+        | "admin"
+        | "resident"
+        | "accountant"
+        | "viewer"
+        | "finance"
+        | "operations"
+        | "security"
       approval_status: "draft" | "pending" | "approved" | "rejected"
       bank_txn_direction: "in" | "out"
-      bank_txn_status: "matched" | "partial" | "unmatched" | "review"
+      bank_txn_status:
+        | "matched"
+        | "partial"
+        | "unmatched"
+        | "review"
+        | "draft"
+        | "applied"
+        | "partially_applied"
+        | "reversed"
       booking_purpose: "personal" | "commercial" | "event" | "wedding"
       booking_status:
         | "pending"
@@ -1624,10 +1639,27 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "resident", "accountant", "viewer"],
+      app_role: [
+        "admin",
+        "resident",
+        "accountant",
+        "viewer",
+        "finance",
+        "operations",
+        "security",
+      ],
       approval_status: ["draft", "pending", "approved", "rejected"],
       bank_txn_direction: ["in", "out"],
-      bank_txn_status: ["matched", "partial", "unmatched", "review"],
+      bank_txn_status: [
+        "matched",
+        "partial",
+        "unmatched",
+        "review",
+        "draft",
+        "applied",
+        "partially_applied",
+        "reversed",
+      ],
       booking_purpose: ["personal", "commercial", "event", "wedding"],
       booking_status: [
         "pending",
