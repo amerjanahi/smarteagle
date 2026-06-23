@@ -249,6 +249,12 @@ export type Database = {
         Row: {
           account_id: string
           amount: number
+          applied_amount: number
+          applied_at: string | null
+          applied_by: string | null
+          applied_to_id: string | null
+          applied_to_type: string | null
+          apply_notes: string | null
           created_at: string
           description: string
           direction: Database["public"]["Enums"]["bank_txn_direction"]
@@ -265,6 +271,12 @@ export type Database = {
         Insert: {
           account_id: string
           amount?: number
+          applied_amount?: number
+          applied_at?: string | null
+          applied_by?: string | null
+          applied_to_id?: string | null
+          applied_to_type?: string | null
+          apply_notes?: string | null
           created_at?: string
           description: string
           direction: Database["public"]["Enums"]["bank_txn_direction"]
@@ -281,6 +293,12 @@ export type Database = {
         Update: {
           account_id?: string
           amount?: number
+          applied_amount?: number
+          applied_at?: string | null
+          applied_by?: string | null
+          applied_to_id?: string | null
+          applied_to_type?: string | null
+          apply_notes?: string | null
           created_at?: string
           description?: string
           direction?: Database["public"]["Enums"]["bank_txn_direction"]
@@ -361,6 +379,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      company_settings: {
+        Row: {
+          address: string | null
+          company_name: string
+          cr_number: string | null
+          created_at: string
+          default_currency: string
+          email: string | null
+          id: string
+          logo_url: string | null
+          phone: string | null
+          tax_invoice_footer: string | null
+          updated_at: string
+          vat_effective_date: string | null
+          vat_number: string | null
+          vat_rate: number
+        }
+        Insert: {
+          address?: string | null
+          company_name?: string
+          cr_number?: string | null
+          created_at?: string
+          default_currency?: string
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          tax_invoice_footer?: string | null
+          updated_at?: string
+          vat_effective_date?: string | null
+          vat_number?: string | null
+          vat_rate?: number
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          cr_number?: string | null
+          created_at?: string
+          default_currency?: string
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          tax_invoice_footer?: string | null
+          updated_at?: string
+          vat_effective_date?: string | null
+          vat_number?: string | null
+          vat_rate?: number
+        }
+        Relationships: []
       }
       credit_note_line_items: {
         Row: {
@@ -465,6 +534,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string
+          decimals: number
+          exchange_rate: number
+          is_default: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          decimals?: number
+          exchange_rate?: number
+          is_default?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          decimals?: number
+          exchange_rate?: number
+          is_default?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       document_counters: {
         Row: {
@@ -1199,6 +1298,51 @@ export type Database = {
           },
         ]
       }
+      role_permissions: {
+        Row: {
+          can_apply_txn: boolean
+          can_approve: boolean
+          can_create: boolean
+          can_delete: boolean
+          can_edit: boolean
+          can_export: boolean
+          can_view: boolean
+          created_at: string
+          id: string
+          module: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+        }
+        Insert: {
+          can_apply_txn?: boolean
+          can_approve?: boolean
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_export?: boolean
+          can_view?: boolean
+          created_at?: string
+          id?: string
+          module: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Update: {
+          can_apply_txn?: boolean
+          can_approve?: boolean
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_export?: boolean
+          can_view?: boolean
+          created_at?: string
+          id?: string
+          module?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       units: {
         Row: {
           area_sqm: number | null
@@ -1460,10 +1604,25 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "resident" | "accountant" | "viewer"
+      app_role:
+        | "admin"
+        | "resident"
+        | "accountant"
+        | "viewer"
+        | "finance"
+        | "operations"
+        | "security"
       approval_status: "draft" | "pending" | "approved" | "rejected"
       bank_txn_direction: "in" | "out"
-      bank_txn_status: "matched" | "partial" | "unmatched" | "review"
+      bank_txn_status:
+        | "matched"
+        | "partial"
+        | "unmatched"
+        | "review"
+        | "draft"
+        | "applied"
+        | "partially_applied"
+        | "reversed"
       booking_purpose: "personal" | "commercial" | "event" | "wedding"
       booking_status:
         | "pending"
@@ -1624,10 +1783,27 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "resident", "accountant", "viewer"],
+      app_role: [
+        "admin",
+        "resident",
+        "accountant",
+        "viewer",
+        "finance",
+        "operations",
+        "security",
+      ],
       approval_status: ["draft", "pending", "approved", "rejected"],
       bank_txn_direction: ["in", "out"],
-      bank_txn_status: ["matched", "partial", "unmatched", "review"],
+      bank_txn_status: [
+        "matched",
+        "partial",
+        "unmatched",
+        "review",
+        "draft",
+        "applied",
+        "partially_applied",
+        "reversed",
+      ],
       booking_purpose: ["personal", "commercial", "event", "wedding"],
       booking_status: [
         "pending",

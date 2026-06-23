@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
-import { Plus, Upload, ArrowLeftRight } from "lucide-react";
+import { Plus, Upload, ArrowLeftRight, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ApplyTransactionDialog, type ApplyTxn } from "@/components/admin/ApplyTransactionDialog";
 
 export const Route = createFileRoute("/_authenticated/admin/bank-transactions")({
   head: () => ({ meta: [{ title: "Bank Transactions — Hayy Admin" }] }),
@@ -19,17 +20,23 @@ export const Route = createFileRoute("/_authenticated/admin/bank-transactions")(
 
 type Txn = {
   id: string; account_id: string; txn_date: string; description: string; reference: string | null;
-  direction: "in" | "out"; amount: number; status: "matched" | "partial" | "unmatched" | "review";
+  direction: "in" | "out"; amount: number;
+  status: "matched" | "partial" | "unmatched" | "review" | "draft" | "applied" | "partially_applied" | "reversed";
   source: string; notes: string | null;
+  applied_amount?: number | null; applied_to_type?: string | null; applied_to_id?: string | null; apply_notes?: string | null;
 };
 
 type Account = { id: string; name: string; currency: string };
 
-const STATUS_TONE: Record<Txn["status"], string> = {
+const STATUS_TONE: Record<string, string> = {
   matched: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+  applied: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
   partial: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  partially_applied: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
   unmatched: "bg-muted text-muted-foreground",
+  draft: "bg-muted text-muted-foreground",
   review: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300",
+  reversed: "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
 };
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -59,6 +66,7 @@ function BankTxnsPage() {
   const [accountFilter, setAccountFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
+  const [applyTxn, setApplyTxn] = useState<ApplyTxn | null>(null);
   const [form, setForm] = useState(emptyForm);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -190,10 +198,13 @@ function BankTxnsPage() {
           <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="applied">Applied</SelectItem>
+            <SelectItem value="partially_applied">Partially Applied</SelectItem>
             <SelectItem value="matched">Matched</SelectItem>
-            <SelectItem value="partial">Partial</SelectItem>
             <SelectItem value="unmatched">Unmatched</SelectItem>
             <SelectItem value="review">Review</SelectItem>
+            <SelectItem value="reversed">Reversed</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -207,12 +218,14 @@ function BankTxnsPage() {
               <TableHead>Description</TableHead>
               <TableHead className="hidden md:table-cell">Reference</TableHead>
               <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right hidden lg:table-cell">Applied</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody>
             {txns.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+              <TableRow><TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-8">
                 <ArrowLeftRight className="mx-auto mb-2 h-5 w-5 opacity-60" />No transactions
               </TableCell></TableRow>
             )}
@@ -225,24 +238,22 @@ function BankTxnsPage() {
                 <TableCell className={`text-right tabular-nums ${t.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}>
                   {t.direction === "in" ? "+" : "−"} {Number(t.amount).toFixed(3)}
                 </TableCell>
+                <TableCell className="text-right tabular-nums hidden lg:table-cell">{Number(t.applied_amount ?? 0).toFixed(3)}</TableCell>
                 <TableCell>
-                  <Select value={t.status} onValueChange={(v: any) => setStatus.mutate({ id: t.id, status: v })}>
-                    <SelectTrigger className={`h-7 w-[120px] border-0 ${STATUS_TONE[t.status]}`}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="matched">Matched</SelectItem>
-                      <SelectItem value="partial">Partial</SelectItem>
-                      <SelectItem value="unmatched">Unmatched</SelectItem>
-                      <SelectItem value="review">Review</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Badge className={`${STATUS_TONE[t.status] ?? ""} capitalize`} variant="outline">{t.status.replace("_"," ")}</Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button size="sm" variant="outline" onClick={() => setApplyTxn(t)}>
+                    <Link2 className="mr-1 h-3.5 w-3.5" /> Apply
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      <ApplyTransactionDialog txn={applyTxn} open={!!applyTxn} onOpenChange={(v) => !v && setApplyTxn(null)} />
     </div>
   );
 }
