@@ -20,14 +20,20 @@ export const Route = createFileRoute("/_authenticated/admin/bank-reconciliation"
 type Account = { id: string; name: string; currency: string; opening_balance: number };
 type Txn = {
   id: string; account_id: string; txn_date: string; description: string; reference: string | null;
-  direction: "in" | "out"; amount: number; status: "matched" | "partial" | "unmatched" | "review";
+  direction: "in" | "out"; amount: number;
+  status: "matched" | "partial" | "unmatched" | "review" | "draft" | "applied" | "partially_applied" | "reversed";
+  applied_amount?: number | null; applied_to_type?: string | null; applied_to_id?: string | null; apply_notes?: string | null;
 };
 
-const STATUS_TONE: Record<Txn["status"], string> = {
+const STATUS_TONE: Record<string, string> = {
   matched: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+  applied: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
   partial: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  partially_applied: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
   unmatched: "bg-muted text-muted-foreground",
+  draft: "bg-muted text-muted-foreground",
   review: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300",
+  reversed: "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
 };
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
