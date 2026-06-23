@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { GitCompare, Wand2 } from "lucide-react";
+import { GitCompare, Wand2, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ApplyTransactionDialog, type ApplyTxn } from "@/components/admin/ApplyTransactionDialog";
 
 export const Route = createFileRoute("/_authenticated/admin/bank-reconciliation")({
   head: () => ({ meta: [{ title: "Bank Reconciliation — Hayy Admin" }] }),
