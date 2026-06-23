@@ -44,6 +44,7 @@ function ReconciliationPage() {
   const [accountId, setAccountId] = useState("");
   const [asOf, setAsOf] = useState(todayStr());
   const [statementBalance, setStatementBalance] = useState(0);
+  const [applyTxn, setApplyTxn] = useState<ApplyTxn | null>(null);
 
   const { data: accounts = [] } = useQuery({
     queryKey: ["bank-accounts-recon"],
