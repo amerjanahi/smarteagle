@@ -206,6 +206,118 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          account_number: string | null
+          bank_name: string | null
+          created_at: string
+          currency: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          opening_balance: number
+          updated_at: string
+        }
+        Insert: {
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          opening_balance?: number
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          opening_balance?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bank_transactions: {
+        Row: {
+          account_id: string
+          amount: number
+          created_at: string
+          description: string
+          direction: Database["public"]["Enums"]["bank_txn_direction"]
+          id: string
+          matched_payment_id: string | null
+          matched_vendor_payment_id: string | null
+          notes: string | null
+          reference: string | null
+          source: string
+          status: Database["public"]["Enums"]["bank_txn_status"]
+          txn_date: string
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          amount?: number
+          created_at?: string
+          description: string
+          direction: Database["public"]["Enums"]["bank_txn_direction"]
+          id?: string
+          matched_payment_id?: string | null
+          matched_vendor_payment_id?: string | null
+          notes?: string | null
+          reference?: string | null
+          source?: string
+          status?: Database["public"]["Enums"]["bank_txn_status"]
+          txn_date: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          created_at?: string
+          description?: string
+          direction?: Database["public"]["Enums"]["bank_txn_direction"]
+          id?: string
+          matched_payment_id?: string | null
+          matched_vendor_payment_id?: string | null
+          notes?: string | null
+          reference?: string | null
+          source?: string
+          status?: Database["public"]["Enums"]["bank_txn_status"]
+          txn_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_matched_payment_id_fkey"
+            columns: ["matched_payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_matched_vendor_payment_id_fkey"
+            columns: ["matched_vendor_payment_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chart_of_accounts: {
         Row: {
           account_type: string
@@ -1350,6 +1462,8 @@ export type Database = {
     Enums: {
       app_role: "admin" | "resident" | "accountant" | "viewer"
       approval_status: "draft" | "pending" | "approved" | "rejected"
+      bank_txn_direction: "in" | "out"
+      bank_txn_status: "matched" | "partial" | "unmatched" | "review"
       booking_purpose: "personal" | "commercial" | "event" | "wedding"
       booking_status:
         | "pending"
@@ -1512,6 +1626,8 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "resident", "accountant", "viewer"],
       approval_status: ["draft", "pending", "approved", "rejected"],
+      bank_txn_direction: ["in", "out"],
+      bank_txn_status: ["matched", "partial", "unmatched", "review"],
       booking_purpose: ["personal", "commercial", "event", "wedding"],
       booking_status: [
         "pending",
