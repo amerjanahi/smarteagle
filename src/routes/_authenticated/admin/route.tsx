@@ -60,6 +60,13 @@ const commsItems: NavItem[] = [
   { to: "/admin/bulk-email", label: "Bulk Email", icon: Mail },
 ];
 
+const bankItems: NavItem[] = [
+  { to: "/admin/bank-accounts", label: "Bank Accounts", icon: Landmark },
+  { to: "/admin/bank-transactions", label: "Transactions", icon: ArrowLeftRight },
+  { to: "/admin/bank-bulk-entry", label: "Bulk Entry", icon: ListPlus },
+  { to: "/admin/bank-reconciliation", label: "Reconciliation", icon: GitCompare },
+];
+
 function AdminShell() {
   const { user, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -67,8 +74,10 @@ function AdminShell() {
 
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
+  const inBank = bankItems.some((i) => pathname === i.to);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
+  const [bankOpen, setBankOpen] = useState(inBank);
 
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
