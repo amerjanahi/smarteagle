@@ -50,7 +50,6 @@ import { Route as AuthenticatedAdminBankReconciliationRouteImport } from './rout
 import { Route as AuthenticatedAdminBankBulkEntryRouteImport } from './routes/_authenticated/admin/bank-bulk-entry'
 import { Route as AuthenticatedAdminBankAccountsRouteImport } from './routes/_authenticated/admin/bank-accounts'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
-import { Route as AuthenticatedAdminAmenityBookingsRouteImport } from './routes/_authenticated/admin/amenity-bookings'
 import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -288,12 +287,6 @@ const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
-const AuthenticatedAdminAmenityBookingsRoute =
-  AuthenticatedAdminAmenityBookingsRouteImport.update({
-    id: '/amenity-bookings',
-    path: '/amenity-bookings',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
 const AuthenticatedAdminAmenitiesRoute =
   AuthenticatedAdminAmenitiesRouteImport.update({
     id: '/amenities',
@@ -308,7 +301,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
-  '/admin/amenity-bookings': typeof AuthenticatedAdminAmenityBookingsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
   '/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
@@ -350,7 +342,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
-  '/admin/amenity-bookings': typeof AuthenticatedAdminAmenityBookingsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
   '/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
@@ -396,7 +387,6 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
-  '/_authenticated/admin/amenity-bookings': typeof AuthenticatedAdminAmenityBookingsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
   '/_authenticated/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
@@ -442,7 +432,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/portal'
     | '/admin/amenities'
-    | '/admin/amenity-bookings'
     | '/admin/audit'
     | '/admin/bank-accounts'
     | '/admin/bank-bulk-entry'
@@ -484,7 +473,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/admin/amenities'
-    | '/admin/amenity-bookings'
     | '/admin/audit'
     | '/admin/bank-accounts'
     | '/admin/bank-bulk-entry'
@@ -529,7 +517,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/portal'
     | '/_authenticated/admin/amenities'
-    | '/_authenticated/admin/amenity-bookings'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/bank-accounts'
     | '/_authenticated/admin/bank-bulk-entry'
@@ -863,13 +850,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/amenity-bookings': {
-      id: '/_authenticated/admin/amenity-bookings'
-      path: '/amenity-bookings'
-      fullPath: '/admin/amenity-bookings'
-      preLoaderRoute: typeof AuthenticatedAdminAmenityBookingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
     '/_authenticated/admin/amenities': {
       id: '/_authenticated/admin/amenities'
       path: '/amenities'
@@ -882,7 +862,6 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAmenitiesRoute: typeof AuthenticatedAdminAmenitiesRoute
-  AuthenticatedAdminAmenityBookingsRoute: typeof AuthenticatedAdminAmenityBookingsRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminBankAccountsRoute: typeof AuthenticatedAdminBankAccountsRoute
   AuthenticatedAdminBankBulkEntryRoute: typeof AuthenticatedAdminBankBulkEntryRoute
@@ -915,8 +894,6 @@ interface AuthenticatedAdminRouteRouteChildren {
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminAmenitiesRoute: AuthenticatedAdminAmenitiesRoute,
-    AuthenticatedAdminAmenityBookingsRoute:
-      AuthenticatedAdminAmenityBookingsRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminBankAccountsRoute: AuthenticatedAdminBankAccountsRoute,
     AuthenticatedAdminBankBulkEntryRoute: AuthenticatedAdminBankBulkEntryRoute,
