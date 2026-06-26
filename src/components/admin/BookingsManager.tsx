@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -13,11 +12,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PURPOSE_LABELS, calcBooking, hoursBetween } from "@/lib/booking-calculator";
-
-export const Route = createFileRoute("/_authenticated/admin/amenity-bookings")({
-  head: () => ({ meta: [{ title: "Amenity Bookings — Hayy Admin" }] }),
-  component: BookingsPage,
-});
 
 type Status = "pending" | "confirmed" | "approved" | "rejected" | "cancelled" | "paid" | "completed";
 
@@ -40,7 +34,7 @@ const STATUS_COLORS: Record<string, "default" | "secondary" | "destructive" | "o
 
 function localDT(iso: string) { return new Date(iso).toISOString().slice(0,16); }
 
-function BookingsPage() {
+export default function BookingsManager() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<string>("all");
   const [createOpen, setCreateOpen] = useState(false);
@@ -77,30 +71,24 @@ function BookingsPage() {
 
   return (
     <div className="space-y-4">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="font-display text-2xl font-bold">Amenity Bookings</h1>
-          <p className="text-sm text-muted-foreground">Approve, reject, reschedule, or book on behalf of residents.</p>
-        </div>
-        <div className="flex gap-2">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="pending">Pending approval</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-              <SelectItem value="paid">Paid</SelectItem>
-            </SelectContent>
-          </Select>
-          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" /> New booking</Button></DialogTrigger>
-            <NewBookingDialog onClose={() => setCreateOpen(false)} />
-          </Dialog>
-        </div>
-      </header>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Select value={filter} onValueChange={setFilter}>
+          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="pending">Pending approval</SelectItem>
+            <SelectItem value="confirmed">Confirmed</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+          </SelectContent>
+        </Select>
+        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+          <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" /> New booking</Button></DialogTrigger>
+          <NewBookingDialog onClose={() => setCreateOpen(false)} />
+        </Dialog>
+      </div>
 
       <div className="rounded-xl border border-border bg-card overflow-x-auto">
         <Table>

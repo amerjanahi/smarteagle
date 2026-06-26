@@ -31,7 +31,6 @@ const propertyGroup: NavGroup = { label: "Property", items: [
 const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
-  { to: "/admin/amenity-bookings", label: "Bookings", icon: Sparkles },
 ];
 const sysGroup: NavGroup = { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] };
 
