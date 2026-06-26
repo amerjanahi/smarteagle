@@ -168,16 +168,18 @@ function AnnualFeesCalculator() {
     mutationFn: async (calcId: string) => {
       const calc = calcs.data?.find((c) => c.id === calcId);
       if (!calc) throw new Error("Calculation not found");
-      const resident = residents.data?.find((r) => r.unit_id === calc.unit_id);
       const { data: inv, error } = await supabase
         .from("invoices")
         .insert({
           unit_id: calc.unit_id,
-          resident_id: resident?.id ?? null,
           amount: calc.net_payable,
+          subtotal: calc.net_payable,
           due_date: calc.period_to,
+          period_start: calc.period_from,
+          period_end: calc.period_to,
           status: "unpaid",
-          notes: `Annual service fee for ${calc.period_from} → ${calc.period_to} (GFA ${calc.gfa_sqm} × ${calc.annual_rate})${calc.waived_amount > 0 ? `; waiver ${calc.waived_amount}` : ""}`,
+          description: "Annual service fee",
+          notes: `Annual fee ${calc.period_from} → ${calc.period_to} (GFA ${calc.gfa_sqm} × ${calc.annual_rate})${Number(calc.waived_amount) > 0 ? `; waiver ${calc.waived_amount}` : ""}`,
         })
         .select("id")
         .single();
