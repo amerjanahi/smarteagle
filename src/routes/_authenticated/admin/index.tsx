@@ -148,8 +148,13 @@ function AdminDashboard() {
       ? `${format(range.from, "dd MMM yyyy")} — ${format(range.to, "dd MMM yyyy")}`
       : "Pick a date range";
 
-  const occupancyCard = { label: "Occupancy rate", value: s ? fmtPct(s.occupancyRate) : "—", sub: s ? `${s.occupied} of ${s.totalUnits} units` : "—", icon: Building2 };
-  const handoverCard = { label: "Handover rate", value: s ? fmtPct(s.handoverRate) : "—", sub: s ? `${s.handed} of ${s.totalUnits} units` : "—", icon: KeyRound };
+  // Actual vs Budget (budget = invoiced as planned target; actual = collected)
+  const budget = s?.invoiced ?? 0;
+  const actual = s?.collected ?? 0;
+  const variance = actual - budget;
+  const actualPct = budget > 0 ? (actual / budget) * 100 : 0;
+
+
 
   const financeCards = [
     { label: "Invoiced", value: s ? fmtBHD(s.invoiced) : "—", icon: FileText },
@@ -256,16 +261,30 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {[occupancyCard, handoverCard].map((c) => (
-            <div key={c.label} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">{c.label}</p>
-                <c.icon className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <p className="mt-2 font-display text-3xl font-bold tracking-tight">{c.value}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{c.sub}</p>
+          {/* Actual vs Budget */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] md:col-span-2">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Actual vs Budget</p>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </div>
-          ))}
+            <div className="mt-3 flex items-baseline gap-3">
+              <p className="font-display text-3xl font-bold tracking-tight tabular-nums">{s ? fmtBHD(actual) : "—"}</p>
+              <p className="text-xs text-muted-foreground">of {s ? fmtBHD(budget) : "—"} budget</p>
+            </div>
+            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className={cn("h-full rounded-full", variance >= 0 ? "bg-emerald-500" : "bg-primary")}
+                style={{ width: `${Math.min(100, actualPct)}%` }}
+              />
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">{fmtPct(actualPct)} of budget</span>
+              <span className={cn("font-medium tabular-nums", variance >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                {variance >= 0 ? "+" : ""}{s ? fmtBHD(variance) : "—"}
+              </span>
+            </div>
+          </div>
+
         </div>
       </section>
 
