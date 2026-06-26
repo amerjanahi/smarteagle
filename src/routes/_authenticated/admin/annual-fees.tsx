@@ -171,6 +171,7 @@ function AnnualFeesCalculator() {
       const { data: inv, error } = await supabase
         .from("invoices")
         .insert({
+          invoice_number: "",
           unit_id: calc.unit_id,
           amount: calc.net_payable,
           subtotal: calc.net_payable,
