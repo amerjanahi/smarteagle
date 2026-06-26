@@ -148,8 +148,13 @@ function AdminDashboard() {
       ? `${format(range.from, "dd MMM yyyy")} — ${format(range.to, "dd MMM yyyy")}`
       : "Pick a date range";
 
-  const occupancyCard = { label: "Occupancy rate", value: s ? fmtPct(s.occupancyRate) : "—", sub: s ? `${s.occupied} of ${s.totalUnits} units` : "—", icon: Building2 };
-  const handoverCard = { label: "Handover rate", value: s ? fmtPct(s.handoverRate) : "—", sub: s ? `${s.handed} of ${s.totalUnits} units` : "—", icon: KeyRound };
+  // Actual vs Budget (budget = invoiced as planned target; actual = collected)
+  const budget = s?.invoiced ?? 0;
+  const actual = s?.collected ?? 0;
+  const variance = actual - budget;
+  const actualPct = budget > 0 ? (actual / budget) * 100 : 0;
+
+
 
   const financeCards = [
     { label: "Invoiced", value: s ? fmtBHD(s.invoiced) : "—", icon: FileText },
