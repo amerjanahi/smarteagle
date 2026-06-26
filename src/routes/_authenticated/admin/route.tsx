@@ -179,6 +179,14 @@ function AdminShell() {
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild isActive={pathname === "/admin/annual-fees"}>
+                        <Link to="/admin/annual-fees">
+                          <Calculator className="h-3.5 w-3.5" />
+                          <span>Annual Fees</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
                   </SidebarMenuSub>
                 </SidebarMenu>
               </SidebarGroupContent>
