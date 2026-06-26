@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
-  ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare,
+  ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -176,6 +176,14 @@ function AdminShell() {
                         <Link to="/admin/chart-of-accounts">
                           <BookOpen className="h-3.5 w-3.5" />
                           <span>Chart of Accounts</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild isActive={pathname === "/admin/annual-fees"}>
+                        <Link to="/admin/annual-fees">
+                          <Calculator className="h-3.5 w-3.5" />
+                          <span>Annual Fees</span>
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>

@@ -173,6 +173,91 @@ export type Database = {
         }
         Relationships: []
       }
+      annual_fee_calculations: {
+        Row: {
+          annual_rate: number
+          created_at: string
+          created_by: string | null
+          gfa_sqm: number
+          gross_annual_fee: number
+          id: string
+          invoice_id: string | null
+          net_payable: number
+          notes: string | null
+          period_from: string
+          period_to: string
+          prorata_fee: number
+          resident_id: string | null
+          unit_id: string
+          updated_at: string
+          waived_amount: number
+          waiver_from: string | null
+          waiver_to: string | null
+        }
+        Insert: {
+          annual_rate: number
+          created_at?: string
+          created_by?: string | null
+          gfa_sqm: number
+          gross_annual_fee: number
+          id?: string
+          invoice_id?: string | null
+          net_payable: number
+          notes?: string | null
+          period_from: string
+          period_to: string
+          prorata_fee: number
+          resident_id?: string | null
+          unit_id: string
+          updated_at?: string
+          waived_amount?: number
+          waiver_from?: string | null
+          waiver_to?: string | null
+        }
+        Update: {
+          annual_rate?: number
+          created_at?: string
+          created_by?: string | null
+          gfa_sqm?: number
+          gross_annual_fee?: number
+          id?: string
+          invoice_id?: string | null
+          net_payable?: number
+          notes?: string | null
+          period_from?: string
+          period_to?: string
+          prorata_fee?: number
+          resident_id?: string | null
+          unit_id?: string
+          updated_at?: string
+          waived_amount?: number
+          waiver_from?: string | null
+          waiver_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "annual_fee_calculations_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "annual_fee_calculations_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "annual_fee_calculations_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -383,6 +468,7 @@ export type Database = {
       company_settings: {
         Row: {
           address: string | null
+          annual_fee_rate: number
           company_name: string
           cr_number: string | null
           created_at: string
@@ -399,6 +485,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          annual_fee_rate?: number
           company_name?: string
           cr_number?: string | null
           created_at?: string
@@ -415,6 +502,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          annual_fee_rate?: number
           company_name?: string
           cr_number?: string | null
           created_at?: string
@@ -1351,6 +1439,7 @@ export type Database = {
           built_up_area_sqm: number | null
           created_at: string
           floor: number | null
+          gfa_sqm: number | null
           handover_date: string | null
           id: string
           is_occupied: boolean
@@ -1367,6 +1456,7 @@ export type Database = {
           built_up_area_sqm?: number | null
           created_at?: string
           floor?: number | null
+          gfa_sqm?: number | null
           handover_date?: string | null
           id?: string
           is_occupied?: boolean
@@ -1383,6 +1473,7 @@ export type Database = {
           built_up_area_sqm?: number | null
           created_at?: string
           floor?: number | null
+          gfa_sqm?: number | null
           handover_date?: string | null
           id?: string
           is_occupied?: boolean

@@ -182,6 +182,7 @@ function VatTab() {
       const { error } = await (supabase.from("company_settings" as any).update({
         vat_number: form.vat_number, vat_rate: form.vat_rate,
         vat_effective_date: form.vat_effective_date, tax_invoice_footer: form.tax_invoice_footer,
+        annual_fee_rate: form.annual_fee_rate,
       }).eq("id", form.id) as any);
       if (error) throw error;
     },
@@ -195,6 +196,7 @@ function VatTab() {
         <div><Label>VAT registration number</Label><Input value={form.vat_number ?? ""} onChange={e => setForm({ ...form, vat_number: e.target.value })} /></div>
         <div><Label>VAT rate (%)</Label><Input type="number" step="0.01" value={form.vat_rate ?? 0} onChange={e => setForm({ ...form, vat_rate: Number(e.target.value) })} /></div>
         <div><Label>Effective date</Label><Input type="date" value={form.vat_effective_date ?? ""} onChange={e => setForm({ ...form, vat_effective_date: e.target.value })} /></div>
+        <div><Label>Annual fee rate (per sqm)</Label><Input type="number" step="0.001" value={form.annual_fee_rate ?? 0} onChange={e => setForm({ ...form, annual_fee_rate: Number(e.target.value) })} /></div>
         <div className="sm:col-span-2"><Label>Tax invoice footer</Label><Textarea rows={3} value={form.tax_invoice_footer ?? ""} onChange={e => setForm({ ...form, tax_invoice_footer: e.target.value })} /></div>
       </div>
       <div className="flex justify-end"><Button onClick={() => save.mutate()} disabled={save.isPending}>Save</Button></div>
