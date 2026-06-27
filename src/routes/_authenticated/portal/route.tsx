@@ -1,7 +1,11 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut } from "lucide-react";
+import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { myVillas } from "@/lib/villa-link.functions";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   component: PortalShell,
@@ -16,13 +20,29 @@ const tabs = [
 ] as const;
 
 function PortalShell() {
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const villasFn = useServerFn(myVillas);
+  const { data: villas, isLoading } = useQuery({
+    queryKey: ["my-villas"],
+    queryFn: () => villasFn(),
+    enabled: role !== "admin",
+  });
+
+  useEffect(() => {
+    if (role !== "admin" && !isLoading && villas && villas.length === 0) {
+      navigate({ to: "/link-villa", replace: true });
+    }
+  }, [role, isLoading, villas, navigate]);
 
   async function handleSignOut() {
     await signOut();
     navigate({ to: "/auth", replace: true });
+  }
+
+  if (role !== "admin" && isLoading) {
+    return <div className="min-h-screen grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (

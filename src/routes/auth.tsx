@@ -35,6 +35,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(false);
 
@@ -50,10 +51,6 @@ function AuthPage() {
     if (!s) return;
     const { data: profile } = await supabase
       .from("profiles").select("approval_status").eq("id", s.user.id).maybeSingle();
-    if (profile?.approval_status === "pending") {
-      setPending(true);
-      return;
-    }
     if (profile?.approval_status === "rejected") {
       await supabase.auth.signOut();
       toast.error("Your account has been rejected. Contact the building administrator.");
@@ -64,6 +61,16 @@ function AuthPage() {
       if (res.promoted) toast.success("You're the first user — promoted to admin.");
     } catch { /* ignore */ }
     await refreshRole();
+    // Residents go to villa-linking; the link-villa page sends them onward
+    // once they have an approved villa. Admins go straight to /admin.
+    const { data: roleRow } = await supabase
+      .from("user_roles").select("role").eq("user_id", s.user.id);
+    const isAdmin = (roleRow ?? []).some((r: any) => r.role === "admin");
+    if (!isAdmin) {
+      const { data: links } = await supabase
+        .from("user_villas").select("id").eq("user_id", s.user.id).eq("status", "active").limit(1);
+      navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
+    }
   }
 
   async function handleEmail(e: React.FormEvent) {
@@ -71,15 +78,19 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email, password,
           options: {
-            data: { full_name: fullName },
+            data: { full_name: fullName, phone },
             emailRedirectTo: `${window.location.origin}/`,
           },
         });
         if (error) throw error;
-        toast.success("Account created. Waiting for admin approval.");
+        // Save phone on profile (trigger created the row)
+        if (signUpData.user) {
+          await supabase.from("profiles").update({ phone, full_name: fullName }).eq("id", signUpData.user.id);
+        }
+        toast.success("Account created. Please verify your email, then link your villa.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -181,6 +192,11 @@ function AuthPage() {
                   <Label htmlFor="name">Full name</Label>
                   <Input id="name" required autoComplete="name" autoCapitalize="words" spellCheck value={fullName} onChange={(e) => setFullName(e.target.value)} />
 
+                </div>
+                <div>
+                  <Label htmlFor="phone-up">Phone number</Label>
+                  <Input id="phone-up" type="tel" autoComplete="tel" required placeholder="+973 …"
+                    value={phone} onChange={(e) => setPhone(e.target.value)} />
                 </div>
                 <div>
                   <Label htmlFor="email-up">Email</Label>
