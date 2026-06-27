@@ -37,6 +37,7 @@ import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
 import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
 import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
+import { Route as AuthenticatedAdminPortalAccessRequestsRouteImport } from './routes/_authenticated/admin/portal-access-requests'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
 import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_authenticated/admin/notice-groups'
@@ -212,6 +213,12 @@ const AuthenticatedAdminPurchaseInvoicesRoute =
     path: '/purchase-invoices',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPortalAccessRequestsRoute =
+  AuthenticatedAdminPortalAccessRequestsRouteImport.update({
+    id: '/portal-access-requests',
+    path: '/portal-access-requests',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
     id: '/payments',
@@ -338,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
   '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
@@ -382,6 +390,7 @@ export interface FileRoutesByTo {
   '/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
   '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
@@ -430,6 +439,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
   '/_authenticated/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/_authenticated/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
@@ -478,6 +488,7 @@ export interface FileRouteTypes {
     | '/admin/notice-groups'
     | '/admin/notices'
     | '/admin/payments'
+    | '/admin/portal-access-requests'
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
     | '/admin/purchases'
@@ -522,6 +533,7 @@ export interface FileRouteTypes {
     | '/admin/notice-groups'
     | '/admin/notices'
     | '/admin/payments'
+    | '/admin/portal-access-requests'
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
     | '/admin/purchases'
@@ -569,6 +581,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/notice-groups'
     | '/_authenticated/admin/notices'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/portal-access-requests'
     | '/_authenticated/admin/purchase-invoices'
     | '/_authenticated/admin/purchase-reports'
     | '/_authenticated/admin/purchases'
@@ -797,6 +810,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPurchaseInvoicesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/portal-access-requests': {
+      id: '/_authenticated/admin/portal-access-requests'
+      path: '/portal-access-requests'
+      fullPath: '/admin/portal-access-requests'
+      preLoaderRoute: typeof AuthenticatedAdminPortalAccessRequestsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
       path: '/payments'
@@ -937,6 +957,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminNoticeGroupsRoute: typeof AuthenticatedAdminNoticeGroupsRoute
   AuthenticatedAdminNoticesRoute: typeof AuthenticatedAdminNoticesRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminPortalAccessRequestsRoute: typeof AuthenticatedAdminPortalAccessRequestsRoute
   AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
   AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
@@ -974,6 +995,8 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminNoticeGroupsRoute: AuthenticatedAdminNoticeGroupsRoute,
     AuthenticatedAdminNoticesRoute: AuthenticatedAdminNoticesRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+    AuthenticatedAdminPortalAccessRequestsRoute:
+      AuthenticatedAdminPortalAccessRequestsRoute,
     AuthenticatedAdminPurchaseInvoicesRoute:
       AuthenticatedAdminPurchaseInvoicesRoute,
     AuthenticatedAdminPurchaseReportsRoute:
