@@ -1398,6 +1398,59 @@ export type Database = {
           },
         ]
       }
+      resident_villa_requests: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          rejection_reason: string | null
+          relationship_type: Database["public"]["Enums"]["villa_relationship"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["villa_request_status"]
+          submitted_at: string
+          updated_at: string
+          user_id: string
+          villa_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          rejection_reason?: string | null
+          relationship_type: Database["public"]["Enums"]["villa_relationship"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["villa_request_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id: string
+          villa_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          rejection_reason?: string | null
+          relationship_type?: Database["public"]["Enums"]["villa_relationship"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["villa_request_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string
+          villa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resident_villa_requests_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       residents: {
         Row: {
           created_at: string
@@ -1570,6 +1623,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_villas: {
+        Row: {
+          approved_at: string
+          approved_by: string | null
+          created_at: string
+          id: string
+          relationship_type: Database["public"]["Enums"]["villa_relationship"]
+          status: string
+          updated_at: string
+          user_id: string
+          villa_id: string
+        }
+        Insert: {
+          approved_at?: string
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          relationship_type: Database["public"]["Enums"]["villa_relationship"]
+          status?: string
+          updated_at?: string
+          user_id: string
+          villa_id: string
+        }
+        Update: {
+          approved_at?: string
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          relationship_type?: Database["public"]["Enums"]["villa_relationship"]
+          status?: string
+          updated_at?: string
+          user_id?: string
+          villa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_villas_villa_id_fkey"
+            columns: ["villa_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vendor_payments: {
         Row: {
@@ -1758,6 +1855,7 @@ export type Database = {
         Args: { _doc_type: string; _prefix: string }
         Returns: string
       }
+      user_has_villa: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
@@ -1768,6 +1866,12 @@ export type Database = {
         | "finance"
         | "operations"
         | "security"
+        | "super_admin"
+        | "owner"
+        | "tenant"
+        | "family_member"
+        | "authorized_rep"
+        | "read_only"
       approval_status: "draft" | "pending" | "approved" | "rejected"
       bank_txn_direction: "in" | "out"
       bank_txn_status:
@@ -1806,6 +1910,12 @@ export type Database = {
         | "cancelled"
         | "overdue"
       resident_type: "owner" | "tenant"
+      villa_relationship:
+        | "owner"
+        | "tenant"
+        | "family_member"
+        | "authorized_rep"
+      villa_request_status: "pending" | "approved" | "rejected"
       visitor_status:
         | "pending"
         | "approved"
@@ -1947,6 +2057,12 @@ export const Constants = {
         "finance",
         "operations",
         "security",
+        "super_admin",
+        "owner",
+        "tenant",
+        "family_member",
+        "authorized_rep",
+        "read_only",
       ],
       approval_status: ["draft", "pending", "approved", "rejected"],
       bank_txn_direction: ["in", "out"],
@@ -1990,6 +2106,13 @@ export const Constants = {
         "overdue",
       ],
       resident_type: ["owner", "tenant"],
+      villa_relationship: [
+        "owner",
+        "tenant",
+        "family_member",
+        "authorized_rep",
+      ],
+      villa_request_status: ["pending", "approved", "rejected"],
       visitor_status: [
         "pending",
         "approved",
