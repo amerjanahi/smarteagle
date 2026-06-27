@@ -224,9 +224,9 @@ function AdminDashboard() {
 
       <section>
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Performance</h3>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-12">
           {/* Collection Rate donut (replaces Handover rate card position) */}
-          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] md:col-span-5">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Collection rate</p>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -262,7 +262,7 @@ function AdminDashboard() {
           </div>
 
           {/* Actual vs Budget */}
-          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] md:col-span-2">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] md:col-span-7">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Actual vs Budget</p>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
