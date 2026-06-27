@@ -153,7 +153,9 @@ function AdminShell() {
                 <Building2 className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold">Hayy Admin</p>
+                <p className="truncate text-sm font-bold">
+                  {(((user?.user_metadata as any)?.full_name as string | undefined)?.trim().split(/\s+/)[0]) || user?.email?.split("@")[0] || "Admin"}
+                </p>
                 <p className="truncate text-xs opacity-70">{user?.email}</p>
               </div>
             </div>
