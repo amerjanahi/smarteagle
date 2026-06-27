@@ -50,6 +50,7 @@ import { Route as AuthenticatedAdminBankReconciliationRouteImport } from './rout
 import { Route as AuthenticatedAdminBankBulkEntryRouteImport } from './routes/_authenticated/admin/bank-bulk-entry'
 import { Route as AuthenticatedAdminBankAccountsRouteImport } from './routes/_authenticated/admin/bank-accounts'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
+import { Route as AuthenticatedAdminApprovalsRouteImport } from './routes/_authenticated/admin/approvals'
 import { Route as AuthenticatedAdminAnnualFeesRouteImport } from './routes/_authenticated/admin/annual-fees'
 import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
 
@@ -288,6 +289,12 @@ const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminApprovalsRoute =
+  AuthenticatedAdminApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminAnnualFeesRoute =
   AuthenticatedAdminAnnualFeesRouteImport.update({
     id: '/annual-fees',
@@ -309,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/annual-fees': typeof AuthenticatedAdminAnnualFeesRoute
+  '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
   '/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
@@ -351,6 +359,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/annual-fees': typeof AuthenticatedAdminAnnualFeesRoute
+  '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
   '/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
@@ -397,6 +406,7 @@ export interface FileRoutesById {
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/_authenticated/admin/annual-fees': typeof AuthenticatedAdminAnnualFeesRoute
+  '/_authenticated/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/bank-accounts': typeof AuthenticatedAdminBankAccountsRoute
   '/_authenticated/admin/bank-bulk-entry': typeof AuthenticatedAdminBankBulkEntryRoute
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
     | '/portal'
     | '/admin/amenities'
     | '/admin/annual-fees'
+    | '/admin/approvals'
     | '/admin/audit'
     | '/admin/bank-accounts'
     | '/admin/bank-bulk-entry'
@@ -485,6 +496,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/amenities'
     | '/admin/annual-fees'
+    | '/admin/approvals'
     | '/admin/audit'
     | '/admin/bank-accounts'
     | '/admin/bank-bulk-entry'
@@ -530,6 +542,7 @@ export interface FileRouteTypes {
     | '/_authenticated/portal'
     | '/_authenticated/admin/amenities'
     | '/_authenticated/admin/annual-fees'
+    | '/_authenticated/admin/approvals'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/bank-accounts'
     | '/_authenticated/admin/bank-bulk-entry'
@@ -863,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/approvals': {
+      id: '/_authenticated/admin/approvals'
+      path: '/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AuthenticatedAdminApprovalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/annual-fees': {
       id: '/_authenticated/admin/annual-fees'
       path: '/annual-fees'
@@ -883,6 +903,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAmenitiesRoute: typeof AuthenticatedAdminAmenitiesRoute
   AuthenticatedAdminAnnualFeesRoute: typeof AuthenticatedAdminAnnualFeesRoute
+  AuthenticatedAdminApprovalsRoute: typeof AuthenticatedAdminApprovalsRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminBankAccountsRoute: typeof AuthenticatedAdminBankAccountsRoute
   AuthenticatedAdminBankBulkEntryRoute: typeof AuthenticatedAdminBankBulkEntryRoute
@@ -916,6 +937,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminAmenitiesRoute: AuthenticatedAdminAmenitiesRoute,
     AuthenticatedAdminAnnualFeesRoute: AuthenticatedAdminAnnualFeesRoute,
+    AuthenticatedAdminApprovalsRoute: AuthenticatedAdminApprovalsRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminBankAccountsRoute: AuthenticatedAdminBankAccountsRoute,
     AuthenticatedAdminBankBulkEntryRoute: AuthenticatedAdminBankBulkEntryRoute,

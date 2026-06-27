@@ -1,9 +1,13 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { pendingSignupCount } from "@/lib/approvals.functions";
 import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
+  Bell, UserPlus,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
