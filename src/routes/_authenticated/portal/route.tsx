@@ -37,6 +37,8 @@ function PortalShell() {
   }, [role, isLoading, villas, navigate]);
 
   async function handleSignOut() {
+    const { biometric } = await import("@/lib/biometric");
+    await biometric.clear();
     await signOut();
     navigate({ to: "/auth", replace: true });
   }

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Building2, Loader2 } from "lucide-react";
+import { Building2, Fingerprint, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -11,10 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { bootstrapAdminIfEmpty } from "@/lib/admin.functions";
+import { biometric } from "@/lib/biometric";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
 });
+
+type SignInMethod = "password" | "email-otp" | "phone-otp";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
@@ -38,6 +41,12 @@ function AuthPage() {
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(false);
+  const [signInMethod, setSignInMethod] = useState<SignInMethod>("password");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [bioAvailable, setBioAvailable] = useState(false);
+
+  useEffect(() => { biometric.isAvailable().then(setBioAvailable); }, []);
 
   // Redirect if already signed in (effect, not during render — avoids hydration mismatch)
   useEffect(() => {
@@ -94,6 +103,10 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Offer to remember credentials for biometric unlock on this device.
+        if (await biometric.isAvailable()) {
+          try { await biometric.save({ username: email, password }); } catch { /* ignore */ }
+        }
       }
       await checkApprovalAndRoute();
     } catch (err) {
@@ -101,6 +114,67 @@ function AuthPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function sendOtp(channel: "email" | "phone") {
+    setBusy(true);
+    try {
+      if (channel === "email") {
+        const { error } = await supabase.auth.signInWithOtp({
+          email, options: { shouldCreateUser: false },
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signInWithOtp({ phone });
+        if (error) throw error;
+      }
+      setOtpSent(true);
+      toast.success("Code sent. Check your messages.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send code");
+    } finally { setBusy(false); }
+  }
+
+  async function verifyOtp(channel: "email" | "phone") {
+    setBusy(true);
+    try {
+      const { error } = channel === "email"
+        ? await supabase.auth.verifyOtp({ email, token: otpCode, type: "email" })
+        : await supabase.auth.verifyOtp({ phone, token: otpCode, type: "sms" });
+      if (error) throw error;
+      await checkApprovalAndRoute();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Invalid code");
+    } finally { setBusy(false); }
+  }
+
+  async function handleForgot() {
+    if (!email) { toast.error("Enter your email first."); return; }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Reset link sent. Check your email.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send reset link");
+    } finally { setBusy(false); }
+  }
+
+  async function handleBiometric() {
+    setBusy(true);
+    try {
+      const creds = await biometric.unlock();
+      if (!creds) { toast.error("Biometric not available or cancelled."); return; }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: creds.username, password: creds.password,
+      });
+      if (error) throw error;
+      await checkApprovalAndRoute();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Biometric sign-in failed");
+    } finally { setBusy(false); }
   }
 
   async function handleGoogle() {
@@ -167,23 +241,103 @@ function AuthPage() {
               <TabsTrigger value="signup">Sign up</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="signin" className="mt-4">
-              <form onSubmit={handleEmail} className="space-y-3">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" autoComplete="email" required
-                    value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" autoComplete="current-password" required
-                    value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <Button type="submit" className="w-full" disabled={busy}>
-                  {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Sign in
+            <TabsContent value="signin" className="mt-4 space-y-4">
+              <Tabs value={signInMethod} onValueChange={(v) => { setSignInMethod(v as SignInMethod); setOtpSent(false); setOtpCode(""); }}>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="password">Password</TabsTrigger>
+                  <TabsTrigger value="email-otp">Email code</TabsTrigger>
+                  <TabsTrigger value="phone-otp">Phone code</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="password" className="mt-4">
+                  <form onSubmit={handleEmail} className="space-y-3">
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" autoComplete="email" required
+                        value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password">Password</Label>
+                        <button type="button" onClick={handleForgot}
+                          className="text-xs text-primary hover:underline disabled:opacity-50" disabled={busy}>
+                          Forgot password?
+                        </button>
+                      </div>
+                      <Input id="password" type="password" autoComplete="current-password" required
+                        value={password} onChange={(e) => setPassword(e.target.value)} />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={busy}>
+                      {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Sign in
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="email-otp" className="mt-4">
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="email-otp">Email</Label>
+                      <Input id="email-otp" type="email" autoComplete="email" required
+                        value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    {otpSent && (
+                      <div>
+                        <Label htmlFor="otp-e">6-digit code</Label>
+                        <Input id="otp-e" inputMode="numeric" maxLength={6} required
+                          value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))} />
+                      </div>
+                    )}
+                    {!otpSent ? (
+                      <Button type="button" className="w-full" disabled={busy || !email} onClick={() => sendOtp("email")}>
+                        {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Send code
+                      </Button>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Button type="button" variant="outline" className="flex-1" onClick={() => setOtpSent(false)} disabled={busy}>Back</Button>
+                        <Button type="button" className="flex-1" disabled={busy || otpCode.length < 6} onClick={() => verifyOtp("email")}>
+                          {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Verify
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="phone-otp" className="mt-4">
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="phone-in">Phone number</Label>
+                      <Input id="phone-in" type="tel" autoComplete="tel" required placeholder="+973 …"
+                        value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    </div>
+                    {otpSent && (
+                      <div>
+                        <Label htmlFor="otp-p">6-digit code</Label>
+                        <Input id="otp-p" inputMode="numeric" maxLength={6} required
+                          value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))} />
+                      </div>
+                    )}
+                    {!otpSent ? (
+                      <Button type="button" className="w-full" disabled={busy || !phone} onClick={() => sendOtp("phone")}>
+                        {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Send SMS code
+                      </Button>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Button type="button" variant="outline" className="flex-1" onClick={() => setOtpSent(false)} disabled={busy}>Back</Button>
+                        <Button type="button" className="flex-1" disabled={busy || otpCode.length < 6} onClick={() => verifyOtp("phone")}>
+                          {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Verify
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              {bioAvailable && (
+                <Button type="button" variant="outline" className="w-full" onClick={handleBiometric} disabled={busy}>
+                  <Fingerprint className="mr-2 h-4 w-4" /> Use fingerprint / Face ID
                 </Button>
-              </form>
+              )}
             </TabsContent>
 
             <TabsContent value="signup" className="mt-4">
