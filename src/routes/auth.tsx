@@ -194,6 +194,11 @@ function AuthPage() {
 
                 </div>
                 <div>
+                  <Label htmlFor="phone-up">Phone number</Label>
+                  <Input id="phone-up" type="tel" autoComplete="tel" required placeholder="+973 …"
+                    value={phone} onChange={(e) => setPhone(e.target.value)} />
+                </div>
+                <div>
                   <Label htmlFor="email-up">Email</Label>
                   <Input id="email-up" type="email" autoComplete="email" required
                     value={email} onChange={(e) => setEmail(e.target.value)} />
