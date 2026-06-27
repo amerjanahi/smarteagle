@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedLinkVillaRouteImport } from './routes/_authenticated/link-villa'
 import { Route as AuthenticatedPortalRouteRouteImport } from './routes/_authenticated/portal/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedPortalIndexRouteImport } from './routes/_authenticated/portal/index'
@@ -72,6 +73,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedLinkVillaRoute = AuthenticatedLinkVillaRouteImport.update({
+  id: '/link-villa',
+  path: '/link-villa',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPortalRouteRoute =
   AuthenticatedPortalRouteRouteImport.update({
@@ -314,6 +320,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
+  '/link-villa': typeof AuthenticatedLinkVillaRoute
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/annual-fees': typeof AuthenticatedAdminAnnualFeesRoute
   '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
@@ -357,6 +364,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/link-villa': typeof AuthenticatedLinkVillaRoute
   '/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/admin/annual-fees': typeof AuthenticatedAdminAnnualFeesRoute
   '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
@@ -404,6 +412,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
+  '/_authenticated/link-villa': typeof AuthenticatedLinkVillaRoute
   '/_authenticated/admin/amenities': typeof AuthenticatedAdminAmenitiesRoute
   '/_authenticated/admin/annual-fees': typeof AuthenticatedAdminAnnualFeesRoute
   '/_authenticated/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
@@ -451,6 +460,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/portal'
+    | '/link-villa'
     | '/admin/amenities'
     | '/admin/annual-fees'
     | '/admin/approvals'
@@ -494,6 +504,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
+    | '/link-villa'
     | '/admin/amenities'
     | '/admin/annual-fees'
     | '/admin/approvals'
@@ -540,6 +551,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/portal'
+    | '/_authenticated/link-villa'
     | '/_authenticated/admin/amenities'
     | '/_authenticated/admin/annual-fees'
     | '/_authenticated/admin/approvals'
@@ -616,6 +628,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/link-villa': {
+      id: '/_authenticated/link-villa'
+      path: '/link-villa'
+      fullPath: '/link-villa'
+      preLoaderRoute: typeof AuthenticatedLinkVillaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/portal': {
       id: '/_authenticated/portal'
@@ -1010,11 +1029,13 @@ const AuthenticatedPortalRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedPortalRouteRoute: typeof AuthenticatedPortalRouteRouteWithChildren
+  AuthenticatedLinkVillaRoute: typeof AuthenticatedLinkVillaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedPortalRouteRoute: AuthenticatedPortalRouteRouteWithChildren,
+  AuthenticatedLinkVillaRoute: AuthenticatedLinkVillaRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
