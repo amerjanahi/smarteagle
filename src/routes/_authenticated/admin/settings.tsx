@@ -11,6 +11,9 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ApprovalsTabs } from "./approvals";
+import { PortalAccessRequestsInner } from "./portal-access-requests";
+import { AllUsersTab } from "@/components/admin/AllUsersTab";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({ meta: [{ title: "Settings — Hayy Admin" }] }),
@@ -34,21 +37,38 @@ function SettingsPage() {
     <div className="space-y-4">
       <header>
         <h2 className="font-display text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-sm text-muted-foreground">Company profile, currencies, VAT, and role permissions.</p>
+        <p className="text-sm text-muted-foreground">Company profile, users, currencies, VAT, and role permissions.</p>
       </header>
       <Tabs defaultValue="company">
         <TabsList className="flex-wrap">
           <TabsTrigger value="company">Company</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="currency">Currency</TabsTrigger>
           <TabsTrigger value="vat">VAT</TabsTrigger>
           <TabsTrigger value="roles">Roles &amp; Permissions</TabsTrigger>
         </TabsList>
         <TabsContent value="company"><CompanyTab /></TabsContent>
+        <TabsContent value="users"><UsersTab /></TabsContent>
         <TabsContent value="currency"><CurrencyTab /></TabsContent>
         <TabsContent value="vat"><VatTab /></TabsContent>
         <TabsContent value="roles"><RolesTab /></TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function UsersTab() {
+  return (
+    <Tabs defaultValue="all" className="space-y-3">
+      <TabsList>
+        <TabsTrigger value="all">All Users</TabsTrigger>
+        <TabsTrigger value="approvals">User Approvals</TabsTrigger>
+        <TabsTrigger value="portal">Portal Access Requests</TabsTrigger>
+      </TabsList>
+      <TabsContent value="all"><AllUsersTab /></TabsContent>
+      <TabsContent value="approvals"><ApprovalsTabs /></TabsContent>
+      <TabsContent value="portal"><PortalAccessRequestsInner /></TabsContent>
+    </Tabs>
   );
 }
 
