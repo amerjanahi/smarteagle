@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "role_perm read auth" ON public.role_permissions;
+CREATE POLICY "role_perm admin read" ON public.role_permissions FOR SELECT TO authenticated USING (has_role(auth.uid(), 'admin'::app_role));
