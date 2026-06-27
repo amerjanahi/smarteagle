@@ -37,8 +37,6 @@ const opsItems: NavItem[] = [
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
 ];
 const sysGroup: NavGroup = { label: "System", items: [
-  { to: "/admin/approvals", label: "User Approvals", icon: UserPlus },
-  { to: "/admin/portal-access-requests", label: "Portal Access Requests", icon: ShieldCheck },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ]};
 
