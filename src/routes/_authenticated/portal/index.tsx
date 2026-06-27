@@ -6,7 +6,7 @@ import {
   CalendarCheck,
   UserPlus,
   Phone,
-  Download,
+  
   ArrowRight,
   CheckCircle2,
   Megaphone,
@@ -56,9 +56,10 @@ function PortalHome() {
         <p className="text-sm text-muted-foreground">Welcome back to your community portal</p>
       </section>
 
-      {/* Outstanding balance hero */}
-      <section
-        className="relative overflow-hidden rounded-3xl p-6 text-primary-foreground shadow-[var(--shadow-lifted)]"
+      {/* Latest announcement hero (clickable) */}
+      <Link
+        to="/portal/announcements"
+        className="relative block overflow-hidden rounded-3xl p-6 text-primary-foreground shadow-[var(--shadow-lifted)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lifted)]"
         style={{ background: "var(--gradient-brand)" }}
       >
         <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
@@ -67,34 +68,48 @@ function PortalHome() {
         <div className="relative">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-primary-foreground/90">
-              <Wallet className="h-4 w-4" />
-              Outstanding Balance
+              <Megaphone className="h-4 w-4" />
+              Latest Announcement
             </div>
             <Badge className="border-0 bg-white/20 text-primary-foreground hover:bg-white/25">
-              <CheckCircle2 className="mr-1 h-3.5 w-3.5" /> No outstanding dues
+              New
             </Badge>
           </div>
 
-          <p className="mt-4 font-display text-5xl font-extrabold tracking-tight text-primary-foreground drop-shadow-sm">
-            BHD <span className="text-primary-foreground">0.000</span>
+          <p className="mt-4 font-display text-2xl font-bold leading-snug tracking-tight text-primary-foreground drop-shadow-sm">
+            Pool maintenance this Friday
           </p>
-          <p className="mt-2 text-sm font-medium text-primary-foreground/95">You're all caught up</p>
+          <p className="mt-2 text-sm font-medium text-primary-foreground/95">
+            Scheduled 8am–12pm. Tap to view all notices.
+          </p>
 
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            <Button asChild size="sm" className="h-10 rounded-xl bg-white text-primary hover:bg-white/90">
-              <Link to="/portal/invoices">
-                <FileText className="mr-1.5 h-4 w-4" /> View Invoices
-              </Link>
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-10 rounded-xl border-white/40 bg-white/10 text-primary-foreground hover:bg-white/20 hover:text-primary-foreground"
-            >
-              <Download className="mr-1.5 h-4 w-4" /> Download Statement
-            </Button>
+          <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-foreground">
+            View all announcements <ArrowRight className="h-4 w-4" />
           </div>
         </div>
+      </Link>
+
+      {/* Outstanding balance — compact */}
+      <section className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+          <Wallet className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Outstanding balance
+            </p>
+            <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
+              <CheckCircle2 className="mr-1 h-3 w-3" /> Up to date
+            </Badge>
+          </div>
+          <p className="mt-0.5 font-display text-xl font-bold tabular-nums">BHD 0.000</p>
+        </div>
+        <Button asChild size="sm" variant="outline" className="h-9 rounded-xl">
+          <Link to="/portal/invoices">
+            <FileText className="mr-1.5 h-4 w-4" /> Invoices
+          </Link>
+        </Button>
       </section>
 
       {/* Quick actions */}
