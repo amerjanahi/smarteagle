@@ -36,7 +36,10 @@ const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
 ];
-const sysGroup: NavGroup = { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] };
+const sysGroup: NavGroup = { label: "System", items: [
+  { to: "/admin/approvals", label: "User Approvals", icon: UserPlus },
+  { to: "/admin/settings", label: "Settings", icon: Settings },
+]};
 
 const salesItems: NavItem[] = [
   { to: "/admin/sales", label: "Sales Hub", icon: TrendingUp },
