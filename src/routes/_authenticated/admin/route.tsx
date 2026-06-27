@@ -1,9 +1,13 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { pendingSignupCount } from "@/lib/approvals.functions";
 import {
   LayoutDashboard, Home, Users, FileText, CreditCard, Receipt,
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
+  Bell, UserPlus,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -32,7 +36,10 @@ const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
 ];
-const sysGroup: NavGroup = { label: "System", items: [{ to: "/admin/settings", label: "Settings", icon: Settings }] };
+const sysGroup: NavGroup = { label: "System", items: [
+  { to: "/admin/approvals", label: "User Approvals", icon: UserPlus },
+  { to: "/admin/settings", label: "Settings", icon: Settings },
+]};
 
 const salesItems: NavItem[] = [
   { to: "/admin/sales", label: "Sales Hub", icon: TrendingUp },
@@ -77,6 +84,14 @@ function AdminShell() {
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
   const [bankOpen, setBankOpen] = useState(inBank);
+
+  const pendingFn = useServerFn(pendingSignupCount);
+  const { data: pendingCount = 0 } = useQuery({
+    queryKey: ["pending-count"],
+    queryFn: () => pendingFn(),
+    enabled: role === "admin",
+    refetchInterval: 30000,
+  });
 
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
@@ -245,6 +260,16 @@ function AdminShell() {
           <header className="flex h-14 items-center gap-2 border-b border-border bg-card px-4">
             <SidebarTrigger />
             <h1 className="font-display text-base font-semibold">Admin Portal</h1>
+            <div className="ml-auto">
+              <Link to="/admin/approvals" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent">
+                <Bell className="h-5 w-5" />
+                {pendingCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+                    {pendingCount > 99 ? "99+" : pendingCount}
+                  </span>
+                )}
+              </Link>
+            </div>
           </header>
           <main className="flex-1 overflow-auto p-6">
             <Outlet />

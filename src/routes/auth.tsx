@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Building2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -36,10 +36,34 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState(false);
 
-  // Redirect if already signed in
-  if (!authLoading && session) {
-    navigate({ to: role === "admin" ? "/admin" : "/portal" });
+  // Redirect if already signed in (effect, not during render — avoids hydration mismatch)
+  useEffect(() => {
+    if (!authLoading && session && role) {
+      navigate({ to: role === "admin" ? "/admin" : "/portal" });
+    }
+  }, [authLoading, session, role, navigate]);
+
+  async function checkApprovalAndRoute() {
+    const { data: { session: s } } = await supabase.auth.getSession();
+    if (!s) return;
+    const { data: profile } = await supabase
+      .from("profiles").select("approval_status").eq("id", s.user.id).maybeSingle();
+    if (profile?.approval_status === "pending") {
+      setPending(true);
+      return;
+    }
+    if (profile?.approval_status === "rejected") {
+      await supabase.auth.signOut();
+      toast.error("Your account has been rejected. Contact the building administrator.");
+      return;
+    }
+    try {
+      const res = await bootstrapAdminIfEmpty();
+      if (res.promoted) toast.success("You're the first user — promoted to admin.");
+    } catch { /* ignore */ }
+    await refreshRole();
   }
 
   async function handleEmail(e: React.FormEvent) {
@@ -55,22 +79,12 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created. You're signed in.");
+        toast.success("Account created. Waiting for admin approval.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      // Bootstrap admin if no admin exists yet (so the first signup can manage)
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      if (currentSession) {
-        try {
-          const res = await bootstrapAdminIfEmpty();
-          if (res.promoted) toast.success("You're the first user — promoted to admin.");
-        } catch { /* ignore */ }
-        await refreshRole();
-      } else {
-        toast.info("Check your email to confirm your account before signing in.");
-      }
+      await checkApprovalAndRoute();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
@@ -86,14 +100,33 @@ function AuthPage() {
       });
       if (result.error) throw result.error;
       if (!result.redirected) {
-        try { await bootstrapAdminIfEmpty(); } catch { /* ignore */ }
-        await refreshRole();
+        await checkApprovalAndRoute();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign-in failed");
     } finally {
       setBusy(false);
     }
+  }
+
+  if (pending) {
+    return (
+      <div className="min-h-screen bg-background grid place-items-center px-6">
+        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-[var(--shadow-soft)]">
+          <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-amber-100 text-amber-700">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+          <h1 className="font-display text-xl font-bold">Awaiting admin approval</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your account has been created. A building administrator needs to approve your access before you can sign in.
+            You'll be notified once approved.
+          </p>
+          <Button className="mt-6 w-full" variant="outline" onClick={async () => { await supabase.auth.signOut(); setPending(false); }}>
+            Sign out
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -105,6 +138,7 @@ function AuthPage() {
           </div>
           <span className="font-display text-lg font-bold">Hayy</span>
         </Link>
+
 
         <div className="mt-12 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
           <h1 className="font-display text-2xl font-bold">
