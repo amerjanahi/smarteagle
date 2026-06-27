@@ -36,10 +36,34 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState(false);
 
-  // Redirect if already signed in
-  if (!authLoading && session) {
-    navigate({ to: role === "admin" ? "/admin" : "/portal" });
+  // Redirect if already signed in (effect, not during render — avoids hydration mismatch)
+  useEffect(() => {
+    if (!authLoading && session && role) {
+      navigate({ to: role === "admin" ? "/admin" : "/portal" });
+    }
+  }, [authLoading, session, role, navigate]);
+
+  async function checkApprovalAndRoute() {
+    const { data: { session: s } } = await supabase.auth.getSession();
+    if (!s) return;
+    const { data: profile } = await supabase
+      .from("profiles").select("approval_status").eq("id", s.user.id).maybeSingle();
+    if (profile?.approval_status === "pending") {
+      setPending(true);
+      return;
+    }
+    if (profile?.approval_status === "rejected") {
+      await supabase.auth.signOut();
+      toast.error("Your account has been rejected. Contact the building administrator.");
+      return;
+    }
+    try {
+      const res = await bootstrapAdminIfEmpty();
+      if (res.promoted) toast.success("You're the first user — promoted to admin.");
+    } catch { /* ignore */ }
+    await refreshRole();
   }
 
   async function handleEmail(e: React.FormEvent) {
@@ -55,22 +79,12 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created. You're signed in.");
+        toast.success("Account created. Waiting for admin approval.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      // Bootstrap admin if no admin exists yet (so the first signup can manage)
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      if (currentSession) {
-        try {
-          const res = await bootstrapAdminIfEmpty();
-          if (res.promoted) toast.success("You're the first user — promoted to admin.");
-        } catch { /* ignore */ }
-        await refreshRole();
-      } else {
-        toast.info("Check your email to confirm your account before signing in.");
-      }
+      await checkApprovalAndRoute();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
