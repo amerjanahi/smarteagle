@@ -100,8 +100,7 @@ function AuthPage() {
       });
       if (result.error) throw result.error;
       if (!result.redirected) {
-        try { await bootstrapAdminIfEmpty(); } catch { /* ignore */ }
-        await refreshRole();
+        await checkApprovalAndRoute();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign-in failed");
