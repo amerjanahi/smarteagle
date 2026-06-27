@@ -85,6 +85,14 @@ function AdminShell() {
   const [purchOpen, setPurchOpen] = useState(inPurch);
   const [bankOpen, setBankOpen] = useState(inBank);
 
+  const pendingFn = useServerFn(pendingSignupCount);
+  const { data: pendingCount = 0 } = useQuery({
+    queryKey: ["pending-count"],
+    queryFn: () => pendingFn(),
+    enabled: role === "admin",
+    refetchInterval: 30000,
+  });
+
   if (!loading && role !== "admin") {
     navigate({ to: "/portal", replace: true });
   }
