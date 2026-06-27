@@ -41,6 +41,12 @@ function AuthPage() {
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(false);
+  const [signInMethod, setSignInMethod] = useState<SignInMethod>("password");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [bioAvailable, setBioAvailable] = useState(false);
+
+  useEffect(() => { biometric.isAvailable().then(setBioAvailable); }, []);
 
   // Redirect if already signed in (effect, not during render — avoids hydration mismatch)
   useEffect(() => {
@@ -97,6 +103,10 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Offer to remember credentials for biometric unlock on this device.
+        if (await biometric.isAvailable()) {
+          try { await biometric.save({ username: email, password }); } catch { /* ignore */ }
+        }
       }
       await checkApprovalAndRoute();
     } catch (err) {
@@ -104,6 +114,67 @@ function AuthPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function sendOtp(channel: "email" | "phone") {
+    setBusy(true);
+    try {
+      if (channel === "email") {
+        const { error } = await supabase.auth.signInWithOtp({
+          email, options: { shouldCreateUser: false },
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signInWithOtp({ phone });
+        if (error) throw error;
+      }
+      setOtpSent(true);
+      toast.success("Code sent. Check your messages.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send code");
+    } finally { setBusy(false); }
+  }
+
+  async function verifyOtp(channel: "email" | "phone") {
+    setBusy(true);
+    try {
+      const { error } = channel === "email"
+        ? await supabase.auth.verifyOtp({ email, token: otpCode, type: "email" })
+        : await supabase.auth.verifyOtp({ phone, token: otpCode, type: "sms" });
+      if (error) throw error;
+      await checkApprovalAndRoute();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Invalid code");
+    } finally { setBusy(false); }
+  }
+
+  async function handleForgot() {
+    if (!email) { toast.error("Enter your email first."); return; }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Reset link sent. Check your email.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send reset link");
+    } finally { setBusy(false); }
+  }
+
+  async function handleBiometric() {
+    setBusy(true);
+    try {
+      const creds = await biometric.unlock();
+      if (!creds) { toast.error("Biometric not available or cancelled."); return; }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: creds.username, password: creds.password,
+      });
+      if (error) throw error;
+      await checkApprovalAndRoute();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Biometric sign-in failed");
+    } finally { setBusy(false); }
   }
 
   async function handleGoogle() {
