@@ -38,6 +38,38 @@ export const pendingSignupCount = createServerFn({ method: "GET" })
     return count ?? 0;
   });
 
+export const listAllSignups = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data: profiles, error } = await context.supabase
+      .from("profiles")
+      .select("id, email, full_name, phone, approval_status, created_at, reviewed_at, requested_role")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    const ids = (profiles ?? []).map((p: any) => p.id);
+    if (ids.length === 0) return [];
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: roles }, { data: villas }] = await Promise.all([
+      supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
+      supabaseAdmin.from("user_villas").select("user_id, unit_id, status").in("user_id", ids),
+    ]);
+    const roleMap = new Map<string, string[]>();
+    (roles ?? []).forEach((r: any) => {
+      const arr = roleMap.get(r.user_id) ?? [];
+      arr.push(r.role); roleMap.set(r.user_id, arr);
+    });
+    const villaMap = new Map<string, number>();
+    (villas ?? []).filter((v: any) => v.status === "active").forEach((v: any) => {
+      villaMap.set(v.user_id, (villaMap.get(v.user_id) ?? 0) + 1);
+    });
+    return (profiles ?? []).map((p: any) => ({
+      ...p,
+      roles: roleMap.get(p.id) ?? [],
+      villa_count: villaMap.get(p.id) ?? 0,
+    }));
+  });
+
 export const approveSignup = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { userId: string; role: "admin" | "resident"; unitId?: string | null; fullName?: string }) => d)
