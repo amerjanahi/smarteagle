@@ -6,7 +6,7 @@ import {
   CalendarCheck,
   UserPlus,
   Phone,
-  
+  Calculator,
   ArrowRight,
   CheckCircle2,
   Megaphone,
@@ -37,6 +37,7 @@ function PortalHome() {
     { to: "/portal/maintenance", label: "Request Repair", icon: Wrench, tone: "from-accent/25 to-accent/5 text-accent-foreground" },
     { to: "/portal/amenities", label: "Book Amenity", icon: CalendarCheck, tone: "from-primary/15 to-primary/5 text-primary" },
     { to: "/portal/visitors", label: "Register Visitor", icon: UserPlus, tone: "from-accent/25 to-accent/5 text-accent-foreground" },
+    { to: "/portal/calculator", label: "Fees Calculator", icon: Calculator, tone: "from-accent/25 to-accent/5 text-accent-foreground" },
     { to: "/portal/more", label: "Contact Management", icon: Phone, tone: "from-primary/15 to-primary/5 text-primary" },
   ] as const;
 
