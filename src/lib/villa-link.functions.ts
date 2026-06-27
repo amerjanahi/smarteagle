@@ -75,14 +75,22 @@ export const listAllVillaRequests = createServerFn({ method: "GET" })
   .inputValidator((d: { status?: "pending" | "approved" | "rejected" | "all" } = {}) => d)
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
-    let q = context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let q = supabaseAdmin
       .from("resident_villa_requests")
-      .select("*, profiles:user_id(full_name, email, phone), units:villa_id(unit_number, building)")
+      .select("*, units:villa_id(unit_number, building)")
       .order("submitted_at", { ascending: false });
     if (data.status && data.status !== "all") q = q.eq("status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return rows ?? [];
+    const userIds = Array.from(new Set((rows ?? []).map((r: any) => r.user_id)));
+    let profilesById: Record<string, any> = {};
+    if (userIds.length) {
+      const { data: profs } = await supabaseAdmin
+        .from("profiles").select("id, full_name, email, phone").in("id", userIds);
+      profilesById = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
+    }
+    return (rows ?? []).map((r: any) => ({ ...r, profiles: profilesById[r.user_id] ?? null }));
   });
 
 export const approveVillaRequest = createServerFn({ method: "POST" })
