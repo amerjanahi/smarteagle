@@ -61,11 +61,16 @@ function AuthPage() {
         if (error) throw error;
       }
       // Bootstrap admin if no admin exists yet (so the first signup can manage)
-      try {
-        const res = await bootstrapAdminIfEmpty();
-        if (res.promoted) toast.success("You're the first user — promoted to admin.");
-      } catch { /* ignore */ }
-      await refreshRole();
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (currentSession) {
+        try {
+          const res = await bootstrapAdminIfEmpty();
+          if (res.promoted) toast.success("You're the first user — promoted to admin.");
+        } catch { /* ignore */ }
+        await refreshRole();
+      } else {
+        toast.info("Check your email to confirm your account before signing in.");
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
