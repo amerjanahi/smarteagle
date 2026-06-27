@@ -140,7 +140,8 @@ function AuthPage() {
               <form onSubmit={handleEmail} className="space-y-3">
                 <div>
                   <Label htmlFor="name">Full name</Label>
-                  <Input id="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                  <Input id="name" required autoComplete="name" autoCapitalize="words" spellCheck value={fullName} onChange={(e) => setFullName(e.target.value)} />
+
                 </div>
                 <div>
                   <Label htmlFor="email-up">Email</Label>
