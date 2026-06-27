@@ -26,22 +26,28 @@ const REL: Record<string, string> = {
 };
 
 function PortalAccessRequestsPage() {
-  const [tab, setTab] = useState<"pending" | "approved" | "rejected">("pending");
   return (
     <div className="space-y-4">
       <header>
         <h2 className="font-display text-2xl font-bold tracking-tight">Portal Access Requests</h2>
         <p className="text-sm text-muted-foreground">Approve or reject resident villa-link requests.</p>
       </header>
-      <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
-        <TabsList>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="approved">Approved</TabsTrigger>
-          <TabsTrigger value="rejected">Rejected</TabsTrigger>
-        </TabsList>
-        <TabsContent value={tab}><RequestsTable status={tab} /></TabsContent>
-      </Tabs>
+      <PortalAccessRequestsInner />
     </div>
+  );
+}
+
+export function PortalAccessRequestsInner() {
+  const [tab, setTab] = useState<"pending" | "approved" | "rejected">("pending");
+  return (
+    <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
+      <TabsList>
+        <TabsTrigger value="pending">Pending</TabsTrigger>
+        <TabsTrigger value="approved">Approved</TabsTrigger>
+        <TabsTrigger value="rejected">Rejected</TabsTrigger>
+      </TabsList>
+      <TabsContent value={tab}><RequestsTable status={tab} /></TabsContent>
+    </Tabs>
   );
 }
 

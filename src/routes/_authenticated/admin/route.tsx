@@ -7,7 +7,7 @@ import {
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
-  Bell, UserPlus,
+  Bell,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -37,8 +37,6 @@ const opsItems: NavItem[] = [
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
 ];
 const sysGroup: NavGroup = { label: "System", items: [
-  { to: "/admin/approvals", label: "User Approvals", icon: UserPlus },
-  { to: "/admin/portal-access-requests", label: "Portal Access Requests", icon: ShieldCheck },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ]};
 

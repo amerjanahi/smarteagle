@@ -30,15 +30,21 @@ function ApprovalsPage() {
         <h2 className="font-display text-2xl font-bold tracking-tight">User Approvals</h2>
         <p className="text-sm text-muted-foreground">Review pending signups and invite new users.</p>
       </header>
-      <Tabs defaultValue="pending">
-        <TabsList>
-          <TabsTrigger value="pending">Pending signups</TabsTrigger>
-          <TabsTrigger value="invites">Invitations</TabsTrigger>
-        </TabsList>
-        <TabsContent value="pending"><PendingTab /></TabsContent>
-        <TabsContent value="invites"><InvitesTab /></TabsContent>
-      </Tabs>
+      <ApprovalsTabs />
     </div>
+  );
+}
+
+export function ApprovalsTabs() {
+  return (
+    <Tabs defaultValue="pending">
+      <TabsList>
+        <TabsTrigger value="pending">Pending signups</TabsTrigger>
+        <TabsTrigger value="invites">Invitations</TabsTrigger>
+      </TabsList>
+      <TabsContent value="pending"><PendingTab /></TabsContent>
+      <TabsContent value="invites"><InvitesTab /></TabsContent>
+    </Tabs>
   );
 }
 
