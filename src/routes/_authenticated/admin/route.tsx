@@ -7,7 +7,7 @@ import {
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
-  Bell, UserPlus,
+  Bell,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
