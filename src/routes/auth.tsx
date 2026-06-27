@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Building2, Loader2 } from "lucide-react";
+import { Building2, Fingerprint, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -11,10 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { bootstrapAdminIfEmpty } from "@/lib/admin.functions";
+import { biometric } from "@/lib/biometric";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
 });
+
+type SignInMethod = "password" | "email-otp" | "phone-otp";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
