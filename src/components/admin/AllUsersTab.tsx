@@ -1,22 +1,44 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Search } from "lucide-react";
-import { listAllSignups } from "@/lib/approvals.functions";
+import { toast } from "sonner";
+import { Search, Plus, Pencil, Trash2, Home } from "lucide-react";
+import { listAllSignups, adminDeleteUser } from "@/lib/approvals.functions";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserFormDialog } from "./UserFormDialog";
+import { LinkVillaDialog } from "./LinkVillaDialog";
+import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   approved: "default", pending: "secondary", rejected: "destructive",
 };
 
 export function AllUsersTab() {
+  const qc = useQueryClient();
   const listFn = useServerFn(listAllSignups);
+  const deleteFn = useServerFn(adminDeleteUser);
   const { data = [], isLoading } = useQuery({ queryKey: ["all-signups"], queryFn: () => listFn() });
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "pending" | "approved" | "rejected">("all");
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<any>(null);
+  const [linkUser, setLinkUser] = useState<any>(null);
+  const [deleteUser, setDeleteUser] = useState<any>(null);
+
+  const del = useMutation({
+    mutationFn: (userId: string) => deleteFn({ data: { userId }}),
+    onSuccess: () => {
+      toast.success("User deleted");
+      qc.invalidateQueries({ queryKey: ["all-signups"] });
+      setDeleteUser(null);
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -47,7 +69,10 @@ export function AllUsersTab() {
             <SelectItem value="rejected">Rejected</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-sm text-muted-foreground ml-auto">{rows.length} user{rows.length === 1 ? "" : "s"}</span>
+        <span className="text-sm text-muted-foreground">{rows.length} user{rows.length === 1 ? "" : "s"}</span>
+        <Button className="ml-auto" onClick={() => { setEditing(null); setFormOpen(true); }}>
+          <Plus className="h-4 w-4 mr-1" /> Add user
+        </Button>
       </div>
       <div className="rounded-xl border border-border bg-card overflow-x-auto">
         <Table>
@@ -55,10 +80,11 @@ export function AllUsersTab() {
             <TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead>
             <TableHead>Roles</TableHead><TableHead>Villas</TableHead>
             <TableHead>Status</TableHead><TableHead>Signed up</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow></TableHeader>
           <TableBody>
-            {isLoading && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Loading…</TableCell></TableRow>}
-            {!isLoading && rows.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No users.</TableCell></TableRow>}
+            {isLoading && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Loading…</TableCell></TableRow>}
+            {!isLoading && rows.length === 0 && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No users.</TableCell></TableRow>}
             {rows.map((u) => (
               <TableRow key={u.id}>
                 <TableCell className="font-medium">{u.full_name ?? "—"}</TableCell>
@@ -73,11 +99,42 @@ export function AllUsersTab() {
                   <Badge variant={STATUS_VARIANT[u.approval_status] ?? "outline"} className="capitalize">{u.approval_status}</Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1">
+                    <Button size="icon" variant="ghost" title="Link villas" onClick={() => setLinkUser(u)}>
+                      <Home className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="ghost" title="Edit" onClick={() => { setEditing(u); setFormOpen(true); }}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="ghost" title="Delete" onClick={() => setDeleteUser(u)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      <UserFormDialog open={formOpen} onOpenChange={setFormOpen} user={editing} />
+      {linkUser && (
+        <LinkVillaDialog
+          open={!!linkUser}
+          onOpenChange={(v) => !v && setLinkUser(null)}
+          userId={linkUser.id}
+          userName={linkUser.full_name ?? linkUser.email}
+        />
+      )}
+      <ConfirmDeleteDialog
+        open={!!deleteUser}
+        onOpenChange={(v) => !v && setDeleteUser(null)}
+        title="Delete user?"
+        description={`This permanently deletes ${deleteUser?.email ?? "this user"} and their access. This cannot be undone.`}
+        busy={del.isPending}
+        onConfirm={() => deleteUser && del.mutate(deleteUser.id)}
+      />
     </div>
   );
 }

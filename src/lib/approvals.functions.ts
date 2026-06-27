@@ -171,3 +171,170 @@ export const revokeInvitation = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+type AppRole = "admin" | "resident" | "accountant" | "security" | "owner" | "tenant";
+
+export const adminCreateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    email: string;
+    password: string;
+    fullName: string;
+    phone?: string;
+    roles: AppRole[];
+    villaId?: string | null;
+    relationshipType?: "owner" | "tenant" | "family_member" | "authorized_rep";
+  }) => d)
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email.toLowerCase().trim(),
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { full_name: data.fullName },
+    });
+    if (error || !created.user) throw new Error(error?.message ?? "Failed to create user");
+    const uid = created.user.id;
+
+    await supabaseAdmin.from("profiles").update({
+      full_name: data.fullName,
+      phone: data.phone ?? null,
+      approval_status: "approved",
+      reviewed_by: context.userId,
+      reviewed_at: new Date().toISOString(),
+    }).eq("id", uid);
+
+    if (data.roles.length) {
+      await supabaseAdmin.from("user_roles").insert(
+        data.roles.map((r) => ({ user_id: uid, role: r }))
+      ).then(() => {}, () => {});
+    }
+
+    if (data.villaId) {
+      await supabaseAdmin.from("user_villas").upsert({
+        user_id: uid,
+        villa_id: data.villaId,
+        relationship_type: data.relationshipType ?? "tenant",
+        status: "active",
+        approved_by: context.userId,
+      }, { onConflict: "user_id,villa_id" });
+    }
+    return { ok: true, userId: uid };
+  });
+
+export const adminUpdateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    userId: string;
+    fullName?: string;
+    phone?: string | null;
+    email?: string;
+    password?: string;
+    roles?: AppRole[];
+    approvalStatus?: "approved" | "pending" | "rejected";
+  }) => d)
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    if (data.email || data.password) {
+      const attrs: any = {};
+      if (data.email) attrs.email = data.email.toLowerCase().trim();
+      if (data.password) attrs.password = data.password;
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, attrs);
+      if (error) throw new Error(error.message);
+    }
+
+    const patch: any = {};
+    if (data.fullName !== undefined) patch.full_name = data.fullName;
+    if (data.phone !== undefined) patch.phone = data.phone;
+    if (data.email) patch.email = data.email.toLowerCase().trim();
+    if (data.approvalStatus) {
+      patch.approval_status = data.approvalStatus;
+      patch.reviewed_by = context.userId;
+      patch.reviewed_at = new Date().toISOString();
+    }
+    if (Object.keys(patch).length) {
+      const { error } = await supabaseAdmin.from("profiles").update(patch).eq("id", data.userId);
+      if (error) throw new Error(error.message);
+    }
+
+    if (data.roles) {
+      await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
+      if (data.roles.length) {
+        await supabaseAdmin.from("user_roles").insert(
+          data.roles.map((r) => ({ user_id: data.userId, role: r }))
+        );
+      }
+    }
+    return { ok: true };
+  });
+
+export const adminDeleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { userId: string }) => d)
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    if (data.userId === context.userId) throw new Error("You cannot delete your own account.");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListUserVillas = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { userId: string }) => d)
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("user_villas")
+      .select("id, villa_id, relationship_type, status, units:villa_id(unit_number, building)")
+      .eq("user_id", data.userId);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+export const adminLinkVilla = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    userId: string;
+    villaId: string;
+    relationshipType: "owner" | "tenant" | "family_member" | "authorized_rep";
+  }) => d)
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("user_villas").upsert({
+      user_id: data.userId,
+      villa_id: data.villaId,
+      relationship_type: data.relationshipType,
+      status: "active",
+      approved_by: context.userId,
+    }, { onConflict: "user_id,villa_id" });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminUnlinkVilla = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { linkId: string }) => d)
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("user_villas").delete().eq("id", data.linkId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListUnits = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data, error } = await context.supabase
+      .from("units").select("id, unit_number, building").order("unit_number");
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
