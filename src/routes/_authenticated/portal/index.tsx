@@ -6,7 +6,7 @@ import {
   CalendarCheck,
   UserPlus,
   Phone,
-  Download,
+  
   ArrowRight,
   CheckCircle2,
   Megaphone,
