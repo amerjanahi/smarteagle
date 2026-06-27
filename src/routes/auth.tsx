@@ -109,6 +109,26 @@ function AuthPage() {
     }
   }
 
+  if (pending) {
+    return (
+      <div className="min-h-screen bg-background grid place-items-center px-6">
+        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-[var(--shadow-soft)]">
+          <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-amber-100 text-amber-700">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+          <h1 className="font-display text-xl font-bold">Awaiting admin approval</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your account has been created. A building administrator needs to approve your access before you can sign in.
+            You'll be notified once approved.
+          </p>
+          <Button className="mt-6 w-full" variant="outline" onClick={async () => { await supabase.auth.signOut(); setPending(false); }}>
+            Sign out
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto flex min-h-screen max-w-md flex-col px-6 py-8">
@@ -118,6 +138,7 @@ function AuthPage() {
           </div>
           <span className="font-display text-lg font-bold">Hayy</span>
         </Link>
+
 
         <div className="mt-12 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
           <h1 className="font-display text-2xl font-bold">
