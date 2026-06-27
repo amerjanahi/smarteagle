@@ -78,15 +78,19 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email, password,
           options: {
-            data: { full_name: fullName },
+            data: { full_name: fullName, phone },
             emailRedirectTo: `${window.location.origin}/`,
           },
         });
         if (error) throw error;
-        toast.success("Account created. Waiting for admin approval.");
+        // Save phone on profile (trigger created the row)
+        if (signUpData.user) {
+          await supabase.from("profiles").update({ phone, full_name: fullName }).eq("id", signUpData.user.id);
+        }
+        toast.success("Account created. Please verify your email, then link your villa.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
