@@ -316,6 +316,12 @@ function UnitsPage() {
               <SelectItem value="vacant">Vacant</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={sort} onValueChange={resetPageAnd(setSort)}>
+            <SelectTrigger className="w-[200px]"><SelectValue placeholder="Sort by" /></SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((o) => (<SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>))}
+            </SelectContent>
+          </Select>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-10">
