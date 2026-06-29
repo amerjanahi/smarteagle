@@ -1,0 +1,30 @@
+
+-- Delete all dummy/seed data
+TRUNCATE TABLE
+  public.payment_allocations,
+  public.payments,
+  public.credit_note_line_items,
+  public.credit_notes,
+  public.invoice_line_items,
+  public.invoices,
+  public.vendor_payments,
+  public.purchase_invoices,
+  public.expenses,
+  public.vendors,
+  public.amenity_bookings,
+  public.amenities,
+  public.maintenance_requests,
+  public.visitors,
+  public.announcements,
+  public.notices,
+  public.notice_group_members,
+  public.notice_groups,
+  public.bank_transactions,
+  public.bank_accounts,
+  public.annual_fee_calculations,
+  public.residents,
+  public.units,
+  public.audit_log,
+  public.documents,
+  public.document_counters
+RESTART IDENTITY CASCADE;

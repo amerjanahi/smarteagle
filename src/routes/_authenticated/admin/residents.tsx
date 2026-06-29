@@ -116,11 +116,20 @@ function loadVisible(): ColumnKey[] {
   }
 }
 
+const SORT_OPTIONS: { value: string; label: string; key: "full_name" | "resident_type" | "move_in_date"; asc: boolean }[] = [
+  { value: "name_asc", label: "Name (A→Z)", key: "full_name", asc: true },
+  { value: "name_desc", label: "Name (Z→A)", key: "full_name", asc: false },
+  { value: "type_asc", label: "Type (owner→tenant)", key: "resident_type", asc: true },
+  { value: "movein_desc", label: "Move-in (newest)", key: "move_in_date", asc: false },
+  { value: "movein_asc", label: "Move-in (oldest)", key: "move_in_date", asc: true },
+];
+
 function ResidentsPage() {
   const [search, setSearch] = useState("");
   const [building, setBuilding] = useState<string>("all");
   const [type, setType] = useState<"all" | "owner" | "tenant">("all");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("active");
+  const [sort, setSort] = useState<string>("name_asc");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
@@ -192,8 +201,9 @@ function ResidentsPage() {
   });
 
   const list = useQuery({
-    queryKey: ["residents", { search, building, type, status, page }],
+    queryKey: ["residents", { search, building, type, status, sort, page }],
     queryFn: async () => {
+      const sortOpt = SORT_OPTIONS.find((o) => o.value === sort) ?? SORT_OPTIONS[0];
       const buildingFilter = building !== "all";
       let q = supabase
         .from("residents")
@@ -201,7 +211,7 @@ function ResidentsPage() {
           "id, unit_id, full_name, email, phone, resident_type, move_in_date, move_out_date, is_active, units!inner(id, unit_number, building, floor, bedrooms, land_area_sqm, built_up_area_sqm, area_sqm)",
           { count: "exact" },
         )
-        .order("full_name", { ascending: true })
+        .order(sortOpt.key, { ascending: sortOpt.asc, nullsFirst: false })
         .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
 
       if (buildingFilter) q = q.eq("units.building", building);
@@ -318,6 +328,12 @@ function ResidentsPage() {
               <SelectItem value="all">All status</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sort} onValueChange={resetPageAnd(setSort)}>
+            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort by" /></SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((o) => (<SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>))}
             </SelectContent>
           </Select>
           <DropdownMenu>
