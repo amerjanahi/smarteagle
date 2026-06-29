@@ -110,13 +110,29 @@ function loadVisible(): ColumnKey[] {
   }
 }
 
+type SortKey = "unit_number" | "building" | "floor" | "bedrooms" | "monthly_service_charge" | "handover_date";
+const SORT_OPTIONS: { value: string; label: string; key: SortKey; asc: boolean }[] = [
+  { value: "unit_asc", label: "Unit number (A→Z)", key: "unit_number", asc: true },
+  { value: "unit_desc", label: "Unit number (Z→A)", key: "unit_number", asc: false },
+  { value: "building_asc", label: "Building (A→Z)", key: "building", asc: true },
+  { value: "floor_asc", label: "Floor (low→high)", key: "floor", asc: true },
+  { value: "floor_desc", label: "Floor (high→low)", key: "floor", asc: false },
+  { value: "bedrooms_desc", label: "Bedrooms (most)", key: "bedrooms", asc: false },
+  { value: "charge_desc", label: "Service charge (high→low)", key: "monthly_service_charge", asc: false },
+  { value: "charge_asc", label: "Service charge (low→high)", key: "monthly_service_charge", asc: true },
+  { value: "handover_desc", label: "Handover (newest)", key: "handover_date", asc: false },
+  { value: "handover_asc", label: "Handover (oldest)", key: "handover_date", asc: true },
+];
+
 function UnitsPage() {
   const [search, setSearch] = useState("");
   const [building, setBuilding] = useState<string>("all");
   const [occupancy, setOccupancy] = useState<"all" | "occupied" | "vacant">("all");
+  const [sort, setSort] = useState<string>("building_asc");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visible, setVisible] = useState<ColumnKey[]>(() => loadVisible());
+
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<UnitFormValues | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -182,14 +198,15 @@ function UnitsPage() {
   });
 
   const list = useQuery({
-    queryKey: ["units", { search, building, occupancy, page }],
+    queryKey: ["units", { search, building, occupancy, sort, page }],
     queryFn: async () => {
+      const sortOpt = SORT_OPTIONS.find((o) => o.value === sort) ?? SORT_OPTIONS[0];
       let q = supabase
         .from("units")
         .select("id, building, unit_number, floor, bedrooms, area_sqm, land_area_sqm, built_up_area_sqm, monthly_service_charge, handover_date, is_occupied, notes", { count: "exact" })
-        .order("building", { ascending: true })
-        .order("unit_number", { ascending: true })
+        .order(sortOpt.key, { ascending: sortOpt.asc, nullsFirst: false })
         .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+
 
       if (building !== "all") q = q.eq("building", building);
       if (occupancy === "occupied") q = q.eq("is_occupied", true);
