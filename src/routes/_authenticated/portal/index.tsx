@@ -106,11 +106,6 @@ function PortalHome() {
           </div>
           <p className="mt-0.5 font-display text-xl font-bold tabular-nums">BHD 0.000</p>
         </div>
-        <Button asChild size="sm" variant="outline" className="h-9 rounded-xl">
-          <Link to="/portal/invoices">
-            <FileText className="mr-1.5 h-4 w-4" /> Invoices
-          </Link>
-        </Button>
       </section>
 
       {/* Quick actions */}
