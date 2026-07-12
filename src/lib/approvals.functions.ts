@@ -279,6 +279,14 @@ export const adminDeleteUser = createServerFn({ method: "POST" })
     await assertAdmin(context);
     if (data.userId === context.userId) throw new Error("You cannot delete your own account.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Explicitly clean up all villa links so units free up immediately.
+    // (auth.users cascades cover user_villas/requests, but residents.user_id is
+    // ON DELETE SET NULL — leaving orphan resident rows that keep units occupied.)
+    await supabaseAdmin.from("user_villas").delete().eq("user_id", data.userId);
+    await supabaseAdmin.from("resident_villa_requests").delete().eq("user_id", data.userId);
+    await supabaseAdmin.from("residents").delete().eq("user_id", data.userId);
+
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
