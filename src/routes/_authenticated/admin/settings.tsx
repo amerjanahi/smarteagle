@@ -11,7 +11,6 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ApprovalsTabs } from "./approvals";
 import { PortalAccessRequestsInner } from "./portal-access-requests";
 import { AllUsersTab } from "@/components/admin/AllUsersTab";
 
@@ -62,12 +61,10 @@ function UsersTab() {
     <Tabs defaultValue="all" className="space-y-3">
       <TabsList>
         <TabsTrigger value="all">All Users</TabsTrigger>
-        <TabsTrigger value="approvals">User Approvals</TabsTrigger>
-        <TabsTrigger value="portal">Portal Access Requests</TabsTrigger>
+        <TabsTrigger value="approvals">Approvals</TabsTrigger>
       </TabsList>
       <TabsContent value="all"><AllUsersTab /></TabsContent>
-      <TabsContent value="approvals"><ApprovalsTabs /></TabsContent>
-      <TabsContent value="portal"><PortalAccessRequestsInner /></TabsContent>
+      <TabsContent value="approvals"><PortalAccessRequestsInner /></TabsContent>
     </Tabs>
   );
 }
