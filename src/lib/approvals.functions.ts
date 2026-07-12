@@ -31,10 +31,11 @@ export const pendingSignupCount = createServerFn({ method: "GET" })
       _role: "admin",
     });
     if (!isAdmin) return 0;
+    // Unified queue: pending villa-link requests are the single approval step.
     const { count } = await context.supabase
-      .from("profiles")
+      .from("resident_villa_requests")
       .select("id", { count: "exact", head: true })
-      .eq("approval_status", "pending");
+      .eq("status", "pending");
     return count ?? 0;
   });
 

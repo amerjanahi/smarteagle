@@ -117,7 +117,24 @@ export const approveVillaRequest = createServerFn({ method: "POST" })
     await supabaseAdmin.from("user_roles").insert({ user_id: req.user_id, role: "resident" })
       .then(() => {}, () => {});
 
-    // Approve profile if pending
+    // Mirror into residents table so unit occupancy and resident lists reflect the link.
+    const { data: profile } = await supabaseAdmin
+      .from("profiles").select("full_name, email, phone").eq("id", req.user_id).maybeSingle();
+    const { data: existingResident } = await supabaseAdmin
+      .from("residents").select("id").eq("user_id", req.user_id).eq("unit_id", req.villa_id).maybeSingle();
+    if (!existingResident) {
+      await supabaseAdmin.from("residents").insert({
+        user_id: req.user_id,
+        unit_id: req.villa_id,
+        full_name: profile?.full_name ?? "Resident",
+        email: profile?.email ?? null,
+        phone: profile?.phone ?? null,
+        resident_type: req.relationship_type === "owner" ? "owner" : "tenant",
+        is_active: true,
+      }).then(() => {}, () => {});
+    }
+
+    // Approve profile if still pending
     await supabaseAdmin.from("profiles").update({
       approval_status: "approved",
       reviewed_by: context.userId,
