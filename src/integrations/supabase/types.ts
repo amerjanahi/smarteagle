@@ -1121,9 +1121,12 @@ export type Database = {
           created_at: string
           group_id: string | null
           id: string
+          image_url: string | null
+          published_at: string | null
           recipient_count: number
           sent_at: string
           sent_by: string | null
+          status: string
           subject: string
           updated_at: string
         }
@@ -1134,9 +1137,12 @@ export type Database = {
           created_at?: string
           group_id?: string | null
           id?: string
+          image_url?: string | null
+          published_at?: string | null
           recipient_count?: number
           sent_at?: string
           sent_by?: string | null
+          status?: string
           subject: string
           updated_at?: string
         }
@@ -1147,9 +1153,12 @@ export type Database = {
           created_at?: string
           group_id?: string | null
           id?: string
+          image_url?: string | null
+          published_at?: string | null
           recipient_count?: number
           sent_at?: string
           sent_by?: string | null
+          status?: string
           subject?: string
           updated_at?: string
         }
