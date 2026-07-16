@@ -52,9 +52,9 @@ export const financeReport = createServerFn({ method: "POST" })
     const payments = payRes.data ?? [];
     const expenses = expRes.data ?? [];
 
-    const invoiced = invoices.filter((i: any) => i.status !== "void").reduce((s: number, i: any) => s + Number(i.amount || 0), 0);
+    const invoiced = invoices.filter((i: any) => i.status !== "cancelled").reduce((s: number, i: any) => s + Number(i.amount || 0), 0);
     const collected = payments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
-    const outstanding = invoices.filter((i: any) => i.status !== "void").reduce((s: number, i: any) => s + (Number(i.amount || 0) - Number(i.amount_paid || 0)), 0);
+    const outstanding = invoices.filter((i: any) => i.status !== "cancelled").reduce((s: number, i: any) => s + (Number(i.amount || 0) - Number(i.amount_paid || 0)), 0);
 
     const expenseTotal = expenses.reduce((s: number, e: any) => s + Number(e.total_amount ?? e.amount ?? 0), 0);
     const byCat = new Map<string, number>();
@@ -65,7 +65,7 @@ export const financeReport = createServerFn({ method: "POST" })
 
     // Aging: uses ALL unpaid invoices as-of "to"
     const { data: openInvs, error: agingErr } = await supabase
-      .from("invoices").select("amount, amount_paid, due_date, status").neq("status", "void").neq("status", "paid");
+      .from("invoices").select("amount, amount_paid, due_date, status").neq("status", "cancelled").neq("status", "paid");
     if (agingErr) throw new Error(agingErr.message);
     const today = new Date(toEnd);
     const buckets = { Current: { amount: 0, count: 0 }, "1-30": { amount: 0, count: 0 }, "31-60": { amount: 0, count: 0 }, "61-90": { amount: 0, count: 0 }, "90+": { amount: 0, count: 0 } };
@@ -92,7 +92,7 @@ export const financeReport = createServerFn({ method: "POST" })
     const monthMap = new Map<string, { invoiced: number; collected: number; expenses: number }>();
     const key = (d: string | Date) => new Date(d).toISOString().slice(0, 7);
     for (const i of invoices) {
-      if (i.status === "void") continue;
+      if (i.status === "cancelled") continue;
       const k = key(i.created_at);
       const c = monthMap.get(k) ?? { invoiced: 0, collected: 0, expenses: 0 };
       c.invoiced += Number(i.amount || 0);
