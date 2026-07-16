@@ -47,8 +47,10 @@ const salesItems: NavItem[] = [
   { to: "/admin/payments", label: "Receipts", icon: CreditCard },
   { to: "/admin/statements", label: "Statements", icon: FileSignature },
   { to: "/admin/templates", label: "Templates", icon: Settings },
+  { to: "/admin/reports", label: "Finance Reports", icon: BarChart3 },
   { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
 ];
+
 
 const purchasesItems: NavItem[] = [
   { to: "/admin/purchases", label: "Purchases Hub", icon: ShoppingBag },
