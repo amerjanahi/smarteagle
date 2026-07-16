@@ -36,6 +36,7 @@ import { Route as AuthenticatedAdminStatementsRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminSalesRouteImport } from './routes/_authenticated/admin/sales'
 import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authenticated/admin/residents'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
 import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
 import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
 import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
@@ -207,6 +208,12 @@ const AuthenticatedAdminResidentsRoute =
     path: '/residents',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPurchasesRoute =
   AuthenticatedAdminPurchasesRouteImport.update({
     id: '/purchases',
@@ -363,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -410,6 +418,7 @@ export interface FileRoutesByTo {
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -461,6 +470,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/_authenticated/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/_authenticated/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -512,6 +522,7 @@ export interface FileRouteTypes {
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
     | '/admin/purchases'
+    | '/admin/reports'
     | '/admin/residents'
     | '/admin/sales'
     | '/admin/settings'
@@ -559,6 +570,7 @@ export interface FileRouteTypes {
     | '/admin/purchase-invoices'
     | '/admin/purchase-reports'
     | '/admin/purchases'
+    | '/admin/reports'
     | '/admin/residents'
     | '/admin/sales'
     | '/admin/settings'
@@ -609,6 +621,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/purchase-invoices'
     | '/_authenticated/admin/purchase-reports'
     | '/_authenticated/admin/purchases'
+    | '/_authenticated/admin/reports'
     | '/_authenticated/admin/residents'
     | '/_authenticated/admin/sales'
     | '/_authenticated/admin/settings'
@@ -828,6 +841,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResidentsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/purchases': {
       id: '/_authenticated/admin/purchases'
       path: '/purchases'
@@ -1000,6 +1020,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
   AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminResidentsRoute: typeof AuthenticatedAdminResidentsRoute
   AuthenticatedAdminSalesRoute: typeof AuthenticatedAdminSalesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -1041,6 +1062,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminPurchaseReportsRoute:
       AuthenticatedAdminPurchaseReportsRoute,
     AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
+    AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
     AuthenticatedAdminResidentsRoute: AuthenticatedAdminResidentsRoute,
     AuthenticatedAdminSalesRoute: AuthenticatedAdminSalesRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
@@ -1123,13 +1145,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
