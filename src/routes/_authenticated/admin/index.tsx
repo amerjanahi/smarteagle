@@ -50,7 +50,10 @@ const CATEGORY_META: Record<ExpenseCategory, { label: string; icon: typeof Brief
   other:       { label: "Other",       icon: Receipt,     tone: "text-muted-foreground" },
 };
 
+import { useCurrency } from "@/hooks/use-currency";
+
 function AdminDashboard() {
+  const { format: fmtBHD } = useCurrency();
   const [presetKey, setPresetKey] = useState<PresetKey>("year");
   const [range, setRange] = useState<DateRange>(() => PRESETS[2].range());
 
