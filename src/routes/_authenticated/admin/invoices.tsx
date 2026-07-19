@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/invoices")({
   head: () => ({ meta: [{ title: "Invoices — Hayy Admin" }] }),
@@ -27,6 +28,7 @@ type Attachment = { name: string; url: string };
 const blankLine = (): Line => ({ description: "", quantity: 1, unit_price: 0, tax_rate: 5 });
 
 function InvoicesPage() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchInvoices = useServerFn(listInvoices);
   const fetchUnits = useServerFn(listUnits);
@@ -360,10 +362,10 @@ function InvoicesPage() {
                         onChange={(e) => setForm({ ...form, discount_amount: +e.target.value })} />
                     </div>
                     <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">
-                      <div className="flex justify-between"><span>Subtotal</span><span>AED {subtotal.toFixed(2)}</span></div>
-                      <div className="flex justify-between"><span>VAT</span><span>AED {tax.toFixed(2)}</span></div>
-                      <div className="flex justify-between text-muted-foreground"><span>Discount</span><span>− AED {Number(form.discount_amount || 0).toFixed(2)}</span></div>
-                      <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Total</span><span>AED {total.toFixed(2)}</span></div>
+                      <div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div>
+                      <div className="flex justify-between"><span>VAT</span><span>{money(tax)}</span></div>
+                      <div className="flex justify-between text-muted-foreground"><span>Discount</span><span>− {money(form.discount_amount || 0)}</span></div>
+                      <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Total</span><span>{money(total)}</span></div>
                     </div>
                   </div>
 
@@ -404,7 +406,7 @@ function InvoicesPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
-              {createMut.isPending ? "Creating…" : `Create invoice (AED ${total.toFixed(2)})`}
+              {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
             </Button>
           </DialogFooter>
         </DialogContent>

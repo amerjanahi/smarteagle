@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useCurrency } from "@/hooks/use-currency";
 
 type Amenity = {
   id: string; name: string; description: string | null; hourly_rate: number;
@@ -24,6 +25,7 @@ const empty = {
 };
 
 export default function AmenitiesManager() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Amenity | null>(null);
@@ -96,9 +98,9 @@ export default function AmenitiesManager() {
               <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
               <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label>Hourly rate (BHD)</Label><Input type="number" step="0.001" value={form.hourly_rate} onChange={(e) => setForm({ ...form, hourly_rate: Number(e.target.value) })} /></div>
+                <div><Label>Hourly rate</Label><Input type="number" step="0.001" value={form.hourly_rate} onChange={(e) => setForm({ ...form, hourly_rate: Number(e.target.value) })} /></div>
                 <div><Label>Capacity</Label><Input type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: Number(e.target.value) })} /></div>
-                <div><Label>Deposit (BHD)</Label><Input type="number" step="0.001" value={form.deposit_amount} onChange={(e) => setForm({ ...form, deposit_amount: Number(e.target.value) })} /></div>
+                <div><Label>Deposit</Label><Input type="number" step="0.001" value={form.deposit_amount} onChange={(e) => setForm({ ...form, deposit_amount: Number(e.target.value) })} /></div>
                 <div><Label>VAT rate %</Label><Input type="number" step="0.01" value={form.vat_rate} onChange={(e) => setForm({ ...form, vat_rate: Number(e.target.value) })} /></div>
               </div>
               <div className="flex items-center justify-between"><Label>Active</Label><Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} /></div>
@@ -125,8 +127,8 @@ export default function AmenitiesManager() {
               {items.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell><div className="font-medium">{a.name}</div>{a.description && <div className="text-xs text-muted-foreground">{a.description}</div>}</TableCell>
-                  <TableCell>BHD {Number(a.hourly_rate).toFixed(3)}</TableCell>
-                  <TableCell>BHD {Number(a.deposit_amount).toFixed(3)}</TableCell>
+                  <TableCell>{money(a.hourly_rate)}</TableCell>
+                  <TableCell>{money(a.deposit_amount)}</TableCell>
                   <TableCell>{Number(a.vat_rate).toFixed(2)}%</TableCell>
                   <TableCell>{a.capacity ?? "—"}</TableCell>
                   <TableCell className="space-x-1">

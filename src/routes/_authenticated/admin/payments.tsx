@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Download } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/payments")({
   head: () => ({ meta: [{ title: "Payments — Hayy Admin" }] }),
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin/payments")({
 });
 
 function PaymentsPage() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchPayments = useServerFn(listPayments);
   const fetchInvoices = useServerFn(listInvoices);
@@ -139,7 +141,7 @@ function PaymentsPage() {
                     })}
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Allocated: AED {allocSum.toFixed(2)} • Unallocated: AED {Math.max(amount - allocSum, 0).toFixed(2)}
+                    Allocated: {money(allocSum)} • Unallocated: {money(Math.max(amount - allocSum, 0))}
                   </p>
                 </div>
               )}
@@ -179,8 +181,8 @@ function PaymentsPage() {
                 <TableCell>{p.invoices?.units?.unit_number ?? "—"}</TableCell>
                 <TableCell>{new Date(p.paid_at).toLocaleDateString()}</TableCell>
                 <TableCell className="capitalize">{p.payment_method}</TableCell>
-                <TableCell>AED {Number(p.amount).toFixed(2)}</TableCell>
-                <TableCell>AED {Number(p.allocated_amount).toFixed(2)}</TableCell>
+                <TableCell>{money(p.amount)}</TableCell>
+                <TableCell>{money(p.allocated_amount)}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" onClick={() => handlePdf(p.id)}><Download className="h-4 w-4" /></Button>
                 </TableCell>

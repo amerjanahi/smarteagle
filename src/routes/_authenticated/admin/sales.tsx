@@ -11,11 +11,10 @@ export const Route = createFileRoute("/_authenticated/admin/sales")({
   component: SalesDashboard,
 });
 
-function money(n: number) {
-  return `AED ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
+import { useCurrency } from "@/hooks/use-currency";
 
 function SalesDashboard() {
+  const { format: money } = useCurrency();
   const fetchDash = useServerFn(salesDashboard);
   const { data, isLoading } = useQuery({
     queryKey: ["sales-dashboard"],

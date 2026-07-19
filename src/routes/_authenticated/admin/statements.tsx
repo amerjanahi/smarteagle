@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Download } from "lucide-react";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/statements")({
   head: () => ({ meta: [{ title: "Statements — Hayy Admin" }] }),
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin/statements")({
 });
 
 function StatementsPage() {
+  const { format: money, code: currencyCode } = useCurrency();
   const fetchUnits = useServerFn(listUnits);
   const fetchStatement = useServerFn(getCustomerStatement);
   const genPdf = useServerFn(generateDocumentPdf);
@@ -83,7 +85,7 @@ function StatementsPage() {
           <div className="flex items-center justify-between border-b border-border p-4">
             <div>
               <p className="text-xs text-muted-foreground">Outstanding balance</p>
-              <p className="text-2xl font-bold">AED {finalBalance.toFixed(2)}</p>
+              <p className="text-2xl font-bold">{money(finalBalance)}</p>
             </div>
             <Button onClick={downloadPdf}><Download className="mr-2 h-4 w-4" /> Download PDF</Button>
           </div>

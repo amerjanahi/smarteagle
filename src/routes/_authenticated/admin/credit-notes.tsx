@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Download } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/credit-notes")({
   head: () => ({ meta: [{ title: "Credit Notes — Hayy Admin" }] }),
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin/credit-notes")({
 });
 
 function CreditNotesPage() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchList = useServerFn(listCreditNotes);
   const fetchUnits = useServerFn(listUnits);
@@ -114,9 +116,9 @@ function CreditNotesPage() {
                 <TableCell className="font-mono text-xs">{c.credit_note_number}</TableCell>
                 <TableCell>{c.units?.building} • {c.units?.unit_number}</TableCell>
                 <TableCell>{new Date(c.issued_at).toLocaleDateString()}</TableCell>
-                <TableCell>AED {Number(c.amount).toFixed(2)}</TableCell>
-                <TableCell>AED {Number(c.applied_amount).toFixed(2)}</TableCell>
-                <TableCell>AED {Number(c.balance).toFixed(2)}</TableCell>
+                <TableCell>{money(c.amount)}</TableCell>
+                <TableCell>{money(c.applied_amount)}</TableCell>
+                <TableCell>{money(c.balance)}</TableCell>
                 <TableCell><Badge variant={c.status === "applied" ? "default" : "secondary"}>{c.status}</Badge></TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" onClick={() => handlePdf(c.id)}><Download className="h-4 w-4" /></Button>

@@ -10,10 +10,10 @@ export const Route = createFileRoute("/_authenticated/admin/purchases")({
   component: PurchasesHub,
 });
 
-const money = (n: number) =>
-  `AED ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { useCurrency } from "@/hooks/use-currency";
 
 function PurchasesHub() {
+  const { format: money } = useCurrency();
   const fetchDash = useServerFn(purchasesDashboard);
   const { data, isLoading } = useQuery({ queryKey: ["purchases-dashboard"], queryFn: () => fetchDash() });
 

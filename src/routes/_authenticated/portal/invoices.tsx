@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useCurrency } from "@/hooks/use-currency";
 import { FileText, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/portal/invoices")({
 
 function InvoicesPage() {
   const { user } = useAuth();
+  const { format: money } = useCurrency();
   const { data: invoices, isLoading } = useQuery({
     queryKey: ["portal-invoices", user?.id],
     enabled: !!user?.id,
@@ -42,7 +44,7 @@ function InvoicesPage() {
       <header>
         <h1 className="font-display text-2xl font-bold">Invoices</h1>
         <p className="text-sm text-muted-foreground">
-          Outstanding: <span className="font-semibold text-foreground">BHD {outstanding.toFixed(3)}</span>
+          Outstanding: <span className="font-semibold text-foreground">{money(outstanding)}</span>
         </p>
       </header>
 
@@ -72,13 +74,13 @@ function InvoicesPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-display text-lg font-bold">BHD {Number(inv.amount).toFixed(3)}</p>
+                  <p className="font-display text-lg font-bold">{money(inv.amount)}</p>
                   <Badge variant={inv.status === "paid" ? "secondary" : overdue ? "destructive" : "outline"}>
                     {inv.status}
                   </Badge>
                   {due > 0 && (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Remaining BHD {due.toFixed(3)}
+                      Remaining {money(due)}
                     </p>
                   )}
                 </div>

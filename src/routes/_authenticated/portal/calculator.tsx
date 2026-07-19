@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useCurrency } from "@/hooks/use-currency";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/_authenticated/portal/calculator")({
 
 function CalculatorPage() {
   const { user } = useAuth();
+  const { format: money } = useCurrency();
   const [unitId, setUnitId] = useState<string>("");
   const [months, setMonths] = useState(12);
 
@@ -72,9 +74,9 @@ function CalculatorPage() {
         <div className="flex items-center gap-2 text-sm opacity-80">
           <Calculator className="h-4 w-4" /> Estimated total
         </div>
-        <p className="mt-2 font-display text-4xl font-extrabold">BHD {total.toFixed(3)}</p>
+        <p className="mt-2 font-display text-4xl font-extrabold">{money(total)}</p>
         <p className="mt-1 text-sm opacity-80">
-          {months} month{months === 1 ? "" : "s"} × BHD {monthly.toFixed(3)}/mo
+          {months} month{months === 1 ? "" : "s"} × {money(monthly)}/mo
         </p>
       </div>
 
@@ -90,11 +92,11 @@ function CalculatorPage() {
           </div>
           <div className="rounded-xl border border-border bg-card p-3">
             <dt className="text-xs text-muted-foreground">Rate / m²</dt>
-            <dd className="font-semibold">BHD {perSqm.toFixed(3)}</dd>
+            <dd className="font-semibold">{money(perSqm)}</dd>
           </div>
           <div className="rounded-xl border border-border bg-card p-3">
             <dt className="text-xs text-muted-foreground">Monthly</dt>
-            <dd className="font-semibold">BHD {monthly.toFixed(3)}</dd>
+            <dd className="font-semibold">{money(monthly)}</dd>
           </div>
         </dl>
       )}

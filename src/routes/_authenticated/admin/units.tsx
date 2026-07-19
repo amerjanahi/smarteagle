@@ -23,14 +23,16 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/units")({
   head: () => ({ meta: [{ title: "Units — Hayy Admin" }] }),
   component: UnitsPage,
 });
 
-const bhd = new Intl.NumberFormat("en-BH", { minimumFractionDigits: 3, maximumFractionDigits: 3, useGrouping: true });
-const fmtBHD = (n: number | null | undefined) => (n == null ? "—" : `BHD ${bhd.format(Number(n))}`);
+let CURRENT_MONEY: (n: number | null | undefined) => string = (n) =>
+  n == null ? "—" : Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+const fmtBHD = (n: number | null | undefined) => CURRENT_MONEY(n);
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—");
 
 type Unit = {
@@ -125,6 +127,8 @@ const SORT_OPTIONS: { value: string; label: string; key: SortKey; asc: boolean }
 ];
 
 function UnitsPage() {
+  const { format: money } = useCurrency();
+  CURRENT_MONEY = (n) => (n == null ? "—" : money(Number(n)));
   const [search, setSearch] = useState("");
   const [building, setBuilding] = useState<string>("all");
   const [occupancy, setOccupancy] = useState<"all" | "occupied" | "vacant">("all");
