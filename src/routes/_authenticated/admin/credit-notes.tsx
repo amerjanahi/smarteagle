@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin/credit-notes")({
 });
 
 function CreditNotesPage() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchList = useServerFn(listCreditNotes);
   const fetchUnits = useServerFn(listUnits);
