@@ -80,7 +80,7 @@ function InvoicesPage() {
                   </Badge>
                   {due > 0 && (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Remaining BHD {due.toFixed(3)}
+                      Remaining {money(due)}
                     </p>
                   )}
                 </div>
