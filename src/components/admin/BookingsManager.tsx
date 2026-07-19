@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PURPOSE_LABELS, calcBooking, hoursBetween } from "@/lib/booking-calculator";
+import { useCurrency } from "@/hooks/use-currency";
 
 type Status = "pending" | "confirmed" | "approved" | "rejected" | "cancelled" | "paid" | "completed";
 
