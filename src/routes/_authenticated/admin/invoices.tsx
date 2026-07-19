@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/invoices")({
   head: () => ({ meta: [{ title: "Invoices — Hayy Admin" }] }),
