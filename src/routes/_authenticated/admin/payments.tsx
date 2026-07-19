@@ -141,7 +141,7 @@ function PaymentsPage() {
                     })}
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Allocated: AED {allocSum.toFixed(2)} • Unallocated: AED {Math.max(amount - allocSum, 0).toFixed(2)}
+                    Allocated: {money(allocSum)} • Unallocated: {money(Math.max(amount - allocSum, 0))}
                   </p>
                 </div>
               )}
