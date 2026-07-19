@@ -17,6 +17,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useCurrency } from "@/hooks/use-currency";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
