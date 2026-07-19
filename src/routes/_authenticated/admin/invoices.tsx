@@ -28,6 +28,7 @@ type Attachment = { name: string; url: string };
 const blankLine = (): Line => ({ description: "", quantity: 1, unit_price: 0, tax_rate: 5 });
 
 function InvoicesPage() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchInvoices = useServerFn(listInvoices);
   const fetchUnits = useServerFn(listUnits);
