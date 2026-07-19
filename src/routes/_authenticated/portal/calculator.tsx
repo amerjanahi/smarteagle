@@ -74,9 +74,9 @@ function CalculatorPage() {
         <div className="flex items-center gap-2 text-sm opacity-80">
           <Calculator className="h-4 w-4" /> Estimated total
         </div>
-        <p className="mt-2 font-display text-4xl font-extrabold">BHD {total.toFixed(3)}</p>
+        <p className="mt-2 font-display text-4xl font-extrabold">{money(total)}</p>
         <p className="mt-1 text-sm opacity-80">
-          {months} month{months === 1 ? "" : "s"} × BHD {monthly.toFixed(3)}/mo
+          {months} month{months === 1 ? "" : "s"} × {money(monthly)}/mo
         </p>
       </div>
 
