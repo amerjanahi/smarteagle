@@ -130,34 +130,35 @@ function AdminShell() {
     const active = items.some((i) => pathname === i.to);
     return (
       <Collapsible open={open} onOpenChange={setOpen}>
-        <SidebarMenuSubItem>
+        <SidebarMenuItem>
           <CollapsibleTrigger asChild>
-            <SidebarMenuSubButton isActive={active} className="justify-between">
+            <SidebarMenuButton isActive={active} className="justify-between">
               <span className="flex items-center gap-2">
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className="h-4 w-4" />
                 <span>{label}</span>
               </span>
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
-            </SidebarMenuSubButton>
+              <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+            </SidebarMenuButton>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <ul className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-2">
+            <SidebarMenuSub>
               {items.map((item) => (
-                <li key={item.to}>
-                  <SidebarMenuSubButton asChild isActive={pathname === item.to} size="sm">
+                <SidebarMenuSubItem key={item.to}>
+                  <SidebarMenuSubButton asChild isActive={pathname === item.to}>
                     <Link to={item.to}>
-                      <item.icon className="h-3.5 w-3.5" />
+                      <item.icon className="h-4 w-4" />
                       <span>{item.label}</span>
                     </Link>
                   </SidebarMenuSubButton>
-                </li>
+                </SidebarMenuSubItem>
               ))}
-            </ul>
+            </SidebarMenuSub>
           </CollapsibleContent>
-        </SidebarMenuSubItem>
+        </SidebarMenuItem>
       </Collapsible>
     );
   };
+
 
   return (
     <SidebarProvider>
@@ -185,28 +186,27 @@ function AdminShell() {
               <SidebarGroupLabel>Finance</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <SidebarMenuSub>
-                    {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
-                    {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
-                    {renderSubsection("Bank", Landmark, bankItems, bankOpen, setBankOpen)}
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild isActive={pathname === "/admin/chart-of-accounts"}>
-                        <Link to="/admin/chart-of-accounts">
-                          <BookOpen className="h-3.5 w-3.5" />
-                          <span>Chart of Accounts</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild isActive={pathname === "/admin/annual-fees"}>
-                        <Link to="/admin/annual-fees">
-                          <Calculator className="h-3.5 w-3.5" />
-                          <span>Annual Fees</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
+                  {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
+                  {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
+                  {renderSubsection("Bank", Landmark, bankItems, bankOpen, setBankOpen)}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/admin/chart-of-accounts"}>
+                      <Link to="/admin/chart-of-accounts">
+                        <BookOpen className="h-4 w-4" />
+                        <span>Chart of Accounts</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/admin/annual-fees"}>
+                      <Link to="/admin/annual-fees">
+                        <Calculator className="h-4 w-4" />
+                        <span>Annual Fees</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
+
               </SidebarGroupContent>
             </SidebarGroup>
 
