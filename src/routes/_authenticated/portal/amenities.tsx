@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calcBooking, hoursBetween, PURPOSE_LABELS, type BookingPurpose, type ExtraService } from "@/lib/booking-calculator";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/portal/amenities")({
   head: () => ({ meta: [{ title: "Book Amenities — Hayy" }] }),
