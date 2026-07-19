@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Download } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/credit-notes")({
   head: () => ({ meta: [{ title: "Credit Notes — Hayy Admin" }] }),
