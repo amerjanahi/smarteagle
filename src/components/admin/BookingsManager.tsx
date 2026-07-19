@@ -113,7 +113,7 @@ export default function BookingsManager() {
                 </TableCell>
                 <TableCell>{PURPOSE_LABELS[b.purpose as keyof typeof PURPOSE_LABELS] ?? b.purpose}</TableCell>
                 <TableCell>{b.hours ?? "—"}</TableCell>
-                <TableCell>BHD {Number(b.total_amount).toFixed(3)}</TableCell>
+                <TableCell>{money(b.total_amount)}</TableCell>
                 <TableCell><Badge variant={STATUS_COLORS[b.status] ?? "outline"}>{b.status}</Badge></TableCell>
                 <TableCell className="space-x-1 text-right">
                   {b.status === "pending" && (
@@ -256,10 +256,10 @@ function NewBookingDialog({ onClose }: { onClose: () => void }) {
       {calc && (
         <div className="rounded-md border border-border bg-muted/30 p-3 text-sm space-y-1">
           <div className="flex justify-between"><span>Hours</span><span>{calc.hours}</span></div>
-          <div className="flex justify-between"><span>Base</span><span>BHD {calc.base.toFixed(3)}</span></div>
-          <div className="flex justify-between"><span>Deposit</span><span>BHD {calc.deposit.toFixed(3)}</span></div>
-          <div className="flex justify-between"><span>VAT</span><span>BHD {calc.vatAmount.toFixed(3)}</span></div>
-          <div className="flex justify-between font-bold border-t pt-1"><span>Total</span><span>BHD {calc.total.toFixed(3)}</span></div>
+          <div className="flex justify-between"><span>Base</span><span>{money(calc.base)}</span></div>
+          <div className="flex justify-between"><span>Deposit</span><span>{money(calc.deposit)}</span></div>
+          <div className="flex justify-between"><span>VAT</span><span>{money(calc.vatAmount)}</span></div>
+          <div className="flex justify-between font-bold border-t pt-1"><span>Total</span><span>{money(calc.total)}</span></div>
         </div>
       )}
       <DialogFooter>
