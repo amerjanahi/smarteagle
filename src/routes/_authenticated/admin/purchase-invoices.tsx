@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin/purchase-invoices")(
   component: PurchaseInvoicesPage,
 });
 
-const money = (n: number) => `AED ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { useCurrency } from "@/hooks/use-currency";
 
 function statusBadge(s: string) {
   const tone: Record<string, string> = {
