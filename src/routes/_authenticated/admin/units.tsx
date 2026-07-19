@@ -30,6 +30,9 @@ export const Route = createFileRoute("/_authenticated/admin/units")({
   component: UnitsPage,
 });
 
+let CURRENT_MONEY: (n: number | null | undefined) => string = (n) =>
+  n == null ? "—" : Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+const fmtBHD = (n: number | null | undefined) => CURRENT_MONEY(n);
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—");
 
 type Unit = {
