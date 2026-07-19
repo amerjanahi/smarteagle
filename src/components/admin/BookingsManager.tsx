@@ -36,6 +36,7 @@ const STATUS_COLORS: Record<string, "default" | "secondary" | "destructive" | "o
 function localDT(iso: string) { return new Date(iso).toISOString().slice(0,16); }
 
 export default function BookingsManager() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const [filter, setFilter] = useState<string>("all");
   const [createOpen, setCreateOpen] = useState(false);
