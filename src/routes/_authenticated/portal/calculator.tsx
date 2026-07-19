@@ -92,11 +92,11 @@ function CalculatorPage() {
           </div>
           <div className="rounded-xl border border-border bg-card p-3">
             <dt className="text-xs text-muted-foreground">Rate / m²</dt>
-            <dd className="font-semibold">BHD {perSqm.toFixed(3)}</dd>
+            <dd className="font-semibold">{money(perSqm)}</dd>
           </div>
           <div className="rounded-xl border border-border bg-card p-3">
             <dt className="text-xs text-muted-foreground">Monthly</dt>
-            <dd className="font-semibold">BHD {monthly.toFixed(3)}</dd>
+            <dd className="font-semibold">{money(monthly)}</dd>
           </div>
         </dl>
       )}
