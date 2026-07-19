@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin/statements")({
 });
 
 function StatementsPage() {
+  const { format: money, code: currencyCode } = useCurrency();
   const fetchUnits = useServerFn(listUnits);
   const fetchStatement = useServerFn(getCustomerStatement);
   const genPdf = useServerFn(generateDocumentPdf);
