@@ -16,6 +16,7 @@ export const Route = createFileRoute("/_authenticated/portal/calculator")({
 
 function CalculatorPage() {
   const { user } = useAuth();
+  const { format: money } = useCurrency();
   const [unitId, setUnitId] = useState<string>("");
   const [months, setMonths] = useState(12);
 
