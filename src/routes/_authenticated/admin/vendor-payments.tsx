@@ -20,9 +20,10 @@ export const Route = createFileRoute("/_authenticated/admin/vendor-payments")({
   component: VendorPaymentsPage,
 });
 
-const money = (n: number) => `AED ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { useCurrency } from "@/hooks/use-currency";
 
 function VendorPaymentsPage() {
+  const { format: money } = useCurrency();
   const fetchList = useServerFn(listVendorPayments);
   const fetchBills = useServerFn(listPurchaseInvoices);
   const fetchVendors = useServerFn(listVendors);
