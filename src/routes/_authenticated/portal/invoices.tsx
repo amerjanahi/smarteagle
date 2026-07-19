@@ -74,7 +74,7 @@ function InvoicesPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-display text-lg font-bold">BHD {Number(inv.amount).toFixed(3)}</p>
+                  <p className="font-display text-lg font-bold">{money(inv.amount)}</p>
                   <Badge variant={inv.status === "paid" ? "secondary" : overdue ? "destructive" : "outline"}>
                     {inv.status}
                   </Badge>
