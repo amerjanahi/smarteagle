@@ -3,18 +3,52 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type CurrencyInfo = { code: string; symbol: string; decimals: number };
 
-const DEFAULT: CurrencyInfo = { code: "AED", symbol: "AED", decimals: 2 };
+const STORAGE_KEY = "hayy-display-currency";
+const DEFAULT: CurrencyInfo = { code: "BHD", symbol: "BHD", decimals: 3 };
+
+export function persistCurrency(currency: CurrencyInfo) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(currency));
+}
+
+function storedCurrency(): CurrencyInfo | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const value = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null");
+    return value?.code && Number.isInteger(value?.decimals) ? value : null;
+  } catch {
+    return null;
+  }
+}
 
 export function useCurrency() {
   const { data } = useQuery({
     queryKey: ["active-currency"],
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<CurrencyInfo> => {
-      const { data: cs } = await (supabase.from("company_settings" as any).select("default_currency").maybeSingle() as any);
-      const code = cs?.default_currency ?? "AED";
-      const { data: cur } = await (supabase.from("currencies" as any).select("code, symbol, decimals").eq("code", code).maybeSingle() as any);
-      if (!cur) return { ...DEFAULT, code };
-      return { code: cur.code, symbol: cur.symbol ?? cur.code, decimals: cur.decimals ?? 2 };
+      const saved = storedCurrency();
+      const { data: settings, error: settingsError } = await (supabase
+        .from("company_settings" as any)
+        .select("default_currency")
+        .maybeSingle() as any);
+      const code = settings?.default_currency ?? saved?.code ?? DEFAULT.code;
+
+      if (settingsError && saved) return saved;
+
+      const { data: currency, error: currencyError } = await (supabase
+        .from("currencies" as any)
+        .select("code, decimals")
+        .eq("code", code)
+        .maybeSingle() as any);
+      if (currencyError && saved && saved.code === code) return saved;
+
+      const resolved = {
+        code,
+        symbol: code,
+        decimals: currency?.decimals ?? saved?.decimals ?? (code === "BHD" || code === "KWD" ? 3 : 2),
+      };
+      persistCurrency(resolved);
+      return resolved;
     },
   });
   const c = data ?? DEFAULT;

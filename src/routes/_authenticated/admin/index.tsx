@@ -53,7 +53,7 @@ const CATEGORY_META: Record<ExpenseCategory, { label: string; icon: typeof Brief
 import { useCurrency } from "@/hooks/use-currency";
 
 function AdminDashboard() {
-  const { format: fmtBHD } = useCurrency();
+  const { code: currencyCode, format: fmtBHD } = useCurrency();
   const [presetKey, setPresetKey] = useState<PresetKey>("year");
   const [range, setRange] = useState<DateRange>(() => PRESETS[2].range());
 
@@ -286,7 +286,7 @@ function AdminDashboard() {
       </section>
 
       <section>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Finance (BHD)</h3>
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Finance ({currencyCode})</h3>
         <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
           {financeCards.map((c) => (
             <div key={c.label} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
