@@ -106,7 +106,7 @@ function PortalHome() {
               <CheckCircle2 className="mr-1 h-3 w-3" /> Up to date
             </Badge>
           </div>
-          <p className="mt-0.5 font-display text-xl font-bold tabular-nums">BHD 0.000</p>
+          <p className="mt-0.5 font-display text-xl font-bold tabular-nums">{money(0)}</p>
         </div>
       </section>
 
