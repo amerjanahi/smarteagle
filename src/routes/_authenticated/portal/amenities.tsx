@@ -32,6 +32,7 @@ type MyBooking = {
 };
 
 function PortalAmenities() {
+  const { format: money, symbol: curSymbol } = useCurrency();
   const { user } = useAuth();
   const qc = useQueryClient();
   const [selected, setSelected] = useState<Amenity | null>(null);
