@@ -44,7 +44,7 @@ function InvoicesPage() {
       <header>
         <h1 className="font-display text-2xl font-bold">Invoices</h1>
         <p className="text-sm text-muted-foreground">
-          Outstanding: <span className="font-semibold text-foreground">BHD {outstanding.toFixed(3)}</span>
+          Outstanding: <span className="font-semibold text-foreground">{money(outstanding)}</span>
         </p>
       </header>
 
