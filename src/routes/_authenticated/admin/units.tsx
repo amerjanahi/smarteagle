@@ -23,14 +23,13 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 
 export const Route = createFileRoute("/_authenticated/admin/units")({
   head: () => ({ meta: [{ title: "Units — Hayy Admin" }] }),
   component: UnitsPage,
 });
 
-const bhd = new Intl.NumberFormat("en-BH", { minimumFractionDigits: 3, maximumFractionDigits: 3, useGrouping: true });
-const fmtBHD = (n: number | null | undefined) => (n == null ? "—" : `BHD ${bhd.format(Number(n))}`);
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—");
 
 type Unit = {
