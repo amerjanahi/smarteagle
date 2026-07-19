@@ -362,10 +362,10 @@ function InvoicesPage() {
                         onChange={(e) => setForm({ ...form, discount_amount: +e.target.value })} />
                     </div>
                     <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">
-                      <div className="flex justify-between"><span>Subtotal</span><span>AED {subtotal.toFixed(2)}</span></div>
-                      <div className="flex justify-between"><span>VAT</span><span>AED {tax.toFixed(2)}</span></div>
-                      <div className="flex justify-between text-muted-foreground"><span>Discount</span><span>− AED {Number(form.discount_amount || 0).toFixed(2)}</span></div>
-                      <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Total</span><span>AED {total.toFixed(2)}</span></div>
+                      <div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div>
+                      <div className="flex justify-between"><span>VAT</span><span>{money(tax)}</span></div>
+                      <div className="flex justify-between text-muted-foreground"><span>Discount</span><span>− {money(form.discount_amount || 0)}</span></div>
+                      <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Total</span><span>{money(total)}</span></div>
                     </div>
                   </div>
 
