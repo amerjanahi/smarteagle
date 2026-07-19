@@ -130,34 +130,35 @@ function AdminShell() {
     const active = items.some((i) => pathname === i.to);
     return (
       <Collapsible open={open} onOpenChange={setOpen}>
-        <SidebarMenuSubItem>
+        <SidebarMenuItem>
           <CollapsibleTrigger asChild>
-            <SidebarMenuSubButton isActive={active} className="justify-between">
+            <SidebarMenuButton isActive={active} className="justify-between">
               <span className="flex items-center gap-2">
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className="h-4 w-4" />
                 <span>{label}</span>
               </span>
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
-            </SidebarMenuSubButton>
+              <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+            </SidebarMenuButton>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <ul className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-2">
+            <SidebarMenuSub>
               {items.map((item) => (
-                <li key={item.to}>
-                  <SidebarMenuSubButton asChild isActive={pathname === item.to} size="sm">
+                <SidebarMenuSubItem key={item.to}>
+                  <SidebarMenuSubButton asChild isActive={pathname === item.to}>
                     <Link to={item.to}>
-                      <item.icon className="h-3.5 w-3.5" />
+                      <item.icon className="h-4 w-4" />
                       <span>{item.label}</span>
                     </Link>
                   </SidebarMenuSubButton>
-                </li>
+                </SidebarMenuSubItem>
               ))}
-            </ul>
+            </SidebarMenuSub>
           </CollapsibleContent>
-        </SidebarMenuSubItem>
+        </SidebarMenuItem>
       </Collapsible>
     );
   };
+
 
   return (
     <SidebarProvider>
