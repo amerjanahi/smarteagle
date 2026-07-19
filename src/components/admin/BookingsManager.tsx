@@ -165,6 +165,7 @@ function RescheduleDialog({ booking, onSave }: { booking: Booking | null; onSave
 }
 
 function NewBookingDialog({ onClose }: { onClose: () => void }) {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const [amenityId, setAmenityId] = useState("");
   const [residentId, setResidentId] = useState("");
