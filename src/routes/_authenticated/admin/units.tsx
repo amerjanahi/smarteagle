@@ -127,6 +127,8 @@ const SORT_OPTIONS: { value: string; label: string; key: SortKey; asc: boolean }
 ];
 
 function UnitsPage() {
+  const { format: money } = useCurrency();
+  CURRENT_MONEY = (n) => (n == null ? "—" : money(Number(n)));
   const [search, setSearch] = useState("");
   const [building, setBuilding] = useState<string>("all");
   const [occupancy, setOccupancy] = useState<"all" | "occupied" | "vacant">("all");
