@@ -41,6 +41,7 @@ function approvalBadge(s: string) {
 }
 
 function PurchaseInvoicesPage() {
+  const { format: money } = useCurrency();
   const fetchList = useServerFn(listPurchaseInvoices);
   const fetchVendors = useServerFn(listVendors);
   const create = useServerFn(createPurchaseInvoice);
