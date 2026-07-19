@@ -28,12 +28,6 @@ export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminDashboard,
 });
 
-const bhd = new Intl.NumberFormat("en-BH", {
-  minimumFractionDigits: 3,
-  maximumFractionDigits: 3,
-  useGrouping: true,
-});
-const fmtBHD = (n: number) => `BHD ${bhd.format(n)}`;
 const fmtPct = (n: number) => `${n.toFixed(1)}%`;
 
 type PresetKey = "month" | "quarter" | "year" | "ytd" | "custom";
