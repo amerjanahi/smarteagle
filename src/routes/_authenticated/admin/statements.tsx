@@ -85,7 +85,7 @@ function StatementsPage() {
           <div className="flex items-center justify-between border-b border-border p-4">
             <div>
               <p className="text-xs text-muted-foreground">Outstanding balance</p>
-              <p className="text-2xl font-bold">AED {finalBalance.toFixed(2)}</p>
+              <p className="text-2xl font-bold">{money(finalBalance)}</p>
             </div>
             <Button onClick={downloadPdf}><Download className="mr-2 h-4 w-4" /> Download PDF</Button>
           </div>
