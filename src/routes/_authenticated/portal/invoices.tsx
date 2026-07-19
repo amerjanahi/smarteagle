@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/portal/invoices")({
 
 function InvoicesPage() {
   const { user } = useAuth();
+  const { format: money } = useCurrency();
   const { data: invoices, isLoading } = useQuery({
     queryKey: ["portal-invoices", user?.id],
     enabled: !!user?.id,
