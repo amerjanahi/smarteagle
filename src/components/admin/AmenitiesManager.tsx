@@ -25,6 +25,7 @@ const empty = {
 };
 
 export default function AmenitiesManager() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Amenity | null>(null);
