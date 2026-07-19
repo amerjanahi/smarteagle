@@ -133,6 +133,7 @@ function PortalAmenities() {
 function BookDialog({ amenity, onClose, onBooked, userId }: {
   amenity: Amenity; onClose: () => void; onBooked: () => void; userId: string | null;
 }) {
+  const { format: money, symbol: curSymbol } = useCurrency();
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [purpose, setPurpose] = useState<BookingPurpose>("personal");
