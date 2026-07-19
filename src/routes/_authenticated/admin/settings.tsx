@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { persistCurrency } from "@/hooks/use-currency";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -145,16 +146,24 @@ function CurrencyTab() {
 
   const setDefault = useMutation({
     mutationFn: async (code: string) => {
-      await (supabase.from("currencies" as any).update({ is_default: false }).neq("code", "") as any);
-      await (supabase.from("currencies" as any).update({ is_default: true }).eq("code", code) as any);
+      const { error: clearError } = await (supabase.from("currencies" as any).update({ is_default: false }).neq("code", "") as any);
+      if (clearError) throw clearError;
+      const { error: currencyError } = await (supabase.from("currencies" as any).update({ is_default: true }).eq("code", code) as any);
+      if (currencyError) throw currencyError;
       if (settings?.id) {
-        await (supabase.from("company_settings" as any).update({ default_currency: code }).eq("id", settings.id) as any);
+        const { error } = await (supabase.from("company_settings" as any).update({ default_currency: code }).eq("id", settings.id) as any);
+        if (error) throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, code) => {
+      const selected = currencies.find((currency: any) => currency.code === code);
+      const activeCurrency = { code, symbol: code, decimals: selected?.decimals ?? 2 };
+      persistCurrency(activeCurrency);
+      qc.setQueryData(["active-currency"], activeCurrency);
       toast.success("Default updated");
       qc.invalidateQueries({ queryKey: ["currencies"] });
       qc.invalidateQueries({ queryKey: ["company-settings"] });
+      qc.invalidateQueries({ queryKey: ["active-currency"] });
     },
   });
 
