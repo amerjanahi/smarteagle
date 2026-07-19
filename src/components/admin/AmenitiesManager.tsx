@@ -127,8 +127,8 @@ export default function AmenitiesManager() {
               {items.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell><div className="font-medium">{a.name}</div>{a.description && <div className="text-xs text-muted-foreground">{a.description}</div>}</TableCell>
-                  <TableCell>BHD {Number(a.hourly_rate).toFixed(3)}</TableCell>
-                  <TableCell>BHD {Number(a.deposit_amount).toFixed(3)}</TableCell>
+                  <TableCell>{money(a.hourly_rate)}</TableCell>
+                  <TableCell>{money(a.deposit_amount)}</TableCell>
                   <TableCell>{Number(a.vat_rate).toFixed(2)}%</TableCell>
                   <TableCell>{a.capacity ?? "—"}</TableCell>
                   <TableCell className="space-x-1">
