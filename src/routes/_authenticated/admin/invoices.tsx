@@ -406,7 +406,7 @@ function InvoicesPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
-              {createMut.isPending ? "Creating…" : `Create invoice (AED ${total.toFixed(2)})`}
+              {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
             </Button>
           </DialogFooter>
         </DialogContent>
