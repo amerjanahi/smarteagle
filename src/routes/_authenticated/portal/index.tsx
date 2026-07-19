@@ -28,6 +28,7 @@ export const Route = createFileRoute("/_authenticated/portal/")({
 
 function PortalHome() {
   const { user } = useAuth();
+  const { format: money } = useCurrency();
   const fullName =
     ((user?.user_metadata as { full_name?: string } | undefined)?.full_name?.trim()) ||
     user?.email?.split("@")[0] ||
