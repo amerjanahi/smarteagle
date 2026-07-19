@@ -10,12 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Download, Printer, TrendingUp, TrendingDown, Wallet, FileText } from "lucide-react";
 
+import { useCurrency } from "@/hooks/use-currency";
+
 export const Route = createFileRoute("/_authenticated/admin/reports")({
   head: () => ({ meta: [{ title: "Finance Reports — Hayy Admin" }] }),
   component: ReportsPage,
 });
-
-const money = (n: number) => `AED ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 function firstOfMonth() {
   const d = new Date();
