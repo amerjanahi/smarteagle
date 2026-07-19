@@ -82,7 +82,7 @@ function PortalAmenities() {
               {a.requires_approval && <Badge variant="outline">Approval</Badge>}
             </div>
             <div className="mt-2 flex items-center justify-between text-sm">
-              <span>BHD {Number(a.hourly_rate).toFixed(3)}/hr</span>
+              <span>{money(a.hourly_rate)}/hr</span>
               <Button size="sm" onClick={() => setSelected(a)}><Plus className="mr-1 h-4 w-4" />Book</Button>
             </div>
           </div>
@@ -107,7 +107,7 @@ function PortalAmenities() {
                 </div>
                 <div className="text-right">
                   <Badge variant={b.status === "paid" ? "default" : b.status === "rejected" || b.status === "cancelled" ? "destructive" : "secondary"}>{b.status}</Badge>
-                  <p className="mt-1 text-xs">BHD {Number(b.total_amount).toFixed(3)}</p>
+                  <p className="mt-1 text-xs">{money(b.total_amount)}</p>
                 </div>
               </li>
             ))}
@@ -213,7 +213,7 @@ function BookDialog({ amenity, onClose, onBooked, userId }: {
             <Label className="text-xs uppercase tracking-wide text-muted-foreground">Extra services</Label>
             <div className="mt-2 flex gap-2">
               <Input placeholder="e.g. Setup crew" value={extraName} onChange={(e) => setExtraName(e.target.value)} />
-              <Input type="number" step="0.001" placeholder="BHD" className="w-28" value={extraAmount} onChange={(e) => setExtraAmount(Number(e.target.value))} />
+              <Input type="number" step="0.001" placeholder={curSymbol} className="w-28" value={extraAmount} onChange={(e) => setExtraAmount(Number(e.target.value))} />
               <Button type="button" size="sm" variant="outline" onClick={addExtra}>Add</Button>
             </div>
             {extras.length > 0 && (
@@ -221,7 +221,7 @@ function BookDialog({ amenity, onClose, onBooked, userId }: {
                 {extras.map((e, i) => (
                   <li key={i} className="flex items-center justify-between rounded bg-muted/40 px-2 py-1">
                     <span>{e.name}</span>
-                    <span className="flex items-center gap-2">BHD {e.amount.toFixed(3)}
+                    <span className="flex items-center gap-2">{money(e.amount)}
                       <button onClick={() => setExtras(extras.filter((_, j) => j !== i))}><X className="h-3 w-3" /></button>
                     </span>
                   </li>
@@ -232,11 +232,11 @@ function BookDialog({ amenity, onClose, onBooked, userId }: {
 
           <div className="rounded-lg bg-muted/40 p-3 text-sm">
             <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">Calculator</p>
-            <div className="flex justify-between"><span>{hours} hrs × BHD {amenity.hourly_rate.toFixed(3)} × {breakdown.multiplier}×</span><span>BHD {breakdown.base.toFixed(3)}</span></div>
-            <div className="flex justify-between"><span>Extras</span><span>BHD {breakdown.extras.toFixed(3)}</span></div>
-            <div className="flex justify-between"><span>VAT {amenity.vat_rate}%</span><span>BHD {breakdown.vatAmount.toFixed(3)}</span></div>
-            <div className="flex justify-between"><span>Deposit</span><span>BHD {breakdown.deposit.toFixed(3)}</span></div>
-            <div className="mt-2 flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span>BHD {breakdown.total.toFixed(3)}</span></div>
+            <div className="flex justify-between"><span>{hours} hrs × {money(amenity.hourly_rate)} × {breakdown.multiplier}×</span><span>{money(breakdown.base)}</span></div>
+            <div className="flex justify-between"><span>Extras</span><span>{money(breakdown.extras)}</span></div>
+            <div className="flex justify-between"><span>VAT {amenity.vat_rate}%</span><span>{money(breakdown.vatAmount)}</span></div>
+            <div className="flex justify-between"><span>Deposit</span><span>{money(breakdown.deposit)}</span></div>
+            <div className="mt-2 flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span>{money(breakdown.total)}</span></div>
           </div>
 
           {amenity.requires_approval && (
