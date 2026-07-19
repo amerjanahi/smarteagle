@@ -40,7 +40,7 @@ export function useCurrency() {
         .select("code, decimals")
         .eq("code", code)
         .maybeSingle() as any);
-      if (currencyError && saved?.code === code) return saved;
+      if (currencyError && saved && saved.code === code) return saved;
 
       const resolved = {
         code,
