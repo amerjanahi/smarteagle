@@ -21,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin/payments")({
 });
 
 function PaymentsPage() {
+  const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchPayments = useServerFn(listPayments);
   const fetchInvoices = useServerFn(listInvoices);
