@@ -144,7 +144,7 @@ export const createInvoice = createServerFn({ method: "POST" })
         customer_email: data.customer_email,
         customer_phone: data.customer_phone,
         attachments: data.attachments ?? [],
-        currency: data.currency ?? "AED",
+        currency: data.currency ?? (await context.supabase.from("company_settings").select("default_currency").maybeSingle()).data?.default_currency ?? "AED",
         status: "unpaid",
         invoice_number: "",
       } as any)
