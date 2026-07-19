@@ -181,8 +181,8 @@ function PaymentsPage() {
                 <TableCell>{p.invoices?.units?.unit_number ?? "—"}</TableCell>
                 <TableCell>{new Date(p.paid_at).toLocaleDateString()}</TableCell>
                 <TableCell className="capitalize">{p.payment_method}</TableCell>
-                <TableCell>AED {Number(p.amount).toFixed(2)}</TableCell>
-                <TableCell>AED {Number(p.allocated_amount).toFixed(2)}</TableCell>
+                <TableCell>{money(p.amount)}</TableCell>
+                <TableCell>{money(p.allocated_amount)}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" onClick={() => handlePdf(p.id)}><Download className="h-4 w-4" /></Button>
                 </TableCell>
