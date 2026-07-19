@@ -38,6 +38,7 @@ function download(name: string, content: string, mime = "text/csv") {
 }
 
 function ReportsPage() {
+  const { format: money } = useCurrency();
   const run = useServerFn(financeReport);
   const [from, setFrom] = useState(firstOfMonth());
   const [to, setTo] = useState(today());
