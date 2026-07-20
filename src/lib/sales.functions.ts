@@ -360,6 +360,23 @@ export const deleteTemplate = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const duplicateTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => d)
+  .handler(async ({ context, data }) => {
+    if (!(await isAdmin(context.supabase, context.userId))) throw new Error("Admin only");
+    const { data: src, error: e1 } = await context.supabase
+      .from("document_templates").select("*").eq("id", data.id).single();
+    if (e1 || !src) throw new Error(e1?.message ?? "Not found");
+    const { id: _omitId, created_at: _c, updated_at: _u, ...rest } = src as any;
+    const copy = { ...rest, name: `${src.name} (copy)`, is_default: false, created_by: context.userId };
+    const { data: row, error } = await context.supabase
+      .from("document_templates").insert(copy).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: row.id };
+  });
+
+
 // ---------- Audit ----------
 export const listAuditLog = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
