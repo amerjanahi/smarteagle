@@ -261,3 +261,67 @@ function TemplatesPage() {
     </div>
   );
 }
+
+function renderPreviewHtml(t: Tpl): string {
+  const f = t.fields_json ?? {};
+  const showLogo = f.show_logo !== false && t.logo_url;
+  const showCompany = f.show_company_details !== false && f.company_details_text;
+  const showTerms = f.show_terms !== false && f.terms_text;
+  const numPrefix = f.number_prefix || "DOC";
+  const label = TYPE_LABELS[t.template_type];
+  const rows = t.template_type === "statement"
+    ? `<tr><td>2026-01-15</td><td>${numPrefix}-2026-00001</td><td>Sample line</td><td class="r">1,000.00</td><td class="r">—</td><td class="r">1,000.00</td></tr>`
+    : `<tr><td>Sample description</td><td class="r">1</td><td class="r">1,000.00</td>${f.show_tax !== false ? '<td class="r">5%</td>' : ""}<td class="r">1,050.00</td></tr>`;
+  const cols = t.template_type === "statement"
+    ? `<th>Date</th><th>Reference</th><th>Description</th><th class="r">Debit</th><th class="r">Credit</th><th class="r">Balance</th>`
+    : `<th>Description</th><th class="r">Qty</th><th class="r">Unit Price</th>${f.show_tax !== false ? '<th class="r">Tax</th>' : ""}<th class="r">Total</th>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${label} Preview</title>
+<style>
+  @page { size: A4; margin: 20mm; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #0f172a; margin: 24px; }
+  .bar { background: ${t.primary_color}; color: #fff; padding: 14px 20px; display:flex; align-items:center; justify-content:space-between; }
+  .bar h1 { margin:0; font-size:20px; letter-spacing:2px; }
+  .logo { max-height: 40px; background:#fff; padding:4px; border-radius:4px; }
+  .meta { display:flex; justify-content:space-between; margin:20px 0; font-size: 13px; }
+  table { width:100%; border-collapse: collapse; margin-top: 16px; font-size:13px; }
+  th { background: ${t.accent_color}; color:#fff; text-align:left; padding: 8px; }
+  td { padding: 8px; border-bottom: 1px solid #eee; }
+  .r { text-align: right; }
+  .totals { margin-top:16px; text-align:right; font-size:13px; }
+  .totals div { padding:4px 0; }
+  .footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid #ddd; font-size: 11px; color:#666; white-space: pre-wrap; }
+  .terms { margin-top: 24px; font-size: 11px; color:#444; white-space: pre-wrap; }
+  .company { font-size: 12px; color:#333; white-space: pre-wrap; margin-top:6px; }
+  .actions { position:fixed; top:8px; right:8px; }
+  .actions button { padding: 6px 12px; margin-left:4px; }
+  @media print { .actions { display: none; } body { margin: 0; } }
+</style></head><body>
+<div class="actions"><button onclick="window.print()">Print / Save as PDF</button><button onclick="window.close()">Close</button></div>
+<div class="bar">
+  <div>${showLogo ? `<img class="logo" src="${t.logo_url}"/>` : ""}</div>
+  <h1>${label.toUpperCase()}</h1>
+</div>
+${t.header_text ? `<div style="font-size:11px;color:#666;margin-top:8px">${t.header_text}</div>` : ""}
+${showCompany ? `<div class="company">${escapeHtml(f.company_details_text)}</div>` : ""}
+<div class="meta">
+  <div><strong>Bill To</strong><br/>Sample Customer<br/>Unit 101</div>
+  <div>
+    <div><strong>${label} #</strong> ${numPrefix}-2026-00001</div>
+    <div><strong>Date</strong> 2026-01-20</div>
+    ${t.template_type !== "receipt" && t.template_type !== "statement" ? '<div><strong>Due</strong> 2026-02-20</div>' : ""}
+  </div>
+</div>
+<table><thead><tr>${cols}</tr></thead><tbody>${rows}</tbody></table>
+${t.template_type !== "statement" ? `<div class="totals">
+  <div>Subtotal: 1,000.00</div>
+  ${f.show_tax !== false ? "<div>Tax: 50.00</div>" : ""}
+  <div><strong>Total: 1,050.00</strong></div>
+</div>` : ""}
+${showTerms ? `<div class="terms"><strong>Terms &amp; Conditions</strong><br/>${escapeHtml(f.terms_text)}</div>` : ""}
+${t.footer_text ? `<div class="footer">${escapeHtml(t.footer_text)}</div>` : ""}
+</body></html>`;
+}
+
+function escapeHtml(s: string): string {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]!));
+}
