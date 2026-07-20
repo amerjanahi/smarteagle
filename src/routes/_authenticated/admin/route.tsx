@@ -35,6 +35,7 @@ const propertyGroup: NavGroup = { label: "Property", items: [
 const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
+  { to: "/admin/emergency-contacts", label: "Emergency Contacts", icon: Bell },
   { to: "/admin/documents", label: "Documents", icon: FileText },
   { to: "/admin/reports-hub", label: "Reports", icon: BarChart3 },
 ];
