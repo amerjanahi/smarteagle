@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -165,7 +165,7 @@ export function Designer({ value, type, logoUrl, onChange, onPreview, onPrint }:
     return {
       backgroundImage: `linear-gradient(to right, rgba(148,163,184,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.15) 1px, transparent 1px)`,
       backgroundSize: `${g}pt ${g}pt`,
-    } as React.CSSProperties;
+    } as CSSProperties;
   }, [showGrid, doc.page.grid]);
 
   return (
@@ -289,7 +289,7 @@ export function Designer({ value, type, logoUrl, onChange, onPreview, onPrint }:
                     {isSelected && !isEditing && (
                       <>
                         {(["nw", "n", "ne", "e", "se", "s", "sw", "w"] as const).map((h) => {
-                          const pos: React.CSSProperties = { position: "absolute", width: 8, height: 8, background: "#3B82F6", border: "1px solid #fff" };
+                          const pos: CSSProperties = { position: "absolute", width: 8, height: 8, background: "#3B82F6", border: "1px solid #fff" };
                           if (h.includes("n")) pos.top = -4; if (h.includes("s")) pos.bottom = -4;
                           if (h.includes("w")) pos.left = -4; if (h.includes("e")) pos.right = -4;
                           if (h === "n" || h === "s") { pos.left = "50%"; pos.marginLeft = -4; }
