@@ -48,6 +48,7 @@ import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_authenticated/admin/maintenance'
 import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
+import { Route as AuthenticatedAdminDocumentsRouteImport } from './routes/_authenticated/admin/documents'
 import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
 import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
 import { Route as AuthenticatedAdminBulkEmailRouteImport } from './routes/_authenticated/admin/bulk-email'
@@ -281,6 +282,12 @@ const AuthenticatedAdminExpensesRoute =
     path: '/expenses',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminDocumentsRoute =
+  AuthenticatedAdminDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminCreditNotesRoute =
   AuthenticatedAdminCreditNotesRouteImport.update({
     id: '/credit-notes',
@@ -367,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
+  '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
@@ -416,6 +424,7 @@ export interface FileRoutesByTo {
   '/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
+  '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
@@ -469,6 +478,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/bulk-email': typeof AuthenticatedAdminBulkEmailRoute
   '/_authenticated/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/_authenticated/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
+  '/_authenticated/admin/documents': typeof AuthenticatedAdminDocumentsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/_authenticated/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
@@ -522,6 +532,7 @@ export interface FileRouteTypes {
     | '/admin/bulk-email'
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
+    | '/admin/documents'
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/maintenance'
@@ -571,6 +582,7 @@ export interface FileRouteTypes {
     | '/admin/bulk-email'
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
+    | '/admin/documents'
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/maintenance'
@@ -623,6 +635,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/bulk-email'
     | '/_authenticated/admin/chart-of-accounts'
     | '/_authenticated/admin/credit-notes'
+    | '/_authenticated/admin/documents'
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/invoices'
     | '/_authenticated/admin/maintenance'
@@ -938,6 +951,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/documents': {
+      id: '/_authenticated/admin/documents'
+      path: '/documents'
+      fullPath: '/admin/documents'
+      preLoaderRoute: typeof AuthenticatedAdminDocumentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/credit-notes': {
       id: '/_authenticated/admin/credit-notes'
       path: '/credit-notes'
@@ -1030,6 +1050,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminBulkEmailRoute: typeof AuthenticatedAdminBulkEmailRoute
   AuthenticatedAdminChartOfAccountsRoute: typeof AuthenticatedAdminChartOfAccountsRoute
   AuthenticatedAdminCreditNotesRoute: typeof AuthenticatedAdminCreditNotesRoute
+  AuthenticatedAdminDocumentsRoute: typeof AuthenticatedAdminDocumentsRoute
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminInvoicesRoute: typeof AuthenticatedAdminInvoicesRoute
   AuthenticatedAdminMaintenanceRoute: typeof AuthenticatedAdminMaintenanceRoute
@@ -1070,6 +1091,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminChartOfAccountsRoute:
       AuthenticatedAdminChartOfAccountsRoute,
     AuthenticatedAdminCreditNotesRoute: AuthenticatedAdminCreditNotesRoute,
+    AuthenticatedAdminDocumentsRoute: AuthenticatedAdminDocumentsRoute,
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
     AuthenticatedAdminInvoicesRoute: AuthenticatedAdminInvoicesRoute,
     AuthenticatedAdminMaintenanceRoute: AuthenticatedAdminMaintenanceRoute,

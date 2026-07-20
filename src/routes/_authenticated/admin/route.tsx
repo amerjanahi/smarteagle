@@ -35,6 +35,7 @@ const propertyGroup: NavGroup = { label: "Property", items: [
 const opsItems: NavItem[] = [
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/visitors", label: "Visitors", icon: UserCheck },
+  { to: "/admin/documents", label: "Documents", icon: FileText },
   { to: "/admin/reports-hub", label: "Reports", icon: BarChart3 },
 ];
 const sysGroup: NavGroup = { label: "System", items: [
@@ -47,7 +48,7 @@ const salesItems: NavItem[] = [
   { to: "/admin/credit-notes", label: "Credit Notes", icon: Receipt },
   { to: "/admin/payments", label: "Receipts", icon: CreditCard },
   { to: "/admin/statements", label: "Statements", icon: FileSignature },
-  { to: "/admin/templates", label: "Templates", icon: Settings },
+  
   
   { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
 ];

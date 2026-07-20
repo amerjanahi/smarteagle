@@ -724,33 +724,95 @@ export type Database = {
       }
       documents: {
         Row: {
+          access_level: string
+          archived: boolean
           category: string | null
           created_at: string
           description: string | null
+          document_date: string | null
           file_url: string
+          folder: string | null
           id: string
+          invoice_id: string | null
+          purchase_invoice_id: string | null
+          resident_id: string | null
+          tags: string[]
           title: string
+          unit_id: string | null
+          updated_at: string
           uploaded_by: string | null
+          vendor_id: string | null
         }
         Insert: {
+          access_level?: string
+          archived?: boolean
           category?: string | null
           created_at?: string
           description?: string | null
+          document_date?: string | null
           file_url: string
+          folder?: string | null
           id?: string
+          invoice_id?: string | null
+          purchase_invoice_id?: string | null
+          resident_id?: string | null
+          tags?: string[]
           title: string
+          unit_id?: string | null
+          updated_at?: string
           uploaded_by?: string | null
+          vendor_id?: string | null
         }
         Update: {
+          access_level?: string
+          archived?: boolean
           category?: string | null
           created_at?: string
           description?: string | null
+          document_date?: string | null
           file_url?: string
+          folder?: string | null
           id?: string
+          invoice_id?: string | null
+          purchase_invoice_id?: string | null
+          resident_id?: string | null
+          tags?: string[]
           title?: string
+          unit_id?: string | null
+          updated_at?: string
           uploaded_by?: string | null
+          vendor_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "documents_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_purchase_invoice_id_fkey"
+            columns: ["purchase_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       expenses: {
         Row: {

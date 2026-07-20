@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/templates")({
@@ -19,18 +19,29 @@ export const Route = createFileRoute("/_authenticated/admin/templates")({
   component: TemplatesPage,
 });
 
+type TplType = "invoice" | "receipt" | "credit_note" | "statement" | "work_order" | "purchase_order";
+
 type Tpl = {
   id?: string;
-  template_type: "invoice" | "credit_note" | "receipt" | "statement";
+  template_type: TplType;
   name: string;
   logo_url: string;
   primary_color: string;
   accent_color: string;
   header_text: string;
   footer_text: string;
-  fields_json: Record<string, boolean>;
+  fields_json: Record<string, any>;
   layout: "compact" | "standard" | "detailed";
   is_default: boolean;
+};
+
+const TYPE_LABELS: Record<TplType, string> = {
+  invoice: "Invoice",
+  receipt: "Receipt",
+  credit_note: "Credit Note",
+  statement: "Statement of Account",
+  work_order: "Work Order",
+  purchase_order: "Purchase Order",
 };
 
 const blank: Tpl = {
@@ -41,7 +52,18 @@ const blank: Tpl = {
   accent_color: "#3B82F6",
   header_text: "",
   footer_text: "Thank you for your business.",
-  fields_json: { show_tax: true, show_period: true, show_notes: false },
+  fields_json: {
+    show_logo: true,
+    show_company_details: true,
+    show_numbering: true,
+    show_tax: true,
+    show_period: true,
+    show_notes: false,
+    show_terms: true,
+    company_details_text: "",
+    terms_text: "",
+    number_prefix: "",
+  },
   layout: "standard",
   is_default: false,
 };
@@ -65,6 +87,14 @@ function TemplatesPage() {
     onError: (e: any) => toast.error(e.message),
   });
 
+  function openPreview(t: Tpl) {
+    const w = window.open("", "_blank", "width=900,height=1200");
+    if (!w) return;
+    w.document.write(renderPreviewHtml(t));
+    w.document.close();
+  }
+
+
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
@@ -83,7 +113,7 @@ function TemplatesPage() {
                 <CardTitle className="text-sm">{t.name}</CardTitle>
                 <div className="flex items-center gap-2">
                   {t.is_default && <Badge>Default</Badge>}
-                  <Badge variant="outline">{t.template_type}</Badge>
+                  <Badge variant="outline">{TYPE_LABELS[t.template_type as TplType] ?? t.template_type}</Badge>
                 </div>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
@@ -110,10 +140,9 @@ function TemplatesPage() {
                   <Select value={editing.template_type} onValueChange={(v: any) => setEditing({ ...editing, template_type: v })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="invoice">Invoice</SelectItem>
-                      <SelectItem value="receipt">Receipt</SelectItem>
-                      <SelectItem value="credit_note">Credit Note</SelectItem>
-                      <SelectItem value="statement">Statement</SelectItem>
+                      {(Object.keys(TYPE_LABELS) as TplType[]).map((k) => (
+                        <SelectItem key={k} value={k}>{TYPE_LABELS[k]}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -161,15 +190,46 @@ function TemplatesPage() {
                 <Textarea value={editing.footer_text ?? ""} onChange={(e) => setEditing({ ...editing, footer_text: e.target.value })} />
               </div>
 
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Number prefix</Label>
+                  <Input
+                    value={(editing.fields_json?.number_prefix as string) ?? ""}
+                    onChange={(e) => setEditing({ ...editing, fields_json: { ...editing.fields_json, number_prefix: e.target.value } })}
+                    placeholder="INV, WO, PO…"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label>Company details</Label>
+                <Textarea
+                  rows={3}
+                  value={(editing.fields_json?.company_details_text as string) ?? ""}
+                  onChange={(e) => setEditing({ ...editing, fields_json: { ...editing.fields_json, company_details_text: e.target.value } })}
+                  placeholder="Name, address, TRN, phone, email"
+                />
+              </div>
+              <div>
+                <Label>Terms &amp; conditions</Label>
+                <Textarea
+                  rows={3}
+                  value={(editing.fields_json?.terms_text as string) ?? ""}
+                  onChange={(e) => setEditing({ ...editing, fields_json: { ...editing.fields_json, terms_text: e.target.value } })}
+                  placeholder="Payment terms, warranty, etc."
+                />
+              </div>
+
               <div>
                 <Label className="mb-2 block">Visible fields</Label>
                 <div className="space-y-2">
-                  {Object.entries(editing.fields_json).map(([k, v]) => (
-                    <div key={k} className="flex items-center justify-between text-sm">
-                      <span className="capitalize">{k.replace(/_/g, " ")}</span>
-                      <Switch checked={v} onCheckedChange={(nv) => setEditing({ ...editing, fields_json: { ...editing.fields_json, [k]: nv } })} />
-                    </div>
-                  ))}
+                  {Object.entries(editing.fields_json)
+                    .filter(([k, v]) => typeof v === "boolean" && k.startsWith("show_"))
+                    .map(([k, v]) => (
+                      <div key={k} className="flex items-center justify-between text-sm">
+                        <span className="capitalize">{k.replace(/^show_/, "").replace(/_/g, " ")}</span>
+                        <Switch checked={!!v} onCheckedChange={(nv) => setEditing({ ...editing, fields_json: { ...editing.fields_json, [k]: nv } })} />
+                      </div>
+                    ))}
                 </div>
               </div>
 
@@ -185,6 +245,9 @@ function TemplatesPage() {
                   </Button>
                 ) : <div />}
                 <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => openPreview(editing)}>
+                    <Eye className="mr-2 h-4 w-4" /> Preview
+                  </Button>
                   <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
                   <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
                     <Save className="mr-2 h-4 w-4" /> {saveMut.isPending ? "Saving…" : "Save"}
@@ -197,4 +260,68 @@ function TemplatesPage() {
       </div>
     </div>
   );
+}
+
+function renderPreviewHtml(t: Tpl): string {
+  const f = t.fields_json ?? {};
+  const showLogo = f.show_logo !== false && t.logo_url;
+  const showCompany = f.show_company_details !== false && f.company_details_text;
+  const showTerms = f.show_terms !== false && f.terms_text;
+  const numPrefix = f.number_prefix || "DOC";
+  const label = TYPE_LABELS[t.template_type];
+  const rows = t.template_type === "statement"
+    ? `<tr><td>2026-01-15</td><td>${numPrefix}-2026-00001</td><td>Sample line</td><td class="r">1,000.00</td><td class="r">—</td><td class="r">1,000.00</td></tr>`
+    : `<tr><td>Sample description</td><td class="r">1</td><td class="r">1,000.00</td>${f.show_tax !== false ? '<td class="r">5%</td>' : ""}<td class="r">1,050.00</td></tr>`;
+  const cols = t.template_type === "statement"
+    ? `<th>Date</th><th>Reference</th><th>Description</th><th class="r">Debit</th><th class="r">Credit</th><th class="r">Balance</th>`
+    : `<th>Description</th><th class="r">Qty</th><th class="r">Unit Price</th>${f.show_tax !== false ? '<th class="r">Tax</th>' : ""}<th class="r">Total</th>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${label} Preview</title>
+<style>
+  @page { size: A4; margin: 20mm; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #0f172a; margin: 24px; }
+  .bar { background: ${t.primary_color}; color: #fff; padding: 14px 20px; display:flex; align-items:center; justify-content:space-between; }
+  .bar h1 { margin:0; font-size:20px; letter-spacing:2px; }
+  .logo { max-height: 40px; background:#fff; padding:4px; border-radius:4px; }
+  .meta { display:flex; justify-content:space-between; margin:20px 0; font-size: 13px; }
+  table { width:100%; border-collapse: collapse; margin-top: 16px; font-size:13px; }
+  th { background: ${t.accent_color}; color:#fff; text-align:left; padding: 8px; }
+  td { padding: 8px; border-bottom: 1px solid #eee; }
+  .r { text-align: right; }
+  .totals { margin-top:16px; text-align:right; font-size:13px; }
+  .totals div { padding:4px 0; }
+  .footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid #ddd; font-size: 11px; color:#666; white-space: pre-wrap; }
+  .terms { margin-top: 24px; font-size: 11px; color:#444; white-space: pre-wrap; }
+  .company { font-size: 12px; color:#333; white-space: pre-wrap; margin-top:6px; }
+  .actions { position:fixed; top:8px; right:8px; }
+  .actions button { padding: 6px 12px; margin-left:4px; }
+  @media print { .actions { display: none; } body { margin: 0; } }
+</style></head><body>
+<div class="actions"><button onclick="window.print()">Print / Save as PDF</button><button onclick="window.close()">Close</button></div>
+<div class="bar">
+  <div>${showLogo ? `<img class="logo" src="${t.logo_url}"/>` : ""}</div>
+  <h1>${label.toUpperCase()}</h1>
+</div>
+${t.header_text ? `<div style="font-size:11px;color:#666;margin-top:8px">${t.header_text}</div>` : ""}
+${showCompany ? `<div class="company">${escapeHtml(f.company_details_text)}</div>` : ""}
+<div class="meta">
+  <div><strong>Bill To</strong><br/>Sample Customer<br/>Unit 101</div>
+  <div>
+    <div><strong>${label} #</strong> ${numPrefix}-2026-00001</div>
+    <div><strong>Date</strong> 2026-01-20</div>
+    ${t.template_type !== "receipt" && t.template_type !== "statement" ? '<div><strong>Due</strong> 2026-02-20</div>' : ""}
+  </div>
+</div>
+<table><thead><tr>${cols}</tr></thead><tbody>${rows}</tbody></table>
+${t.template_type !== "statement" ? `<div class="totals">
+  <div>Subtotal: 1,000.00</div>
+  ${f.show_tax !== false ? "<div>Tax: 50.00</div>" : ""}
+  <div><strong>Total: 1,050.00</strong></div>
+</div>` : ""}
+${showTerms ? `<div class="terms"><strong>Terms &amp; Conditions</strong><br/>${escapeHtml(f.terms_text)}</div>` : ""}
+${t.footer_text ? `<div class="footer">${escapeHtml(t.footer_text)}</div>` : ""}
+</body></html>`;
+}
+
+function escapeHtml(s: string): string {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]!));
 }
