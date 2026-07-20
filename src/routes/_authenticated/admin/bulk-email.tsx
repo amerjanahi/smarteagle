@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DevicePreview } from "@/components/admin/DevicePreview";
 
 export const Route = createFileRoute("/_authenticated/admin/bulk-email")({
   head: () => ({ meta: [{ title: "Bulk Email — Hayy Admin" }] }),
@@ -103,16 +104,34 @@ function BulkEmailPage() {
             <Send className="mr-1 h-4 w-4" /> Send to {recipients.length}
           </Button>
         </div>
-        <aside className="rounded-xl border border-border bg-card p-4">
-          <div className="mb-2 flex items-center gap-2 text-sm font-medium"><Mail className="h-4 w-4" /> Recipients ({recipients.length})</div>
-          <ul className="max-h-96 space-y-1 overflow-auto text-xs">
-            {recipients.map((r: any) => (
-              <li key={r.id} className="flex items-center justify-between rounded-md bg-muted/30 px-2 py-1">
-                <span>{r.full_name || r.email}</span>
-                <Badge variant="outline" className="text-[10px]">{r.email}</Badge>
-              </li>
-            ))}
-          </ul>
+        <aside className="space-y-4">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="mb-2 flex items-center gap-2 text-sm font-medium"><Mail className="h-4 w-4" /> Recipients ({recipients.length})</div>
+            <ul className="max-h-64 space-y-1 overflow-auto text-xs">
+              {recipients.map((r: any) => (
+                <li key={r.id} className="flex items-center justify-between rounded-md bg-muted/30 px-2 py-1">
+                  <span>{r.full_name || r.email}</span>
+                  <Badge variant="outline" className="text-[10px]">{r.email}</Badge>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-3">
+            <div className="mb-2 text-sm font-medium">Preview</div>
+            <DevicePreview>
+              {(device) => (
+                <div className={device === "mobile" ? "p-3 text-sm min-h-[360px]" : "p-5 min-h-[440px]"}>
+                  <div className="border-b border-border pb-2 mb-3">
+                    <div className="text-xs text-muted-foreground">Subject</div>
+                    <div className="font-semibold">{subject || "(subject)"}</div>
+                  </div>
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {body || <span className="text-muted-foreground">Start typing to see how your email looks…</span>}
+                  </div>
+                </div>
+              )}
+            </DevicePreview>
+          </div>
         </aside>
       </div>
     </div>

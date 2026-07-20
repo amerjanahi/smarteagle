@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { DevicePreview } from "@/components/admin/DevicePreview";
 
 export const Route = createFileRoute("/_authenticated/admin/notices")({
   head: () => ({ meta: [{ title: "Notices — Hayy Admin" }] }),
@@ -218,8 +219,9 @@ function NoticesPage() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{form.id ? "Edit notice" : "New notice"}</DialogTitle></DialogHeader>
+          <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-3">
             <div>
               <Label>Subject</Label>
@@ -271,6 +273,19 @@ function NoticesPage() {
               </div>
             )}
           </div>
+          <div className="space-y-2">
+            <Label>Live preview</Label>
+            <DevicePreview>
+              {(device) => (
+                <div className={device === "mobile" ? "p-3 text-sm min-h-[420px]" : "p-6 min-h-[520px]"}>
+                  <h2 className={device === "mobile" ? "text-base font-semibold mb-2" : "text-xl font-semibold mb-3"}>{form.subject || "(subject)"}</h2>
+                  {form.image_url && <img src={form.image_url} alt="" className="w-full rounded-lg mb-3" />}
+                  <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: form.body || "<p class='text-muted-foreground'>Start typing to see the preview…</p>" }} />
+                </div>
+              )}
+            </DevicePreview>
+          </div>
+          </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => save.mutate({ publish: false })} disabled={!form.subject || save.isPending}>
               Save draft
@@ -284,7 +299,7 @@ function NoticesPage() {
       </Dialog>
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{preview?.subject}</DialogTitle></DialogHeader>
           {preview && (
             <div className="space-y-3">
@@ -293,8 +308,15 @@ function NoticesPage() {
                 <span>Created {new Date(preview.created_at).toLocaleString()}</span>
                 <span>· Modified {new Date(preview.updated_at).toLocaleString()}</span>
               </div>
-              {preview.image_url && <img src={preview.image_url} alt="" className="w-full rounded-lg" />}
-              <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: preview.body }} />
+              <DevicePreview>
+                {(device) => (
+                  <div className={device === "mobile" ? "p-3 text-sm" : "p-6"}>
+                    <h2 className={device === "mobile" ? "text-base font-semibold mb-2" : "text-xl font-semibold mb-3"}>{preview.subject}</h2>
+                    {preview.image_url && <img src={preview.image_url} alt="" className="w-full rounded-lg mb-3" />}
+                    <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: preview.body }} />
+                  </div>
+                )}
+              </DevicePreview>
             </div>
           )}
         </DialogContent>
