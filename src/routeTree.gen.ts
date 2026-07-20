@@ -36,6 +36,7 @@ import { Route as AuthenticatedAdminStatementsRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminSalesRouteImport } from './routes/_authenticated/admin/sales'
 import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authenticated/admin/residents'
+import { Route as AuthenticatedAdminReportsHubRouteImport } from './routes/_authenticated/admin/reports-hub'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
 import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
 import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
@@ -208,6 +209,12 @@ const AuthenticatedAdminResidentsRoute =
     path: '/residents',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminReportsHubRoute =
+  AuthenticatedAdminReportsHubRouteImport.update({
+    id: '/reports-hub',
+    path: '/reports-hub',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminReportsRoute =
   AuthenticatedAdminReportsRouteImport.update({
     id: '/reports',
@@ -371,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/reports-hub': typeof AuthenticatedAdminReportsHubRoute
   '/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -419,6 +427,7 @@ export interface FileRoutesByTo {
   '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/reports-hub': typeof AuthenticatedAdminReportsHubRoute
   '/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -471,6 +480,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/_authenticated/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/_authenticated/admin/reports-hub': typeof AuthenticatedAdminReportsHubRoute
   '/_authenticated/admin/residents': typeof AuthenticatedAdminResidentsRoute
   '/_authenticated/admin/sales': typeof AuthenticatedAdminSalesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -523,6 +533,7 @@ export interface FileRouteTypes {
     | '/admin/purchase-reports'
     | '/admin/purchases'
     | '/admin/reports'
+    | '/admin/reports-hub'
     | '/admin/residents'
     | '/admin/sales'
     | '/admin/settings'
@@ -571,6 +582,7 @@ export interface FileRouteTypes {
     | '/admin/purchase-reports'
     | '/admin/purchases'
     | '/admin/reports'
+    | '/admin/reports-hub'
     | '/admin/residents'
     | '/admin/sales'
     | '/admin/settings'
@@ -622,6 +634,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/purchase-reports'
     | '/_authenticated/admin/purchases'
     | '/_authenticated/admin/reports'
+    | '/_authenticated/admin/reports-hub'
     | '/_authenticated/admin/residents'
     | '/_authenticated/admin/sales'
     | '/_authenticated/admin/settings'
@@ -841,6 +854,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResidentsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/reports-hub': {
+      id: '/_authenticated/admin/reports-hub'
+      path: '/reports-hub'
+      fullPath: '/admin/reports-hub'
+      preLoaderRoute: typeof AuthenticatedAdminReportsHubRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/reports': {
       id: '/_authenticated/admin/reports'
       path: '/reports'
@@ -1021,6 +1041,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminReportsHubRoute: typeof AuthenticatedAdminReportsHubRoute
   AuthenticatedAdminResidentsRoute: typeof AuthenticatedAdminResidentsRoute
   AuthenticatedAdminSalesRoute: typeof AuthenticatedAdminSalesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -1063,6 +1084,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
       AuthenticatedAdminPurchaseReportsRoute,
     AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
     AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+    AuthenticatedAdminReportsHubRoute: AuthenticatedAdminReportsHubRoute,
     AuthenticatedAdminResidentsRoute: AuthenticatedAdminResidentsRoute,
     AuthenticatedAdminSalesRoute: AuthenticatedAdminSalesRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
