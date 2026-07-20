@@ -283,8 +283,8 @@ export const rptProfitLoss = createServerFn({ method: "POST" })
     await assertFinance(context.supabase, context.userId);
     const { from, to } = dateRange(data);
     const [pay, exp] = await Promise.all([
-      context.supabase.from("payments").select("amount").gte("paid_at", from).lte("paid_at", to),
-      context.supabase.from("expenses").select("category, total_amount, amount")
+      (context.supabase as any).from("payments").select("amount").gte("paid_at", from).lte("paid_at", to),
+      (context.supabase as any).from("expenses").select("category, total_amount, amount")
         .gte("expense_date", data.from ?? "1970-01-01").lte("expense_date", data.to ?? "2999-12-31"),
     ]);
     if (pay.error) throw new Error(pay.error.message);
@@ -318,9 +318,9 @@ export const rptBalanceSheet = createServerFn({ method: "POST" })
   .handler(async ({ context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
     const [banks, ar, ap] = await Promise.all([
-      context.supabase.from("bank_accounts").select("account_name, current_balance"),
-      context.supabase.from("invoices").select("amount, amount_paid, status").neq("status", "cancelled"),
-      context.supabase.from("purchase_invoices").select("total_amount, amount_paid, status").neq("status", "cancelled"),
+      (context.supabase as any).from("bank_accounts").select("account_name, current_balance"),
+      (context.supabase as any).from("invoices").select("amount, amount_paid, status").neq("status", "cancelled"),
+      (context.supabase as any).from("purchase_invoices").select("total_amount, amount_paid, status").neq("status", "cancelled"),
     ]);
     if (banks.error) throw new Error(banks.error.message);
     if (ar.error) throw new Error(ar.error.message);
@@ -353,10 +353,10 @@ export const rptCashFlow = createServerFn({ method: "POST" })
     await assertFinance(context.supabase, context.userId);
     const { from, to } = dateRange(data);
     const [pay, vp, exp] = await Promise.all([
-      context.supabase.from("payments").select("amount, paid_at").gte("paid_at", from).lte("paid_at", to),
-      context.supabase.from("vendor_payments").select("amount, payment_date")
+      (context.supabase as any).from("payments").select("amount, paid_at").gte("paid_at", from).lte("paid_at", to),
+      (context.supabase as any).from("vendor_payments").select("amount, payment_date")
         .gte("payment_date", data.from ?? "1970-01-01").lte("payment_date", data.to ?? "2999-12-31"),
-      context.supabase.from("expenses").select("total_amount, amount, expense_date")
+      (context.supabase as any).from("expenses").select("total_amount, amount, expense_date")
         .gte("expense_date", data.from ?? "1970-01-01").lte("expense_date", data.to ?? "2999-12-31"),
     ]);
     if (pay.error) throw new Error(pay.error.message);
