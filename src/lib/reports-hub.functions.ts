@@ -92,28 +92,29 @@ export const rptExpenses = createServerFn({ method: "POST" })
     await assertFinance(context.supabase, context.userId);
     let q = (context.supabase as any)
       .from("expenses")
-      .select("expense_date, category, description, amount, vat_amount, total_amount, vendor_name, status")
+      .select("expense_date, category, description, amount, vat_amount, total_amount, vendor, approval_status")
       .order("expense_date", { ascending: false });
     if (data.from) q = q.gte("expense_date", data.from);
     if (data.to) q = q.lte("expense_date", data.to);
     if (data.category) q = q.eq("category", data.category);
-    if (data.status) q = q.eq("status", data.status);
+    if (data.status) q = q.eq("approval_status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return {
       columns: [
         { key: "expense_date", label: "Date" },
         { key: "category", label: "Category" },
-        { key: "vendor_name", label: "Vendor" },
+        { key: "vendor", label: "Vendor" },
         { key: "description", label: "Description" },
         { key: "amount", label: "Amount" },
         { key: "vat_amount", label: "VAT" },
         { key: "total_amount", label: "Total" },
-        { key: "status", label: "Status" },
+        { key: "approval_status", label: "Status" },
       ],
       rows: rows ?? [],
     };
   });
+
 
 export const rptPurchaseInvoices = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
