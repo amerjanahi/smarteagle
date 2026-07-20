@@ -78,7 +78,7 @@ function NoticesPage() {
         }
       }
       const payload: any = {
-        subject: form.subject, body: form.body, channel: form.channel, audience: form.audience,
+        subject: form.subject, body: sanitizeHtml(form.body), channel: form.channel, audience: form.audience,
         group_id: form.audience === "group" ? form.group_id : null,
         image_url: form.image_url || null,
         status: publish ? "published" : "draft",
