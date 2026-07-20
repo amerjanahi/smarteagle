@@ -89,7 +89,7 @@ export const registerWalkIn = createServerFn({ method: "POST" })
       approved_at: nowIso,
       checked_in_at: nowIso,
       checked_in_by: context.userId,
-      requested_by: context.userId,
+      requested_by: context.userId as any,
       gate_notes: data.notes ?? null,
     }).select("id").single();
     if (error) throw new Error(error.message);

@@ -35,7 +35,7 @@ function ScanPage() {
     if (!data) { setAlert({ kind: "unknown", msg: t("unknown_alert", lang) }); return; }
     if (data.blocked) { setAlert({ kind: "blocked", msg: t("blocked_alert", lang) }); setMatch(data); return; }
     const expected = new Date(data.expected_at).getTime();
-    if (Date.now() - expected > 24 * 60 * 60 * 1000 || data.status === "cancelled") {
+    if (Date.now() - expected > 24 * 60 * 60 * 1000 || (data.status as string) === "cancelled") {
       setAlert({ kind: "expired", msg: t("expired_alert", lang) });
     }
     setMatch(data);
