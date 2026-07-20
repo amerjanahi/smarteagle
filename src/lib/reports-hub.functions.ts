@@ -33,13 +33,12 @@ export const rptInvoices = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
     const { from, to } = dateRange(data);
-    let q = context.supabase
+    let q = (context.supabase as any)
       .from("invoices")
-      .select("invoice_number, customer_name, unit_id, resident_id, amount, amount_paid, status, due_date, created_at")
+      .select("invoice_number, customer_name, unit_id, amount, amount_paid, status, due_date, created_at")
       .gte("created_at", from).lte("created_at", to)
       .order("created_at", { ascending: false });
     if (data.unit_id) q = q.eq("unit_id", data.unit_id);
-    if (data.resident_id) q = q.eq("resident_id", data.resident_id);
     if (data.status) q = q.eq("status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
@@ -68,7 +67,7 @@ export const rptPayments = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
     const { from, to } = dateRange(data);
-    const { data: rows, error } = await context.supabase
+    const { data: rows, error } = await (context.supabase as any)
       .from("payments")
       .select("receipt_number, amount, payment_method, paid_at, invoice_id, notes")
       .gte("paid_at", from).lte("paid_at", to)
@@ -91,7 +90,7 @@ export const rptExpenses = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ data, context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    let q = context.supabase
+    let q = (context.supabase as any)
       .from("expenses")
       .select("expense_date, category, description, amount, vat_amount, total_amount, vendor_name, status")
       .order("expense_date", { ascending: false });
@@ -121,7 +120,7 @@ export const rptPurchaseInvoices = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ data, context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    let q = context.supabase
+    let q = (context.supabase as any)
       .from("purchase_invoices")
       .select("bill_number, vendor_name, invoice_date, due_date, total_amount, amount_paid, balance_due, status")
       .order("invoice_date", { ascending: false });
@@ -150,7 +149,7 @@ export const rptResidents = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    const { data: rows, error } = await context.supabase
+    const { data: rows, error } = await (context.supabase as any)
       .from("residents")
       .select("full_name, email, phone, is_active, move_in_date, move_out_date, unit_id")
       .order("full_name");
@@ -174,7 +173,7 @@ export const rptUnits = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    const { data: rows, error } = await context.supabase
+    const { data: rows, error } = await (context.supabase as any)
       .from("units")
       .select("unit_number, unit_type, bedrooms, bathrooms, size_sqft, service_charge_rate, is_occupied")
       .order("unit_number");
@@ -198,7 +197,7 @@ export const rptBank = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ data, context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    let q = context.supabase
+    let q = (context.supabase as any)
       .from("bank_transactions")
       .select("transaction_date, description, reference, amount, direction, status, account_id")
       .order("transaction_date", { ascending: false });
@@ -225,7 +224,7 @@ export const rptAnnualFees = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    const { data: rows, error } = await context.supabase
+    const { data: rows, error } = await (context.supabase as any)
       .from("annual_fee_calculations")
       .select("year, unit_id, resident_id, base_amount, vat_amount, total_amount, frequency, status, generated_at")
       .order("year", { ascending: false });
@@ -250,7 +249,7 @@ export const rptAging = createServerFn({ method: "POST" })
   .inputValidator((d: Filters) => d)
   .handler(async ({ data, context }): Promise<ReportResult> => {
     await assertFinance(context.supabase, context.userId);
-    const { data: invs, error } = await context.supabase
+    const { data: invs, error } = await (context.supabase as any)
       .from("invoices")
       .select("invoice_number, customer_name, due_date, amount, amount_paid, status")
       .neq("status", "cancelled").neq("status", "paid");
