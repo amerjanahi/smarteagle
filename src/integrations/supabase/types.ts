@@ -1979,7 +1979,7 @@ export type Database = {
           qr_code: string
           requested_by: string | null
           status: Database["public"]["Enums"]["visitor_status"]
-          unit_id: string
+          unit_id: string | null
           updated_at: string
           visitor_name: string
           visitor_phone: string | null
@@ -2003,7 +2003,7 @@ export type Database = {
           qr_code?: string
           requested_by?: string | null
           status?: Database["public"]["Enums"]["visitor_status"]
-          unit_id: string
+          unit_id?: string | null
           updated_at?: string
           visitor_name: string
           visitor_phone?: string | null
@@ -2027,7 +2027,7 @@ export type Database = {
           qr_code?: string
           requested_by?: string | null
           status?: Database["public"]["Enums"]["visitor_status"]
-          unit_id?: string
+          unit_id?: string | null
           updated_at?: string
           visitor_name?: string
           visitor_phone?: string | null
