@@ -1,68 +1,66 @@
-## Sales Module Enhancement
 
-Build out a complete sales/billing workflow on top of the existing `invoices`, `payments`, and `credit_notes` tables, with line-item support, payment allocation across multiple invoices, customizable document templates, PDF generation, statements, and an audit trail.
+## Central Reports Hub
 
-### 1. Database changes (migration)
+Add a single **Reports** page under **Operations** that provides one entry point to every report across the platform, reusing existing data and logic.
 
-**New tables**
-- `invoice_line_items` — invoice_id, description, quantity, unit_price, tax_rate, line_total
-- `credit_note_line_items` — same shape, tied to credit_notes
-- `payment_allocations` — payment_id, invoice_id, amount_applied (lets one payment cover multiple invoices)
-- `document_templates` — type (invoice/credit_note/receipt/statement), name, logo_url, primary_color, header_text, footer_text, fields_json (which columns to show), layout (compact/standard/detailed), is_default
-- `audit_log` — table_name, record_id, action (insert/update/delete/issue/void/allocate), actor_user_id, before_json, after_json, created_at
+### Sidebar
+- Add `Reports` (BarChart3 icon) to `opsItems` in `src/routes/_authenticated/admin/route.tsx`, pointing to `/admin/reports-hub`.
+- Keep existing `/admin/reports` (Finance) and `/admin/purchase-reports` intact — the hub links to them.
 
-**Column additions**
-- `invoices`: tax_amount, subtotal, balance_due (generated), currency, voided_at, voided_by
-- `credit_notes`: status (draft/issued/applied/void), applied_amount, balance (remaining credit)
-- `payments`: allocated_amount, unallocated_amount (for over-payments → customer credit)
-- `residents`/units: customer_balance view (computed)
+### New route: `/admin/reports-hub`
+File: `src/routes/_authenticated/admin/reports-hub.tsx`
 
-**Triggers**
-- Recompute invoice `amount_paid`/`status` from `payment_allocations` (not from `payments` directly)
-- Recompute credit-note `applied_amount`/`balance` when allocations or invoice changes happen
-- Write to `audit_log` on every insert/update/delete to invoices, payments, credit_notes, allocations
-- Auto-generate sequential `invoice_number`, `receipt_number`, `credit_note_number` per year
+Layout:
+- Header with global filter bar (persisted in URL search params via TanStack Router):
+  - Date range (presets: This Month / Last Month / QTD / YTD / Custom)
+  - Unit (searchable select)
+  - Resident (searchable select)
+  - Category (expense/invoice categories)
+  - Status (paid/unpaid/partial/overdue/cancelled)
+  - Transaction type (invoice/payment/expense/bill/bank)
+- Grid of report cards grouped by section:
+  - **Sales**: Invoices list, Aging, Collections
+  - **Purchases**: Bills, Expenses by category, Vendor payments
+  - **Payments & Collections**: Receipts by method, Outstanding
+  - **Residents & Units**: Residents roster, Units occupancy
+  - **Bank**: Balances, Reconciliation status, Transactions
+  - **Annual Fees**: Calculations & billing status
+  - **Accounting**: Profit & Loss, Balance Sheet, Cash Flow
+  - **Ageing**: AR aging + AP aging
+- Each card opens a `ReportViewer` drawer/dialog showing:
+  - Title (editable inline when user has `admin` role — persisted to `localStorage` key `report-config:<reportId>`)
+  - Column chooser (checkbox list, saved to same local config)
+  - Data table (reuses existing shadcn `Table`)
+  - Toolbar: View / Print / Export PDF / Export Excel
 
-**RBAC**
-- Add roles `accountant` and `viewer` to existing `app_role` enum
-- Helper: `can_manage_sales(user_id)` = admin OR accountant
-- Policies: viewers read-only; accountants create/edit drafts; admins void/delete
+### Data layer (reuse first)
+- Reuse `financeReport` from `src/lib/reports.functions.ts` for P&L, Cash Flow, Aging, Collections.
+- Add a thin `src/lib/reports-hub.functions.ts` with additional `createServerFn` handlers **only** where no equivalent exists:
+  - `residentsUnitsReport` — joins existing `residents` + `units`
+  - `bankReport` — sums `bank_accounts` + `bank_transactions`
+  - `annualFeesReport` — reads `annual_fee_calculations`
+  - `balanceSheetReport` — derived from `chart_of_accounts` + invoices/payments/expenses
+- All handlers gated by `requireSupabaseAuth` + `can_manage_sales` role check (same pattern as `financeReport`).
+- No schema changes, no new tables, no data duplication.
 
-### 2. Server functions (`src/lib/sales.functions.ts`)
+### Export utilities
+- PDF: reuse existing `src/lib/pdf.server.ts` pattern (server fn returns base64) + `downloadBase64Pdf` from `src/lib/pdf-download.ts`. Single generic `exportReportPdf` server fn accepting `{ title, columns, rows }`.
+- Excel: client-side using `xlsx` (already common) — add via `bun add xlsx` if missing; generate workbook from the same `{ columns, rows }` shape.
+- Print: `window.print()` on the viewer with a print-only stylesheet class.
 
-All under `requireSupabaseAuth` + role check:
-- `createInvoice` / `updateInvoice` / `voidInvoice` (with line items)
-- `recordPayment` (with allocations array; auto-allocate FIFO if not specified)
-- `issueCreditNote` / `applyCreditNote` (allocate to invoices)
-- `getCustomerStatement` (unit_id, date range → invoices, payments, credits, running balance)
-- `generateInvoicePdf` / `generateReceiptPdf` / `generateCreditNotePdf` / `generateStatementPdf` (returns base64 PDF using `pdf-lib`, applies selected template)
-- `listTemplates` / `saveTemplate` / `uploadLogo` (admin only)
+### Report configuration persistence
+- Per-user, per-report config stored in `localStorage` under `report-config:<id>`:
+  ```json
+  { "name": "AR Aging", "columns": ["invoice_number","customer","due_date","balance"] }
+  ```
+- Reset button restores defaults.
+- Gate the edit UI behind `role === "admin"` from `useAuth`.
 
-### 3. UI — `/admin/sales/*`
+### Non-goals
+- No changes to existing report pages (`/admin/reports`, `/admin/purchase-reports`, `/admin/statements`).
+- No new DB tables, no permissions changes, no module rewrites.
+- No server-side persistence of layout (localStorage only) to keep credit usage minimal.
 
-- `/admin/sales` — dashboard: outstanding receivables, aged debtors, recent activity
-- `/admin/sales/invoices` — list, filter by status/unit/date; create/edit drawer with line items, tax, preview
-- `/admin/sales/payments` — record payment, pick customer, allocate across open invoices, print receipt
-- `/admin/sales/credit-notes` — issue/apply credit notes
-- `/admin/sales/statements` — pick customer + date range, preview & download PDF, email
-- `/admin/sales/templates` — template editor (logo upload, color picker, toggle fields, header/footer, live preview)
-- `/admin/sales/audit` — searchable audit log (admin only)
-
-### 4. Storage
-- New private bucket `sales-documents` for logos and generated PDFs
-- RLS: admins/accountants read+write, residents read only their own receipts/invoices
-
-### Out of scope (ask separately if needed)
-- Email delivery of PDFs (needs Resend setup)
-- Online payment gateway integration (Stripe/Paddle)
-- Multi-currency conversion rates
-- Recurring invoice schedules
-
-### Order of work
-1. Migration (schema + RBAC + triggers + audit)
-2. Server functions + PDF generation
-3. Admin UI screens
-4. Template editor
-5. Resident-side: view own invoices/receipts/statements
-
-Approve and I'll start with the migration.
+### Files touched
+- **New**: `src/routes/_authenticated/admin/reports-hub.tsx`, `src/lib/reports-hub.functions.ts`, `src/components/admin/ReportViewer.tsx`, `src/lib/report-export.ts`
+- **Edited**: `src/routes/_authenticated/admin/route.tsx` (add sidebar item)
