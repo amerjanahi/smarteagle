@@ -17,8 +17,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedLinkVillaRouteImport } from './routes/_authenticated/link-villa'
 import { Route as AuthenticatedPortalRouteRouteImport } from './routes/_authenticated/portal/route'
+import { Route as AuthenticatedGateRouteRouteImport } from './routes/_authenticated/gate/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedPortalIndexRouteImport } from './routes/_authenticated/portal/index'
+import { Route as AuthenticatedGateIndexRouteImport } from './routes/_authenticated/gate/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedPortalVisitorsRouteImport } from './routes/_authenticated/portal/visitors'
 import { Route as AuthenticatedPortalMoreRouteImport } from './routes/_authenticated/portal/more'
@@ -27,6 +29,12 @@ import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authe
 import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_authenticated/portal/calculator'
 import { Route as AuthenticatedPortalAnnouncementsRouteImport } from './routes/_authenticated/portal/announcements'
 import { Route as AuthenticatedPortalAmenitiesRouteImport } from './routes/_authenticated/portal/amenities'
+import { Route as AuthenticatedGateSearchRouteImport } from './routes/_authenticated/gate/search'
+import { Route as AuthenticatedGateScanRouteImport } from './routes/_authenticated/gate/scan'
+import { Route as AuthenticatedGateIncidentsRouteImport } from './routes/_authenticated/gate/incidents'
+import { Route as AuthenticatedGateEmergencyRouteImport } from './routes/_authenticated/gate/emergency'
+import { Route as AuthenticatedGateCheckinRouteImport } from './routes/_authenticated/gate/checkin'
+import { Route as AuthenticatedGateApprovedRouteImport } from './routes/_authenticated/gate/approved'
 import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin/visitors'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin/vendors'
 import { Route as AuthenticatedAdminVendorPaymentsRouteImport } from './routes/_authenticated/admin/vendor-payments'
@@ -48,6 +56,7 @@ import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_authenticated/admin/maintenance'
 import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
 import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
+import { Route as AuthenticatedAdminEmergencyContactsRouteImport } from './routes/_authenticated/admin/emergency-contacts'
 import { Route as AuthenticatedAdminDocumentsRouteImport } from './routes/_authenticated/admin/documents'
 import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
 import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
@@ -101,6 +110,11 @@ const AuthenticatedPortalRouteRoute =
     path: '/portal',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedGateRouteRoute = AuthenticatedGateRouteRouteImport.update({
+  id: '/gate',
+  path: '/gate',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -112,6 +126,11 @@ const AuthenticatedPortalIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
+const AuthenticatedGateIndexRoute = AuthenticatedGateIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedGateRouteRoute,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -157,6 +176,40 @@ const AuthenticatedPortalAmenitiesRoute =
     id: '/amenities',
     path: '/amenities',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedGateSearchRoute = AuthenticatedGateSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedGateRouteRoute,
+} as any)
+const AuthenticatedGateScanRoute = AuthenticatedGateScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AuthenticatedGateRouteRoute,
+} as any)
+const AuthenticatedGateIncidentsRoute =
+  AuthenticatedGateIncidentsRouteImport.update({
+    id: '/incidents',
+    path: '/incidents',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedGateEmergencyRoute =
+  AuthenticatedGateEmergencyRouteImport.update({
+    id: '/emergency',
+    path: '/emergency',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedGateCheckinRoute =
+  AuthenticatedGateCheckinRouteImport.update({
+    id: '/checkin',
+    path: '/checkin',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedGateApprovedRoute =
+  AuthenticatedGateApprovedRouteImport.update({
+    id: '/approved',
+    path: '/approved',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
   } as any)
 const AuthenticatedAdminVisitorsRoute =
   AuthenticatedAdminVisitorsRouteImport.update({
@@ -282,6 +335,12 @@ const AuthenticatedAdminExpensesRoute =
     path: '/expenses',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminEmergencyContactsRoute =
+  AuthenticatedAdminEmergencyContactsRouteImport.update({
+    id: '/emergency-contacts',
+    path: '/emergency-contacts',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminDocumentsRoute =
   AuthenticatedAdminDocumentsRouteImport.update({
     id: '/documents',
@@ -360,6 +419,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/gate': typeof AuthenticatedGateRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/link-villa': typeof AuthenticatedLinkVillaRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -375,6 +435,7 @@ export interface FileRoutesByFullPath {
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
+  '/admin/emergency-contacts': typeof AuthenticatedAdminEmergencyContactsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
@@ -396,6 +457,12 @@ export interface FileRoutesByFullPath {
   '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/gate/approved': typeof AuthenticatedGateApprovedRoute
+  '/gate/checkin': typeof AuthenticatedGateCheckinRoute
+  '/gate/emergency': typeof AuthenticatedGateEmergencyRoute
+  '/gate/incidents': typeof AuthenticatedGateIncidentsRoute
+  '/gate/scan': typeof AuthenticatedGateScanRoute
+  '/gate/search': typeof AuthenticatedGateSearchRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -404,6 +471,7 @@ export interface FileRoutesByFullPath {
   '/portal/more': typeof AuthenticatedPortalMoreRoute
   '/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/gate/': typeof AuthenticatedGateIndexRoute
   '/portal/': typeof AuthenticatedPortalIndexRoute
 }
 export interface FileRoutesByTo {
@@ -425,6 +493,7 @@ export interface FileRoutesByTo {
   '/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
+  '/admin/emergency-contacts': typeof AuthenticatedAdminEmergencyContactsRoute
   '/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
@@ -446,6 +515,12 @@ export interface FileRoutesByTo {
   '/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/gate/approved': typeof AuthenticatedGateApprovedRoute
+  '/gate/checkin': typeof AuthenticatedGateCheckinRoute
+  '/gate/emergency': typeof AuthenticatedGateEmergencyRoute
+  '/gate/incidents': typeof AuthenticatedGateIncidentsRoute
+  '/gate/scan': typeof AuthenticatedGateScanRoute
+  '/gate/search': typeof AuthenticatedGateSearchRoute
   '/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -454,6 +529,7 @@ export interface FileRoutesByTo {
   '/portal/more': typeof AuthenticatedPortalMoreRoute
   '/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/gate': typeof AuthenticatedGateIndexRoute
   '/portal': typeof AuthenticatedPortalIndexRoute
 }
 export interface FileRoutesById {
@@ -464,6 +540,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/gate': typeof AuthenticatedGateRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRouteRouteWithChildren
   '/_authenticated/link-villa': typeof AuthenticatedLinkVillaRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -479,6 +556,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/chart-of-accounts': typeof AuthenticatedAdminChartOfAccountsRoute
   '/_authenticated/admin/credit-notes': typeof AuthenticatedAdminCreditNotesRoute
   '/_authenticated/admin/documents': typeof AuthenticatedAdminDocumentsRoute
+  '/_authenticated/admin/emergency-contacts': typeof AuthenticatedAdminEmergencyContactsRoute
   '/_authenticated/admin/expenses': typeof AuthenticatedAdminExpensesRoute
   '/_authenticated/admin/invoices': typeof AuthenticatedAdminInvoicesRoute
   '/_authenticated/admin/maintenance': typeof AuthenticatedAdminMaintenanceRoute
@@ -500,6 +578,12 @@ export interface FileRoutesById {
   '/_authenticated/admin/vendor-payments': typeof AuthenticatedAdminVendorPaymentsRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/_authenticated/gate/approved': typeof AuthenticatedGateApprovedRoute
+  '/_authenticated/gate/checkin': typeof AuthenticatedGateCheckinRoute
+  '/_authenticated/gate/emergency': typeof AuthenticatedGateEmergencyRoute
+  '/_authenticated/gate/incidents': typeof AuthenticatedGateIncidentsRoute
+  '/_authenticated/gate/scan': typeof AuthenticatedGateScanRoute
+  '/_authenticated/gate/search': typeof AuthenticatedGateSearchRoute
   '/_authenticated/portal/amenities': typeof AuthenticatedPortalAmenitiesRoute
   '/_authenticated/portal/announcements': typeof AuthenticatedPortalAnnouncementsRoute
   '/_authenticated/portal/calculator': typeof AuthenticatedPortalCalculatorRoute
@@ -508,6 +592,7 @@ export interface FileRoutesById {
   '/_authenticated/portal/more': typeof AuthenticatedPortalMoreRoute
   '/_authenticated/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/gate/': typeof AuthenticatedGateIndexRoute
   '/_authenticated/portal/': typeof AuthenticatedPortalIndexRoute
 }
 export interface FileRouteTypes {
@@ -518,6 +603,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap.xml'
     | '/admin'
+    | '/gate'
     | '/portal'
     | '/link-villa'
     | '/auth/callback'
@@ -533,6 +619,7 @@ export interface FileRouteTypes {
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
     | '/admin/documents'
+    | '/admin/emergency-contacts'
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/maintenance'
@@ -554,6 +641,12 @@ export interface FileRouteTypes {
     | '/admin/vendor-payments'
     | '/admin/vendors'
     | '/admin/visitors'
+    | '/gate/approved'
+    | '/gate/checkin'
+    | '/gate/emergency'
+    | '/gate/incidents'
+    | '/gate/scan'
+    | '/gate/search'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -562,6 +655,7 @@ export interface FileRouteTypes {
     | '/portal/more'
     | '/portal/visitors'
     | '/admin/'
+    | '/gate/'
     | '/portal/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -583,6 +677,7 @@ export interface FileRouteTypes {
     | '/admin/chart-of-accounts'
     | '/admin/credit-notes'
     | '/admin/documents'
+    | '/admin/emergency-contacts'
     | '/admin/expenses'
     | '/admin/invoices'
     | '/admin/maintenance'
@@ -604,6 +699,12 @@ export interface FileRouteTypes {
     | '/admin/vendor-payments'
     | '/admin/vendors'
     | '/admin/visitors'
+    | '/gate/approved'
+    | '/gate/checkin'
+    | '/gate/emergency'
+    | '/gate/incidents'
+    | '/gate/scan'
+    | '/gate/search'
     | '/portal/amenities'
     | '/portal/announcements'
     | '/portal/calculator'
@@ -612,6 +713,7 @@ export interface FileRouteTypes {
     | '/portal/more'
     | '/portal/visitors'
     | '/admin'
+    | '/gate'
     | '/portal'
   id:
     | '__root__'
@@ -621,6 +723,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/_authenticated/gate'
     | '/_authenticated/portal'
     | '/_authenticated/link-villa'
     | '/auth/callback'
@@ -636,6 +739,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/chart-of-accounts'
     | '/_authenticated/admin/credit-notes'
     | '/_authenticated/admin/documents'
+    | '/_authenticated/admin/emergency-contacts'
     | '/_authenticated/admin/expenses'
     | '/_authenticated/admin/invoices'
     | '/_authenticated/admin/maintenance'
@@ -657,6 +761,12 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/vendor-payments'
     | '/_authenticated/admin/vendors'
     | '/_authenticated/admin/visitors'
+    | '/_authenticated/gate/approved'
+    | '/_authenticated/gate/checkin'
+    | '/_authenticated/gate/emergency'
+    | '/_authenticated/gate/incidents'
+    | '/_authenticated/gate/scan'
+    | '/_authenticated/gate/search'
     | '/_authenticated/portal/amenities'
     | '/_authenticated/portal/announcements'
     | '/_authenticated/portal/calculator'
@@ -665,6 +775,7 @@ export interface FileRouteTypes {
     | '/_authenticated/portal/more'
     | '/_authenticated/portal/visitors'
     | '/_authenticated/admin/'
+    | '/_authenticated/gate/'
     | '/_authenticated/portal/'
   fileRoutesById: FileRoutesById
 }
@@ -734,6 +845,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/gate': {
+      id: '/_authenticated/gate'
+      path: '/gate'
+      fullPath: '/gate'
+      preLoaderRoute: typeof AuthenticatedGateRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -747,6 +865,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/portal/'
       preLoaderRoute: typeof AuthenticatedPortalIndexRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/gate/': {
+      id: '/_authenticated/gate/'
+      path: '/'
+      fullPath: '/gate/'
+      preLoaderRoute: typeof AuthenticatedGateIndexRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -803,6 +928,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/portal/amenities'
       preLoaderRoute: typeof AuthenticatedPortalAmenitiesRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/gate/search': {
+      id: '/_authenticated/gate/search'
+      path: '/search'
+      fullPath: '/gate/search'
+      preLoaderRoute: typeof AuthenticatedGateSearchRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/scan': {
+      id: '/_authenticated/gate/scan'
+      path: '/scan'
+      fullPath: '/gate/scan'
+      preLoaderRoute: typeof AuthenticatedGateScanRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/incidents': {
+      id: '/_authenticated/gate/incidents'
+      path: '/incidents'
+      fullPath: '/gate/incidents'
+      preLoaderRoute: typeof AuthenticatedGateIncidentsRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/emergency': {
+      id: '/_authenticated/gate/emergency'
+      path: '/emergency'
+      fullPath: '/gate/emergency'
+      preLoaderRoute: typeof AuthenticatedGateEmergencyRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/checkin': {
+      id: '/_authenticated/gate/checkin'
+      path: '/checkin'
+      fullPath: '/gate/checkin'
+      preLoaderRoute: typeof AuthenticatedGateCheckinRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/approved': {
+      id: '/_authenticated/gate/approved'
+      path: '/approved'
+      fullPath: '/gate/approved'
+      preLoaderRoute: typeof AuthenticatedGateApprovedRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
     }
     '/_authenticated/admin/visitors': {
       id: '/_authenticated/admin/visitors'
@@ -951,6 +1118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/emergency-contacts': {
+      id: '/_authenticated/admin/emergency-contacts'
+      path: '/emergency-contacts'
+      fullPath: '/admin/emergency-contacts'
+      preLoaderRoute: typeof AuthenticatedAdminEmergencyContactsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/documents': {
       id: '/_authenticated/admin/documents'
       path: '/documents'
@@ -1051,6 +1225,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminChartOfAccountsRoute: typeof AuthenticatedAdminChartOfAccountsRoute
   AuthenticatedAdminCreditNotesRoute: typeof AuthenticatedAdminCreditNotesRoute
   AuthenticatedAdminDocumentsRoute: typeof AuthenticatedAdminDocumentsRoute
+  AuthenticatedAdminEmergencyContactsRoute: typeof AuthenticatedAdminEmergencyContactsRoute
   AuthenticatedAdminExpensesRoute: typeof AuthenticatedAdminExpensesRoute
   AuthenticatedAdminInvoicesRoute: typeof AuthenticatedAdminInvoicesRoute
   AuthenticatedAdminMaintenanceRoute: typeof AuthenticatedAdminMaintenanceRoute
@@ -1092,6 +1267,8 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
       AuthenticatedAdminChartOfAccountsRoute,
     AuthenticatedAdminCreditNotesRoute: AuthenticatedAdminCreditNotesRoute,
     AuthenticatedAdminDocumentsRoute: AuthenticatedAdminDocumentsRoute,
+    AuthenticatedAdminEmergencyContactsRoute:
+      AuthenticatedAdminEmergencyContactsRoute,
     AuthenticatedAdminExpensesRoute: AuthenticatedAdminExpensesRoute,
     AuthenticatedAdminInvoicesRoute: AuthenticatedAdminInvoicesRoute,
     AuthenticatedAdminMaintenanceRoute: AuthenticatedAdminMaintenanceRoute,
@@ -1125,6 +1302,32 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedGateRouteRouteChildren {
+  AuthenticatedGateApprovedRoute: typeof AuthenticatedGateApprovedRoute
+  AuthenticatedGateCheckinRoute: typeof AuthenticatedGateCheckinRoute
+  AuthenticatedGateEmergencyRoute: typeof AuthenticatedGateEmergencyRoute
+  AuthenticatedGateIncidentsRoute: typeof AuthenticatedGateIncidentsRoute
+  AuthenticatedGateScanRoute: typeof AuthenticatedGateScanRoute
+  AuthenticatedGateSearchRoute: typeof AuthenticatedGateSearchRoute
+  AuthenticatedGateIndexRoute: typeof AuthenticatedGateIndexRoute
+}
+
+const AuthenticatedGateRouteRouteChildren: AuthenticatedGateRouteRouteChildren =
+  {
+    AuthenticatedGateApprovedRoute: AuthenticatedGateApprovedRoute,
+    AuthenticatedGateCheckinRoute: AuthenticatedGateCheckinRoute,
+    AuthenticatedGateEmergencyRoute: AuthenticatedGateEmergencyRoute,
+    AuthenticatedGateIncidentsRoute: AuthenticatedGateIncidentsRoute,
+    AuthenticatedGateScanRoute: AuthenticatedGateScanRoute,
+    AuthenticatedGateSearchRoute: AuthenticatedGateSearchRoute,
+    AuthenticatedGateIndexRoute: AuthenticatedGateIndexRoute,
+  }
+
+const AuthenticatedGateRouteRouteWithChildren =
+  AuthenticatedGateRouteRoute._addFileChildren(
+    AuthenticatedGateRouteRouteChildren,
+  )
+
 interface AuthenticatedPortalRouteRouteChildren {
   AuthenticatedPortalAmenitiesRoute: typeof AuthenticatedPortalAmenitiesRoute
   AuthenticatedPortalAnnouncementsRoute: typeof AuthenticatedPortalAnnouncementsRoute
@@ -1156,12 +1359,14 @@ const AuthenticatedPortalRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedGateRouteRoute: typeof AuthenticatedGateRouteRouteWithChildren
   AuthenticatedPortalRouteRoute: typeof AuthenticatedPortalRouteRouteWithChildren
   AuthenticatedLinkVillaRoute: typeof AuthenticatedLinkVillaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedGateRouteRoute: AuthenticatedGateRouteRouteWithChildren,
   AuthenticatedPortalRouteRoute: AuthenticatedPortalRouteRouteWithChildren,
   AuthenticatedLinkVillaRoute: AuthenticatedLinkVillaRoute,
 }

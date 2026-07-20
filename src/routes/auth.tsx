@@ -51,7 +51,8 @@ function AuthPage() {
   // Redirect if already signed in (effect, not during render — avoids hydration mismatch)
   useEffect(() => {
     if (!authLoading && session && role) {
-      navigate({ to: role === "admin" ? "/admin" : "/portal" });
+      const dest = role === "admin" ? "/admin" : role === "security" ? "/gate" : "/portal";
+      navigate({ to: dest });
     }
   }, [authLoading, session, role, navigate]);
 
@@ -70,16 +71,14 @@ function AuthPage() {
       if (res.promoted) toast.success("You're the first user — promoted to admin.");
     } catch { /* ignore */ }
     await refreshRole();
-    // Residents go to villa-linking; the link-villa page sends them onward
-    // once they have an approved villa. Admins go straight to /admin.
     const { data: roleRow } = await supabase
       .from("user_roles").select("role").eq("user_id", s.user.id);
-    const isAdmin = (roleRow ?? []).some((r: any) => r.role === "admin");
-    if (!isAdmin) {
-      const { data: links } = await supabase
-        .from("user_villas").select("id").eq("user_id", s.user.id).eq("status", "active").limit(1);
-      navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
-    }
+    const roles = (roleRow ?? []).map((r: any) => r.role);
+    if (roles.includes("admin")) return; // effect above routes to /admin
+    if (roles.includes("security")) { navigate({ to: "/gate" }); return; }
+    const { data: links } = await supabase
+      .from("user_villas").select("id").eq("user_id", s.user.id).eq("status", "active").limit(1);
+    navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
   }
 
   async function handleEmail(e: React.FormEvent) {
