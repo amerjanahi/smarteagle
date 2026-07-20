@@ -1,6 +1,7 @@
 import DOMPurify from "isomorphic-dompurify";
 
-const CONFIG: DOMPurify.Config = {
+const CONFIG = {
+
   ALLOWED_TAGS: [
     "a", "b", "i", "u", "em", "strong", "s", "strike", "sub", "sup",
     "p", "br", "hr", "span", "div",
@@ -32,5 +33,6 @@ DOMPurify.addHook("afterSanitizeAttributes", (node) => {
 
 export function sanitizeHtml(dirty: string | null | undefined): string {
   if (!dirty) return "";
-  return DOMPurify.sanitize(dirty, CONFIG) as string;
+  return DOMPurify.sanitize(dirty, CONFIG) as unknown as string;
 }
+
