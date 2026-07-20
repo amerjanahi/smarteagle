@@ -46,12 +46,21 @@ function SettingsPage() {
           <TabsTrigger value="currency">Currency</TabsTrigger>
           <TabsTrigger value="vat">VAT</TabsTrigger>
           <TabsTrigger value="roles">Roles &amp; Permissions</TabsTrigger>
+          <TabsTrigger value="templates">Document Templates</TabsTrigger>
         </TabsList>
         <TabsContent value="company"><CompanyTab /></TabsContent>
         <TabsContent value="users"><UsersTab /></TabsContent>
         <TabsContent value="currency"><CurrencyTab /></TabsContent>
         <TabsContent value="vat"><VatTab /></TabsContent>
         <TabsContent value="roles"><RolesTab /></TabsContent>
+        <TabsContent value="templates">
+          <div className="rounded-md border p-4 text-sm">
+            Manage document templates for Invoice, Receipt, Credit Note, Statement, Work Order, and Purchase Order.
+            <div className="mt-3">
+              <a href="/admin/templates" className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-primary-foreground hover:opacity-90">Open Document Templates →</a>
+            </div>
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
