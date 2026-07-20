@@ -324,14 +324,14 @@ export const saveTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: {
     id?: string;
-    template_type: "invoice" | "credit_note" | "receipt" | "statement";
+    template_type: "invoice" | "credit_note" | "receipt" | "statement" | "work_order" | "purchase_order";
     name: string;
     logo_url?: string | null;
     primary_color: string;
     accent_color: string;
     header_text?: string | null;
     footer_text?: string | null;
-    fields_json: Record<string, boolean>;
+    fields_json: Record<string, any>;
     layout: "compact" | "standard" | "detailed";
     is_default: boolean;
   }) => d)

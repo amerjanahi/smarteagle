@@ -19,18 +19,29 @@ export const Route = createFileRoute("/_authenticated/admin/templates")({
   component: TemplatesPage,
 });
 
+type TplType = "invoice" | "receipt" | "credit_note" | "statement" | "work_order" | "purchase_order";
+
 type Tpl = {
   id?: string;
-  template_type: "invoice" | "credit_note" | "receipt" | "statement";
+  template_type: TplType;
   name: string;
   logo_url: string;
   primary_color: string;
   accent_color: string;
   header_text: string;
   footer_text: string;
-  fields_json: Record<string, boolean>;
+  fields_json: Record<string, any>;
   layout: "compact" | "standard" | "detailed";
   is_default: boolean;
+};
+
+const TYPE_LABELS: Record<TplType, string> = {
+  invoice: "Invoice",
+  receipt: "Receipt",
+  credit_note: "Credit Note",
+  statement: "Statement of Account",
+  work_order: "Work Order",
+  purchase_order: "Purchase Order",
 };
 
 const blank: Tpl = {
@@ -41,7 +52,18 @@ const blank: Tpl = {
   accent_color: "#3B82F6",
   header_text: "",
   footer_text: "Thank you for your business.",
-  fields_json: { show_tax: true, show_period: true, show_notes: false },
+  fields_json: {
+    show_logo: true,
+    show_company_details: true,
+    show_numbering: true,
+    show_tax: true,
+    show_period: true,
+    show_notes: false,
+    show_terms: true,
+    company_details_text: "",
+    terms_text: "",
+    number_prefix: "",
+  },
   layout: "standard",
   is_default: false,
 };
