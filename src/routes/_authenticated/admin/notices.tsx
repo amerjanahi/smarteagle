@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { DevicePreview } from "@/components/admin/DevicePreview";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export const Route = createFileRoute("/_authenticated/admin/notices")({
   head: () => ({ meta: [{ title: "Notices — Hayy Admin" }] }),
