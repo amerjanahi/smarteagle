@@ -1,41 +1,53 @@
-## Goal
+## Scope
+Three security hardening tasks. No feature/behavior changes to end-user flows.
 
-Add two new admin views under Visitors:
-1. **Live Access Board** — real-time who's inside now, with duration and quick exit.
-2. **Visitor History** — searchable, filterable log of all past entries with export.
+## 1. `.gitignore` — env & secret files
+Append env/secret patterns to the existing root `.gitignore` (currently missing any `.env*` rule; `.env` is present in the repo). Retain `.env.example`.
 
-## Approach
+Add:
+```
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+```
 
-Keep `admin/visitors.tsx` as pre-registration and convert its top bar into tabs: **Pre-Register | Live Board | History**. Reuse existing `visitors` table + `checkOutVisitor` server fn. No schema changes required — all needed columns exist (`visitor_type`, `company`, `car_plate`, `checked_in_at/_by`, `checked_out_at/_by`, `expected_at`, `status`, `blocked`, `gate_notes`, `unit_id`, `approved_by`).
+Note (chat only, not code): `.env` is already tracked and contains only publishable Supabase keys — safe, but I'll flag that untracking it requires a git command the user must run manually (`git rm --cached .env`), since I can't run stateful git.
 
-Overdue rule: default max stay = 8 hours (configurable constant), highlight row in amber; > 24 h in red.
+## 2. Sanitize notice HTML with DOMPurify
+Install `dompurify` + `@types/dompurify`.
 
-### 1. Live Access Board (`LiveAccessBoard.tsx`)
-- Query: `visitors` where `status = 'checked_in'`, join `units(unit_number, building)`, join `profiles!checked_in_by(full_name)` for gate staff name.
-- Realtime: subscribe to `postgres_changes` on `visitors` (inside `useEffect`, teardown on unmount) → `invalidateQueries`.
-- Local ticking clock (setInterval 30s) to refresh live durations.
-- Columns: Type (badge) · Name / Company · Villa · Plate · Entry time · Duration · Gate staff · Status · **Mark Exited** button (calls `checkOutVisitor`).
-- Status derivation: `Inside` (< max), `Overdue` (> max), plus `Denied` when `blocked = true`.
-- Header stats: Inside now, Overdue, Denied today.
-- Filter chip row: visitor type.
+- `src/lib/sanitize-html.ts` (new): thin wrapper exporting `sanitizeHtml(dirty)` with an allow-list config (standard formatting tags, `a`, `img`, `ul/ol/li`, `p`, `span`, `strong/em/u`, `br`, `h1-h6`), allowed attrs (`href`, `src`, `alt`, `style` limited, `target`, `rel`, `data-path`), forces `target=_blank` + `rel=noopener noreferrer` on links, blocks `javascript:` URLs.
+- `src/components/admin/RichTextEditor.tsx`: sanitize on every `onChange` before calling the parent callback, and on the initial `innerHTML` write from `value`. Image insertion already builds a controlled `<img>`; still routed through the same sanitizer after `execCommand`.
+- `src/routes/_authenticated/admin/notices.tsx`: wrap all three `dangerouslySetInnerHTML={{ __html: ... }}` sites (list preview, editor live preview, published preview) with `sanitizeHtml(...)`.
 
-### 2. Visitor History (`VisitorHistory.tsx`)
-- Query all visitors ordered by `expected_at desc`, joined with units + gate staff profile.
-- Filter bar: date range (from/to on `expected_at`), villa (unit select), visitor type, plate (text), status, gate staff (profile select). Client-side filtering after fetch (bounded to last 500 for perf; add "Load more" later if needed).
-- Columns: Entry · Exit · Duration · Villa · Type · Name/Phone · Plate · Approval source (`approved_by` name or "Pre-registered" / "Walk-in") · Gate staff · Status · Notes/Incident flag.
-- Row click → detail drawer showing full notes and any linked incident photos (if `gate_notes` or matching incident within ±1h on same unit).
-- Export: reuse `src/lib/report-export.ts` — `exportCsv`, `exportExcel`, `printReport` (PDF via print). Add buttons: Export CSV / Excel / PDF.
+## 3. Remove automatic first-user admin promotion
+Two places currently do this — both need to go:
 
-### 3. Wire into existing page
-Refactor `src/routes/_authenticated/admin/visitors.tsx` to render a `Tabs` component with three panels. Existing pre-register form and QR dialog stay in the "Pre-Register" tab unchanged.
+- **DB trigger** `public.handle_new_user()`: strip the "if no admin exists, insert admin role" block. Keep the profile upsert. Migration will `CREATE OR REPLACE FUNCTION` with the cleaned body (same signature, security definer, search_path).
+- **Server fn** `bootstrapAdminIfEmpty` in `src/lib/admin.functions.ts`: remove the function entirely, plus any import/call sites (grep confirms it's only defined here; will re-verify call sites during build and delete them).
 
-## Files
+Chat message will tell the user how to manually seed the first admin via SQL:
+```sql
+INSERT INTO public.user_roles (user_id, role)
+VALUES ('<auth-user-uuid>', 'admin');
+```
 
-- **New** `src/components/admin/visitors/LiveAccessBoard.tsx`
-- **New** `src/components/admin/visitors/VisitorHistory.tsx`
-- **New** `src/components/admin/visitors/shared.ts` — duration formatter, status/type badges, `MAX_STAY_HOURS` constant.
-- **Edit** `src/routes/_authenticated/admin/visitors.tsx` — wrap existing UI in Tabs, add two new tabs.
+## Technical notes
+- DOMPurify runs client-side; SSR passes strings through untouched (editor is client-only). The sanitizer module uses `isomorphic-dompurify` OR guards `typeof window` — will use `isomorphic-dompurify` for a single import path that works in both environments (safer if any render ever moves to SSR).
+- Migration is schema-only (function replace), no table/policy changes.
+- No UI changes visible to users.
 
-## Out of scope
-
-- Schema changes, permitted-duration per visitor type, gate-staff device tracking beyond what already logs, and incident photo attachments beyond linking existing `incidents` records. Ask if you want any of these.
+## Files touched
+- `.gitignore` (edit)
+- `package.json` (add `isomorphic-dompurify`)
+- `src/lib/sanitize-html.ts` (new)
+- `src/components/admin/RichTextEditor.tsx` (edit)
+- `src/routes/_authenticated/admin/notices.tsx` (edit)
+- `src/lib/admin.functions.ts` (remove `bootstrapAdminIfEmpty`; grep for callers)
+- Migration: replace `handle_new_user()` without admin auto-promotion

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
-import { bootstrapAdminIfEmpty } from "@/lib/admin.functions";
+
 import { biometric } from "@/lib/biometric";
 
 const searchSchema = z.object({
@@ -66,10 +66,7 @@ function AuthPage() {
       toast.error("Your account has been rejected. Contact the building administrator.");
       return;
     }
-    try {
-      const res = await bootstrapAdminIfEmpty();
-      if (res.promoted) toast.success("You're the first user — promoted to admin.");
-    } catch { /* ignore */ }
+    // First admin must be assigned manually in the database — no auto-promotion.
     await refreshRole();
     const { data: roleRow } = await supabase
       .from("user_roles").select("role").eq("user_id", s.user.id);

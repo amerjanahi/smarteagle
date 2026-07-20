@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { DevicePreview } from "@/components/admin/DevicePreview";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export const Route = createFileRoute("/_authenticated/admin/notices")({
   head: () => ({ meta: [{ title: "Notices — Hayy Admin" }] }),
@@ -77,7 +78,7 @@ function NoticesPage() {
         }
       }
       const payload: any = {
-        subject: form.subject, body: form.body, channel: form.channel, audience: form.audience,
+        subject: form.subject, body: sanitizeHtml(form.body), channel: form.channel, audience: form.audience,
         group_id: form.audience === "group" ? form.group_id : null,
         image_url: form.image_url || null,
         status: publish ? "published" : "draft",
@@ -187,7 +188,7 @@ function NoticesPage() {
                       {n.image_url && <img src={n.image_url} alt="" className="h-8 w-8 rounded object-cover" />}
                       <div>
                         <div className="font-medium">{n.subject || "(untitled)"}</div>
-                        <div className="text-xs text-muted-foreground line-clamp-1" dangerouslySetInnerHTML={{ __html: n.body.replace(/<[^>]+>/g, " ").slice(0, 120) }} />
+                        <div className="text-xs text-muted-foreground line-clamp-1">{(n.body || "").replace(/<[^>]+>/g, " ").slice(0, 120)}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -280,7 +281,7 @@ function NoticesPage() {
                 <div className={device === "mobile" ? "p-3 text-sm min-h-[420px]" : "p-6 min-h-[520px]"}>
                   <h2 className={device === "mobile" ? "text-base font-semibold mb-2" : "text-xl font-semibold mb-3"}>{form.subject || "(subject)"}</h2>
                   {form.image_url && <img src={form.image_url} alt="" className="w-full rounded-lg mb-3" />}
-                  <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: form.body || "<p class='text-muted-foreground'>Start typing to see the preview…</p>" }} />
+                  <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: sanitizeHtml(form.body) || "<p class='text-muted-foreground'>Start typing to see the preview…</p>" }} />
                 </div>
               )}
             </DevicePreview>
@@ -313,7 +314,7 @@ function NoticesPage() {
                   <div className={device === "mobile" ? "p-3 text-sm" : "p-6"}>
                     <h2 className={device === "mobile" ? "text-base font-semibold mb-2" : "text-xl font-semibold mb-3"}>{preview.subject}</h2>
                     {preview.image_url && <img src={preview.image_url} alt="" className="w-full rounded-lg mb-3" />}
-                    <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: preview.body }} />
+                    <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: sanitizeHtml(preview.body) }} />
                   </div>
                 )}
               </DevicePreview>

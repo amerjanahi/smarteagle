@@ -6,6 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 const FONTS = ["Inter", "Arial", "Georgia", "Times New Roman", "Courier New", "Verdana"];
 const SIZES = [
@@ -31,13 +32,14 @@ export function RichTextEditor({
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (ref.current && ref.current.innerHTML !== value) {
-      ref.current.innerHTML = value || "";
+    const clean = sanitizeHtml(value);
+    if (ref.current && ref.current.innerHTML !== clean) {
+      ref.current.innerHTML = clean;
     }
   }, [value]);
 
   const handleInput = () => {
-    if (ref.current) onChange(ref.current.innerHTML);
+    if (ref.current) onChange(sanitizeHtml(ref.current.innerHTML));
   };
 
   const insertImage = async (file: File) => {
