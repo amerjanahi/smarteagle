@@ -814,6 +814,36 @@ export type Database = {
           },
         ]
       }
+      emergency_contacts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          priority: number
+          role_label: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          priority?: number
+          role_label?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          priority?: number
+          role_label?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -882,6 +912,92 @@ export type Database = {
           vendor?: string | null
         }
         Relationships: []
+      }
+      gate_activity_log: {
+        Row: {
+          action: string
+          created_at: string
+          device_info: string | null
+          id: string
+          metadata: Json
+          session_id: string | null
+          staff_id: string | null
+          unit_id: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          device_info?: string | null
+          id?: string
+          metadata?: Json
+          session_id?: string | null
+          staff_id?: string | null
+          unit_id?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          device_info?: string | null
+          id?: string
+          metadata?: Json
+          session_id?: string | null
+          staff_id?: string | null
+          unit_id?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
+      incidents: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          occurred_at: string
+          photo_urls: string[]
+          reported_by: string | null
+          severity: string
+          status: string
+          title: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          occurred_at?: string
+          photo_urls?: string[]
+          reported_by?: string | null
+          severity?: string
+          status?: string
+          title: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          occurred_at?: string
+          photo_urls?: string[]
+          reported_by?: string | null
+          severity?: string
+          status?: string
+          title?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incidents_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invitations: {
         Row: {
@@ -1848,11 +1964,16 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
+          blocked: boolean
           car_plate: string | null
           checked_in_at: string | null
+          checked_in_by: string | null
           checked_out_at: string | null
+          checked_out_by: string | null
+          company: string | null
           created_at: string
           expected_at: string
+          gate_notes: string | null
           id: string
           purpose: string | null
           qr_code: string
@@ -1862,15 +1983,21 @@ export type Database = {
           updated_at: string
           visitor_name: string
           visitor_phone: string | null
+          visitor_type: string
         }
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
+          blocked?: boolean
           car_plate?: string | null
           checked_in_at?: string | null
+          checked_in_by?: string | null
           checked_out_at?: string | null
+          checked_out_by?: string | null
+          company?: string | null
           created_at?: string
           expected_at: string
+          gate_notes?: string | null
           id?: string
           purpose?: string | null
           qr_code?: string
@@ -1880,15 +2007,21 @@ export type Database = {
           updated_at?: string
           visitor_name: string
           visitor_phone?: string | null
+          visitor_type?: string
         }
         Update: {
           approved_at?: string | null
           approved_by?: string | null
+          blocked?: boolean
           car_plate?: string | null
           checked_in_at?: string | null
+          checked_in_by?: string | null
           checked_out_at?: string | null
+          checked_out_by?: string | null
+          company?: string | null
           created_at?: string
           expected_at?: string
+          gate_notes?: string | null
           id?: string
           purpose?: string | null
           qr_code?: string
@@ -1898,6 +2031,7 @@ export type Database = {
           updated_at?: string
           visitor_name?: string
           visitor_phone?: string | null
+          visitor_type?: string
         }
         Relationships: [
           {
