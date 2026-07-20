@@ -105,7 +105,7 @@ function TemplatesPage() {
                 <CardTitle className="text-sm">{t.name}</CardTitle>
                 <div className="flex items-center gap-2">
                   {t.is_default && <Badge>Default</Badge>}
-                  <Badge variant="outline">{t.template_type}</Badge>
+                  <Badge variant="outline">{TYPE_LABELS[t.template_type as TplType] ?? t.template_type}</Badge>
                 </div>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
@@ -132,10 +132,9 @@ function TemplatesPage() {
                   <Select value={editing.template_type} onValueChange={(v: any) => setEditing({ ...editing, template_type: v })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="invoice">Invoice</SelectItem>
-                      <SelectItem value="receipt">Receipt</SelectItem>
-                      <SelectItem value="credit_note">Credit Note</SelectItem>
-                      <SelectItem value="statement">Statement</SelectItem>
+                      {(Object.keys(TYPE_LABELS) as TplType[]).map((k) => (
+                        <SelectItem key={k} value={k}>{TYPE_LABELS[k]}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -183,15 +182,46 @@ function TemplatesPage() {
                 <Textarea value={editing.footer_text ?? ""} onChange={(e) => setEditing({ ...editing, footer_text: e.target.value })} />
               </div>
 
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Number prefix</Label>
+                  <Input
+                    value={(editing.fields_json?.number_prefix as string) ?? ""}
+                    onChange={(e) => setEditing({ ...editing, fields_json: { ...editing.fields_json, number_prefix: e.target.value } })}
+                    placeholder="INV, WO, PO…"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label>Company details</Label>
+                <Textarea
+                  rows={3}
+                  value={(editing.fields_json?.company_details_text as string) ?? ""}
+                  onChange={(e) => setEditing({ ...editing, fields_json: { ...editing.fields_json, company_details_text: e.target.value } })}
+                  placeholder="Name, address, TRN, phone, email"
+                />
+              </div>
+              <div>
+                <Label>Terms &amp; conditions</Label>
+                <Textarea
+                  rows={3}
+                  value={(editing.fields_json?.terms_text as string) ?? ""}
+                  onChange={(e) => setEditing({ ...editing, fields_json: { ...editing.fields_json, terms_text: e.target.value } })}
+                  placeholder="Payment terms, warranty, etc."
+                />
+              </div>
+
               <div>
                 <Label className="mb-2 block">Visible fields</Label>
                 <div className="space-y-2">
-                  {Object.entries(editing.fields_json).map(([k, v]) => (
-                    <div key={k} className="flex items-center justify-between text-sm">
-                      <span className="capitalize">{k.replace(/_/g, " ")}</span>
-                      <Switch checked={v} onCheckedChange={(nv) => setEditing({ ...editing, fields_json: { ...editing.fields_json, [k]: nv } })} />
-                    </div>
-                  ))}
+                  {Object.entries(editing.fields_json)
+                    .filter(([k, v]) => typeof v === "boolean" && k.startsWith("show_"))
+                    .map(([k, v]) => (
+                      <div key={k} className="flex items-center justify-between text-sm">
+                        <span className="capitalize">{k.replace(/^show_/, "").replace(/_/g, " ")}</span>
+                        <Switch checked={!!v} onCheckedChange={(nv) => setEditing({ ...editing, fields_json: { ...editing.fields_json, [k]: nv } })} />
+                      </div>
+                    ))}
                 </div>
               </div>
 
@@ -207,6 +237,9 @@ function TemplatesPage() {
                   </Button>
                 ) : <div />}
                 <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => openPreview(editing)}>
+                    <Eye className="mr-2 h-4 w-4" /> Preview
+                  </Button>
                   <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
                   <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
                     <Save className="mr-2 h-4 w-4" /> {saveMut.isPending ? "Saving…" : "Save"}
