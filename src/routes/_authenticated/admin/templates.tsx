@@ -87,6 +87,14 @@ function TemplatesPage() {
     onError: (e: any) => toast.error(e.message),
   });
 
+  function openPreview(t: Tpl) {
+    const w = window.open("", "_blank", "width=900,height=1200");
+    if (!w) return;
+    w.document.write(renderPreviewHtml(t));
+    w.document.close();
+  }
+
+
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
