@@ -92,28 +92,29 @@ export const rptExpenses = createServerFn({ method: "POST" })
     await assertFinance(context.supabase, context.userId);
     let q = (context.supabase as any)
       .from("expenses")
-      .select("expense_date, category, description, amount, vat_amount, total_amount, vendor_name, status")
+      .select("expense_date, category, description, amount, vat_amount, total_amount, vendor, approval_status")
       .order("expense_date", { ascending: false });
     if (data.from) q = q.gte("expense_date", data.from);
     if (data.to) q = q.lte("expense_date", data.to);
     if (data.category) q = q.eq("category", data.category);
-    if (data.status) q = q.eq("status", data.status);
+    if (data.status) q = q.eq("approval_status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return {
       columns: [
         { key: "expense_date", label: "Date" },
         { key: "category", label: "Category" },
-        { key: "vendor_name", label: "Vendor" },
+        { key: "vendor", label: "Vendor" },
         { key: "description", label: "Description" },
         { key: "amount", label: "Amount" },
         { key: "vat_amount", label: "VAT" },
         { key: "total_amount", label: "Total" },
-        { key: "status", label: "Status" },
+        { key: "approval_status", label: "Status" },
       ],
       rows: rows ?? [],
     };
   });
+
 
 export const rptPurchaseInvoices = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -226,23 +227,26 @@ export const rptAnnualFees = createServerFn({ method: "POST" })
     await assertFinance(context.supabase, context.userId);
     const { data: rows, error } = await (context.supabase as any)
       .from("annual_fee_calculations")
-      .select("year, unit_id, resident_id, base_amount, vat_amount, total_amount, frequency, status, generated_at")
-      .order("year", { ascending: false });
+      .select("period_from, period_to, unit_id, resident_id, annual_rate, gfa_sqm, gross_annual_fee, prorata_fee, waived_amount, net_payable")
+      .order("period_from", { ascending: false });
     if (error) throw new Error(error.message);
     return {
       columns: [
-        { key: "year", label: "Year" },
+        { key: "period_from", label: "From" },
+        { key: "period_to", label: "To" },
         { key: "unit_id", label: "Unit" },
         { key: "resident_id", label: "Resident" },
-        { key: "frequency", label: "Frequency" },
-        { key: "base_amount", label: "Base" },
-        { key: "vat_amount", label: "VAT" },
-        { key: "total_amount", label: "Total" },
-        { key: "status", label: "Status" },
+        { key: "annual_rate", label: "Rate" },
+        { key: "gfa_sqm", label: "GFA (sqm)" },
+        { key: "gross_annual_fee", label: "Gross" },
+        { key: "prorata_fee", label: "Pro-rata" },
+        { key: "waived_amount", label: "Waived" },
+        { key: "net_payable", label: "Net Payable" },
       ],
       rows: rows ?? [],
     };
   });
+
 
 export const rptAging = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
