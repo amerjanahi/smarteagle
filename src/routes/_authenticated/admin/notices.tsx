@@ -219,8 +219,9 @@ function NoticesPage() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{form.id ? "Edit notice" : "New notice"}</DialogTitle></DialogHeader>
+          <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-3">
             <div>
               <Label>Subject</Label>
