@@ -5,9 +5,9 @@ import { resolveMergeTokens } from "./mergeFields";
 
 export type RenderMode = "editor" | "preview" | "print";
 
-function styleToCss(el: CanvasElement, mode: RenderMode): React.CSSProperties {
+function styleToCss(el: CanvasElement, mode: RenderMode): CSSProperties {
   const s = el.style ?? {};
-  const base: React.CSSProperties = {
+  const base: CSSProperties = {
     position: "absolute",
     left: `${el.x}pt`,
     top: `${el.y}pt`,
@@ -37,7 +37,7 @@ export function renderElement(
   type: TplType,
   mode: RenderMode,
   logoUrl?: string,
-): React.ReactNode {
+): ReactNode {
   switch (el.type) {
     case "text":
     case "field":
@@ -113,7 +113,7 @@ export function renderElement(
   }
 }
 
-export function CanvasPage({ doc, type, mode, logoUrl, children }: { doc: CanvasDoc; type: TplType; mode: RenderMode; logoUrl?: string; children?: React.ReactNode }) {
+export function CanvasPage({ doc, type, mode, logoUrl, children }: { doc: CanvasDoc; type: TplType; mode: RenderMode; logoUrl?: string; children?: ReactNode }) {
   const { w, h } = pageSize(doc);
   return (
     <div
