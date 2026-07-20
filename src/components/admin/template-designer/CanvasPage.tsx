@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import type { CanvasDoc, CanvasElement, TplType } from "./types";
 import { pageSize } from "./types";
 import { resolveMergeTokens } from "./mergeFields";
 
