@@ -13,6 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LiveAccessBoard } from "@/components/admin/visitors/LiveAccessBoard";
+import { VisitorHistory } from "@/components/admin/visitors/VisitorHistory";
 
 export const Route = createFileRoute("/_authenticated/admin/visitors")({
   head: () => ({ meta: [{ title: "Visitors — Hayy Admin" }] }),
@@ -22,6 +25,28 @@ export const Route = createFileRoute("/_authenticated/admin/visitors")({
 const qrUrl = (code: string) => `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(code)}`;
 
 function VisitorsAdminPage() {
+  return (
+    <div className="space-y-4">
+      <header>
+        <h1 className="font-display text-2xl font-bold">Visitors</h1>
+        <p className="text-sm text-muted-foreground">Live gate access, pre-registration, and full visit history.</p>
+      </header>
+
+      <Tabs defaultValue="live" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="live">Live Access Board</TabsTrigger>
+          <TabsTrigger value="register">Pre-Register</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
+        </TabsList>
+        <TabsContent value="live"><LiveAccessBoard /></TabsContent>
+        <TabsContent value="register"><PreRegisterPanel /></TabsContent>
+        <TabsContent value="history"><VisitorHistory /></TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function PreRegisterPanel() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -64,6 +89,7 @@ function VisitorsAdminPage() {
       setOpen(false);
       setForm({ unit_id: "", visitor_name: "", visitor_phone: "", car_plate: "", expected_at: "", purpose: "" });
       qc.invalidateQueries({ queryKey: ["admin-visitors"] });
+      qc.invalidateQueries({ queryKey: ["visitors-history"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -81,11 +107,7 @@ function VisitorsAdminPage() {
 
   return (
     <div className="space-y-4">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold">Visitors</h1>
-          <p className="text-sm text-muted-foreground">Pre-register visitors and generate QR codes for gate access.</p>
-        </div>
+      <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm"><Plus className="mr-1 h-4 w-4" />Add visitor</Button></DialogTrigger>
           <DialogContent className="max-w-xl">
@@ -111,7 +133,7 @@ function VisitorsAdminPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </header>
+      </div>
 
       {visitors.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
