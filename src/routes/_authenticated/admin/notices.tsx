@@ -222,6 +222,7 @@ function NoticesPage() {
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{form.id ? "Edit notice" : "New notice"}</DialogTitle></DialogHeader>
           <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-3">
             <div>
               <Label>Subject</Label>
@@ -272,6 +273,19 @@ function NoticesPage() {
                 </Select>
               </div>
             )}
+          </div>
+          <div className="space-y-2">
+            <Label>Live preview</Label>
+            <DevicePreview>
+              {(device) => (
+                <div className={device === "mobile" ? "p-3 text-sm min-h-[420px]" : "p-6 min-h-[520px]"}>
+                  <h2 className={device === "mobile" ? "text-base font-semibold mb-2" : "text-xl font-semibold mb-3"}>{form.subject || "(subject)"}</h2>
+                  {form.image_url && <img src={form.image_url} alt="" className="w-full rounded-lg mb-3" />}
+                  <div className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg" dangerouslySetInnerHTML={{ __html: form.body || "<p class='text-muted-foreground'>Start typing to see the preview…</p>" }} />
+                </div>
+              )}
+            </DevicePreview>
+          </div>
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => save.mutate({ publish: false })} disabled={!form.subject || save.isPending}>
