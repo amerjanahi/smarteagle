@@ -12,24 +12,32 @@ export const Route = createFileRoute("/_authenticated/portal")({
   component: PortalShell,
 });
 
-const tabs = [
+const baseTabs = [
   { to: "/portal", label: "Home", icon: Home },
   { to: "/portal/invoices", label: "Invoices", icon: FileText },
   { to: "/portal/maintenance", label: "Repairs", icon: Wrench },
   { to: "/portal/visitors", label: "Visitors", icon: UserPlus },
   { to: "/portal/more", label: "More", icon: MoreHorizontal },
 ] as const;
+const workTab = { to: "/portal/work", label: "Work", icon: Briefcase } as const;
 
 function PortalShell() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const villasFn = useServerFn(myVillas);
+  const meEmpFn = useServerFn(getMyEmployee);
   const { data: villas, isLoading } = useQuery({
     queryKey: ["my-villas"],
     queryFn: () => villasFn(),
     enabled: role !== "admin",
   });
+  const { data: meEmp } = useQuery({
+    queryKey: ["me-emp"],
+    queryFn: () => meEmpFn(),
+    enabled: role !== "admin",
+  });
+  const tabs = meEmp ? [...baseTabs.slice(0, 4), workTab, baseTabs[4]] : baseTabs;
 
   useEffect(() => {
     if (role !== "admin" && !isLoading && villas && villas.length === 0) {
