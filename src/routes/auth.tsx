@@ -15,6 +15,7 @@ import { biometric } from "@/lib/biometric";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
+  next: z.string().optional(),
 });
 
 type SignInMethod = "password" | "email-otp" | "phone-otp";

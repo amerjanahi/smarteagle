@@ -93,7 +93,7 @@ function Consent() {
         </p>
         {scopes.length > 0 && (
           <ul className="mt-4 space-y-1 text-sm text-muted-foreground list-disc pl-5">
-            {scopes.map((s) => <li key={s}>{s}</li>)}
+            {scopes.map((s: string) => <li key={s}>{s}</li>)}
           </ul>
         )}
         {error && <p className="mt-4 text-sm text-destructive" role="alert">{error}</p>}
