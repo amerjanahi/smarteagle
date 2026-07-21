@@ -15,6 +15,7 @@ import { biometric } from "@/lib/biometric";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
+  next: z.string().optional(),
 });
 
 type SignInMethod = "password" | "email-otp" | "phone-otp";
@@ -51,10 +52,15 @@ function AuthPage() {
   // Redirect if already signed in (effect, not during render — avoids hydration mismatch)
   useEffect(() => {
     if (!authLoading && session && role) {
+      // Honor ?next=<same-origin path> so OAuth consent (and other redirects) come back correctly.
+      if (search.next && search.next.startsWith("/") && !search.next.startsWith("//")) {
+        window.location.href = search.next;
+        return;
+      }
       const dest = role === "admin" ? "/admin" : role === "security" ? "/gate" : "/portal";
       navigate({ to: dest });
     }
-  }, [authLoading, session, role, navigate]);
+  }, [authLoading, session, role, navigate, search.next]);
 
   async function checkApprovalAndRoute() {
     const { data: { session: s } } = await supabase.auth.getSession();
