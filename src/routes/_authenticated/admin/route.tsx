@@ -218,8 +218,26 @@ function AdminShell() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/admin/payroll-journals"}>
+                      <Link to="/admin/payroll-journals">
+                        <ReceiptIcon className="h-4 w-4" />
+                        <span>Payroll Journals</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
 
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* HR group */}
+            <SidebarGroup>
+              <SidebarGroupLabel>HR</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {renderSubsection("Human Resources", Briefcase, hrItems, hrOpen, setHrOpen)}
+                </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
 
