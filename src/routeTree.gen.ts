@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPortalIndexRouteImport } from './routes/_authenticated/portal/index'
 import { Route as AuthenticatedGateIndexRouteImport } from './routes/_authenticated/gate/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedPortalWorkRouteImport } from './routes/_authenticated/portal/work'
 import { Route as AuthenticatedPortalVisitorsRouteImport } from './routes/_authenticated/portal/visitors'
 import { Route as AuthenticatedPortalMoreRouteImport } from './routes/_authenticated/portal/more'
 import { Route as AuthenticatedPortalMaintenanceRouteImport } from './routes/_authenticated/portal/maintenance'
@@ -52,6 +53,7 @@ import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
 import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
 import { Route as AuthenticatedAdminPortalAccessRequestsRouteImport } from './routes/_authenticated/admin/portal-access-requests'
+import { Route as AuthenticatedAdminPayrollJournalsRouteImport } from './routes/_authenticated/admin/payroll-journals'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
 import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_authenticated/admin/notice-groups'
@@ -73,6 +75,11 @@ import { Route as AuthenticatedAdminAnnualFeesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as AuthenticatedAdminHrPayslipsRouteImport } from './routes/_authenticated/admin/hr/payslips'
+import { Route as AuthenticatedAdminHrPayrollRouteImport } from './routes/_authenticated/admin/hr/payroll'
+import { Route as AuthenticatedAdminHrLeaveRouteImport } from './routes/_authenticated/admin/hr/leave'
+import { Route as AuthenticatedAdminHrEmployeesRouteImport } from './routes/_authenticated/admin/hr/employees'
+import { Route as AuthenticatedAdminHrAttendanceRouteImport } from './routes/_authenticated/admin/hr/attendance'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -156,6 +163,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedPortalWorkRoute = AuthenticatedPortalWorkRouteImport.update({
+  id: '/work',
+  path: '/work',
+  getParentRoute: () => AuthenticatedPortalRouteRoute,
 } as any)
 const AuthenticatedPortalVisitorsRoute =
   AuthenticatedPortalVisitorsRouteImport.update({
@@ -314,6 +326,12 @@ const AuthenticatedAdminPortalAccessRequestsRoute =
     path: '/portal-access-requests',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPayrollJournalsRoute =
+  AuthenticatedAdminPayrollJournalsRouteImport.update({
+    id: '/payroll-journals',
+    path: '/payroll-journals',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
     id: '/payments',
@@ -438,6 +456,36 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminHrPayslipsRoute =
+  AuthenticatedAdminHrPayslipsRouteImport.update({
+    id: '/hr/payslips',
+    path: '/hr/payslips',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrPayrollRoute =
+  AuthenticatedAdminHrPayrollRouteImport.update({
+    id: '/hr/payroll',
+    path: '/hr/payroll',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrLeaveRoute =
+  AuthenticatedAdminHrLeaveRouteImport.update({
+    id: '/hr/leave',
+    path: '/hr/leave',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrEmployeesRoute =
+  AuthenticatedAdminHrEmployeesRouteImport.update({
+    id: '/hr/employees',
+    path: '/hr/employees',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrAttendanceRoute =
+  AuthenticatedAdminHrAttendanceRouteImport.update({
+    id: '/hr/attendance',
+    path: '/hr/attendance',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -473,6 +521,7 @@ export interface FileRoutesByFullPath {
   '/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
   '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/payroll-journals': typeof AuthenticatedAdminPayrollJournalsRoute
   '/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
@@ -500,9 +549,15 @@ export interface FileRoutesByFullPath {
   '/portal/maintenance': typeof AuthenticatedPortalMaintenanceRoute
   '/portal/more': typeof AuthenticatedPortalMoreRoute
   '/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
+  '/portal/work': typeof AuthenticatedPortalWorkRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/gate/': typeof AuthenticatedGateIndexRoute
   '/portal/': typeof AuthenticatedPortalIndexRoute
+  '/admin/hr/attendance': typeof AuthenticatedAdminHrAttendanceRoute
+  '/admin/hr/employees': typeof AuthenticatedAdminHrEmployeesRoute
+  '/admin/hr/leave': typeof AuthenticatedAdminHrLeaveRoute
+  '/admin/hr/payroll': typeof AuthenticatedAdminHrPayrollRoute
+  '/admin/hr/payslips': typeof AuthenticatedAdminHrPayslipsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -535,6 +590,7 @@ export interface FileRoutesByTo {
   '/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
   '/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/payroll-journals': typeof AuthenticatedAdminPayrollJournalsRoute
   '/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
@@ -562,9 +618,15 @@ export interface FileRoutesByTo {
   '/portal/maintenance': typeof AuthenticatedPortalMaintenanceRoute
   '/portal/more': typeof AuthenticatedPortalMoreRoute
   '/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
+  '/portal/work': typeof AuthenticatedPortalWorkRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/gate': typeof AuthenticatedGateIndexRoute
   '/portal': typeof AuthenticatedPortalIndexRoute
+  '/admin/hr/attendance': typeof AuthenticatedAdminHrAttendanceRoute
+  '/admin/hr/employees': typeof AuthenticatedAdminHrEmployeesRoute
+  '/admin/hr/leave': typeof AuthenticatedAdminHrLeaveRoute
+  '/admin/hr/payroll': typeof AuthenticatedAdminHrPayrollRoute
+  '/admin/hr/payslips': typeof AuthenticatedAdminHrPayslipsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -602,6 +664,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/notice-groups': typeof AuthenticatedAdminNoticeGroupsRoute
   '/_authenticated/admin/notices': typeof AuthenticatedAdminNoticesRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/payroll-journals': typeof AuthenticatedAdminPayrollJournalsRoute
   '/_authenticated/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
   '/_authenticated/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
@@ -629,9 +692,15 @@ export interface FileRoutesById {
   '/_authenticated/portal/maintenance': typeof AuthenticatedPortalMaintenanceRoute
   '/_authenticated/portal/more': typeof AuthenticatedPortalMoreRoute
   '/_authenticated/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
+  '/_authenticated/portal/work': typeof AuthenticatedPortalWorkRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/gate/': typeof AuthenticatedGateIndexRoute
   '/_authenticated/portal/': typeof AuthenticatedPortalIndexRoute
+  '/_authenticated/admin/hr/attendance': typeof AuthenticatedAdminHrAttendanceRoute
+  '/_authenticated/admin/hr/employees': typeof AuthenticatedAdminHrEmployeesRoute
+  '/_authenticated/admin/hr/leave': typeof AuthenticatedAdminHrLeaveRoute
+  '/_authenticated/admin/hr/payroll': typeof AuthenticatedAdminHrPayrollRoute
+  '/_authenticated/admin/hr/payslips': typeof AuthenticatedAdminHrPayslipsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -669,6 +738,7 @@ export interface FileRouteTypes {
     | '/admin/notice-groups'
     | '/admin/notices'
     | '/admin/payments'
+    | '/admin/payroll-journals'
     | '/admin/portal-access-requests'
     | '/admin/purchase-invoices'
     | '/admin/purchases'
@@ -696,9 +766,15 @@ export interface FileRouteTypes {
     | '/portal/maintenance'
     | '/portal/more'
     | '/portal/visitors'
+    | '/portal/work'
     | '/admin/'
     | '/gate/'
     | '/portal/'
+    | '/admin/hr/attendance'
+    | '/admin/hr/employees'
+    | '/admin/hr/leave'
+    | '/admin/hr/payroll'
+    | '/admin/hr/payslips'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -731,6 +807,7 @@ export interface FileRouteTypes {
     | '/admin/notice-groups'
     | '/admin/notices'
     | '/admin/payments'
+    | '/admin/payroll-journals'
     | '/admin/portal-access-requests'
     | '/admin/purchase-invoices'
     | '/admin/purchases'
@@ -758,9 +835,15 @@ export interface FileRouteTypes {
     | '/portal/maintenance'
     | '/portal/more'
     | '/portal/visitors'
+    | '/portal/work'
     | '/admin'
     | '/gate'
     | '/portal'
+    | '/admin/hr/attendance'
+    | '/admin/hr/employees'
+    | '/admin/hr/leave'
+    | '/admin/hr/payroll'
+    | '/admin/hr/payslips'
   id:
     | '__root__'
     | '/'
@@ -797,6 +880,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/notice-groups'
     | '/_authenticated/admin/notices'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/payroll-journals'
     | '/_authenticated/admin/portal-access-requests'
     | '/_authenticated/admin/purchase-invoices'
     | '/_authenticated/admin/purchases'
@@ -824,9 +908,15 @@ export interface FileRouteTypes {
     | '/_authenticated/portal/maintenance'
     | '/_authenticated/portal/more'
     | '/_authenticated/portal/visitors'
+    | '/_authenticated/portal/work'
     | '/_authenticated/admin/'
     | '/_authenticated/gate/'
     | '/_authenticated/portal/'
+    | '/_authenticated/admin/hr/attendance'
+    | '/_authenticated/admin/hr/employees'
+    | '/_authenticated/admin/hr/leave'
+    | '/_authenticated/admin/hr/payroll'
+    | '/_authenticated/admin/hr/payslips'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -955,6 +1045,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/portal/work': {
+      id: '/_authenticated/portal/work'
+      path: '/work'
+      fullPath: '/portal/work'
+      preLoaderRoute: typeof AuthenticatedPortalWorkRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
     }
     '/_authenticated/portal/visitors': {
       id: '/_authenticated/portal/visitors'
@@ -1145,6 +1242,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPortalAccessRequestsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/payroll-journals': {
+      id: '/_authenticated/admin/payroll-journals'
+      path: '/payroll-journals'
+      fullPath: '/admin/payroll-journals'
+      preLoaderRoute: typeof AuthenticatedAdminPayrollJournalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
       path: '/payments'
@@ -1292,6 +1396,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/hr/payslips': {
+      id: '/_authenticated/admin/hr/payslips'
+      path: '/hr/payslips'
+      fullPath: '/admin/hr/payslips'
+      preLoaderRoute: typeof AuthenticatedAdminHrPayslipsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/payroll': {
+      id: '/_authenticated/admin/hr/payroll'
+      path: '/hr/payroll'
+      fullPath: '/admin/hr/payroll'
+      preLoaderRoute: typeof AuthenticatedAdminHrPayrollRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/leave': {
+      id: '/_authenticated/admin/hr/leave'
+      path: '/hr/leave'
+      fullPath: '/admin/hr/leave'
+      preLoaderRoute: typeof AuthenticatedAdminHrLeaveRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/employees': {
+      id: '/_authenticated/admin/hr/employees'
+      path: '/hr/employees'
+      fullPath: '/admin/hr/employees'
+      preLoaderRoute: typeof AuthenticatedAdminHrEmployeesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/attendance': {
+      id: '/_authenticated/admin/hr/attendance'
+      path: '/hr/attendance'
+      fullPath: '/admin/hr/attendance'
+      preLoaderRoute: typeof AuthenticatedAdminHrAttendanceRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
@@ -1315,6 +1454,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminNoticeGroupsRoute: typeof AuthenticatedAdminNoticeGroupsRoute
   AuthenticatedAdminNoticesRoute: typeof AuthenticatedAdminNoticesRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminPayrollJournalsRoute: typeof AuthenticatedAdminPayrollJournalsRoute
   AuthenticatedAdminPortalAccessRequestsRoute: typeof AuthenticatedAdminPortalAccessRequestsRoute
   AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
@@ -1330,6 +1470,11 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
   AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminHrAttendanceRoute: typeof AuthenticatedAdminHrAttendanceRoute
+  AuthenticatedAdminHrEmployeesRoute: typeof AuthenticatedAdminHrEmployeesRoute
+  AuthenticatedAdminHrLeaveRoute: typeof AuthenticatedAdminHrLeaveRoute
+  AuthenticatedAdminHrPayrollRoute: typeof AuthenticatedAdminHrPayrollRoute
+  AuthenticatedAdminHrPayslipsRoute: typeof AuthenticatedAdminHrPayslipsRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
@@ -1357,6 +1502,8 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminNoticeGroupsRoute: AuthenticatedAdminNoticeGroupsRoute,
     AuthenticatedAdminNoticesRoute: AuthenticatedAdminNoticesRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+    AuthenticatedAdminPayrollJournalsRoute:
+      AuthenticatedAdminPayrollJournalsRoute,
     AuthenticatedAdminPortalAccessRequestsRoute:
       AuthenticatedAdminPortalAccessRequestsRoute,
     AuthenticatedAdminPurchaseInvoicesRoute:
@@ -1375,6 +1522,11 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
     AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+    AuthenticatedAdminHrAttendanceRoute: AuthenticatedAdminHrAttendanceRoute,
+    AuthenticatedAdminHrEmployeesRoute: AuthenticatedAdminHrEmployeesRoute,
+    AuthenticatedAdminHrLeaveRoute: AuthenticatedAdminHrLeaveRoute,
+    AuthenticatedAdminHrPayrollRoute: AuthenticatedAdminHrPayrollRoute,
+    AuthenticatedAdminHrPayslipsRoute: AuthenticatedAdminHrPayslipsRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =
@@ -1416,6 +1568,7 @@ interface AuthenticatedPortalRouteRouteChildren {
   AuthenticatedPortalMaintenanceRoute: typeof AuthenticatedPortalMaintenanceRoute
   AuthenticatedPortalMoreRoute: typeof AuthenticatedPortalMoreRoute
   AuthenticatedPortalVisitorsRoute: typeof AuthenticatedPortalVisitorsRoute
+  AuthenticatedPortalWorkRoute: typeof AuthenticatedPortalWorkRoute
   AuthenticatedPortalIndexRoute: typeof AuthenticatedPortalIndexRoute
 }
 
@@ -1429,6 +1582,7 @@ const AuthenticatedPortalRouteRouteChildren: AuthenticatedPortalRouteRouteChildr
     AuthenticatedPortalMaintenanceRoute: AuthenticatedPortalMaintenanceRoute,
     AuthenticatedPortalMoreRoute: AuthenticatedPortalMoreRoute,
     AuthenticatedPortalVisitorsRoute: AuthenticatedPortalVisitorsRoute,
+    AuthenticatedPortalWorkRoute: AuthenticatedPortalWorkRoute,
     AuthenticatedPortalIndexRoute: AuthenticatedPortalIndexRoute,
   }
 

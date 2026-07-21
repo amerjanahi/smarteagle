@@ -7,7 +7,7 @@ import {
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
-  Bell,
+  Bell, Briefcase, CalendarCheck, Plane, Receipt as ReceiptIcon,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -77,6 +77,14 @@ const bankItems: NavItem[] = [
   { to: "/admin/bank-reconciliation", label: "Reconciliation", icon: GitCompare },
 ];
 
+const hrItems: NavItem[] = [
+  { to: "/admin/hr/employees", label: "Employees", icon: Users },
+  { to: "/admin/hr/attendance", label: "Attendance", icon: CalendarCheck },
+  { to: "/admin/hr/leave", label: "Leave", icon: Plane },
+  { to: "/admin/hr/payroll", label: "Payroll", icon: Wallet },
+  { to: "/admin/hr/payslips", label: "Payslips", icon: ReceiptIcon },
+];
+
 function AdminShell() {
   const { user, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -85,9 +93,11 @@ function AdminShell() {
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
   const inBank = bankItems.some((i) => pathname === i.to);
+  const inHr = hrItems.some((i) => pathname === i.to);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
   const [bankOpen, setBankOpen] = useState(inBank);
+  const [hrOpen, setHrOpen] = useState(inHr);
 
   const pendingFn = useServerFn(pendingSignupCount);
   const { data: pendingCount = 0 } = useQuery({
@@ -208,8 +218,26 @@ function AdminShell() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/admin/payroll-journals"}>
+                      <Link to="/admin/payroll-journals">
+                        <ReceiptIcon className="h-4 w-4" />
+                        <span>Payroll Journals</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
 
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* HR group */}
+            <SidebarGroup>
+              <SidebarGroupLabel>HR</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {renderSubsection("Human Resources", Briefcase, hrItems, hrOpen, setHrOpen)}
+                </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
 
