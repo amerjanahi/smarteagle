@@ -50,7 +50,6 @@ import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminReportsHubRouteImport } from './routes/_authenticated/admin/reports-hub'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
 import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
-import { Route as AuthenticatedAdminPurchaseReportsRouteImport } from './routes/_authenticated/admin/purchase-reports'
 import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
 import { Route as AuthenticatedAdminPortalAccessRequestsRouteImport } from './routes/_authenticated/admin/portal-access-requests'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
@@ -303,12 +302,6 @@ const AuthenticatedAdminPurchasesRoute =
     path: '/purchases',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
-const AuthenticatedAdminPurchaseReportsRoute =
-  AuthenticatedAdminPurchaseReportsRouteImport.update({
-    id: '/purchase-reports',
-    path: '/purchase-reports',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
 const AuthenticatedAdminPurchaseInvoicesRoute =
   AuthenticatedAdminPurchaseInvoicesRouteImport.update({
     id: '/purchase-invoices',
@@ -482,7 +475,6 @@ export interface FileRoutesByFullPath {
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
-  '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/reports-hub': typeof AuthenticatedAdminReportsHubRoute
@@ -545,7 +537,6 @@ export interface FileRoutesByTo {
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
-  '/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/reports-hub': typeof AuthenticatedAdminReportsHubRoute
@@ -613,7 +604,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/portal-access-requests': typeof AuthenticatedAdminPortalAccessRequestsRoute
   '/_authenticated/admin/purchase-invoices': typeof AuthenticatedAdminPurchaseInvoicesRoute
-  '/_authenticated/admin/purchase-reports': typeof AuthenticatedAdminPurchaseReportsRoute
   '/_authenticated/admin/purchases': typeof AuthenticatedAdminPurchasesRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/reports-hub': typeof AuthenticatedAdminReportsHubRoute
@@ -681,7 +671,6 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/portal-access-requests'
     | '/admin/purchase-invoices'
-    | '/admin/purchase-reports'
     | '/admin/purchases'
     | '/admin/reports'
     | '/admin/reports-hub'
@@ -744,7 +733,6 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/portal-access-requests'
     | '/admin/purchase-invoices'
-    | '/admin/purchase-reports'
     | '/admin/purchases'
     | '/admin/reports'
     | '/admin/reports-hub'
@@ -811,7 +799,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/portal-access-requests'
     | '/_authenticated/admin/purchase-invoices'
-    | '/_authenticated/admin/purchase-reports'
     | '/_authenticated/admin/purchases'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/reports-hub'
@@ -1144,13 +1131,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/purchase-reports': {
-      id: '/_authenticated/admin/purchase-reports'
-      path: '/purchase-reports'
-      fullPath: '/admin/purchase-reports'
-      preLoaderRoute: typeof AuthenticatedAdminPurchaseReportsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
     '/_authenticated/admin/purchase-invoices': {
       id: '/_authenticated/admin/purchase-invoices'
       path: '/purchase-invoices'
@@ -1337,7 +1317,6 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPortalAccessRequestsRoute: typeof AuthenticatedAdminPortalAccessRequestsRoute
   AuthenticatedAdminPurchaseInvoicesRoute: typeof AuthenticatedAdminPurchaseInvoicesRoute
-  AuthenticatedAdminPurchaseReportsRoute: typeof AuthenticatedAdminPurchaseReportsRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminReportsHubRoute: typeof AuthenticatedAdminReportsHubRoute
@@ -1382,8 +1361,6 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
       AuthenticatedAdminPortalAccessRequestsRoute,
     AuthenticatedAdminPurchaseInvoicesRoute:
       AuthenticatedAdminPurchaseInvoicesRoute,
-    AuthenticatedAdminPurchaseReportsRoute:
-      AuthenticatedAdminPurchaseReportsRoute,
     AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
     AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
     AuthenticatedAdminReportsHubRoute: AuthenticatedAdminReportsHubRoute,
