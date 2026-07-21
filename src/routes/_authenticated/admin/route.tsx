@@ -77,6 +77,14 @@ const bankItems: NavItem[] = [
   { to: "/admin/bank-reconciliation", label: "Reconciliation", icon: GitCompare },
 ];
 
+const hrItems: NavItem[] = [
+  { to: "/admin/hr/employees", label: "Employees", icon: Users },
+  { to: "/admin/hr/attendance", label: "Attendance", icon: CalendarCheck },
+  { to: "/admin/hr/leave", label: "Leave", icon: Plane },
+  { to: "/admin/hr/payroll", label: "Payroll", icon: Wallet },
+  { to: "/admin/hr/payslips", label: "Payslips", icon: ReceiptIcon },
+];
+
 function AdminShell() {
   const { user, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
