@@ -1,53 +1,93 @@
-## Scope
-Three security hardening tasks. No feature/behavior changes to end-user flows.
 
-## 1. `.gitignore` — env & secret files
-Append env/secret patterns to the existing root `.gitignore` (currently missing any `.env*` rule; `.env` is present in the repo). Retain `.env.example`.
+# HR Module — Phase 1
 
-Add:
-```
-# Env & secrets
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-*.p12
-*.pfx
-secrets.json
-```
+Scope kept intentionally minimal per your answers. Recruitment, performance, EOS, government grants, and NFC access control are deferred to later phases.
 
-Note (chat only, not code): `.env` is already tracked and contains only publishable Supabase keys — safe, but I'll flag that untracking it requires a git command the user must run manually (`git rm --cached .env`), since I can't run stateful git.
+## What's included
 
-## 2. Sanitize notice HTML with DOMPurify
-Install `dompurify` + `@types/dompurify`.
+- **Employees** — records, optional link to app user, documents
+- **Attendance** — manual daily entries (hours in/out, status)
+- **Leave** — request → approve/reject with balances
+- **Payroll** — monthly runs, payslips, PDF export
+- **Accounting** — auto-draft journal entries flagged for Finance review before posting
 
-- `src/lib/sanitize-html.ts` (new): thin wrapper exporting `sanitizeHtml(dirty)` with an allow-list config (standard formatting tags, `a`, `img`, `ul/ol/li`, `p`, `span`, `strong/em/u`, `br`, `h1-h6`), allowed attrs (`href`, `src`, `alt`, `style` limited, `target`, `rel`, `data-path`), forces `target=_blank` + `rel=noopener noreferrer` on links, blocks `javascript:` URLs.
-- `src/components/admin/RichTextEditor.tsx`: sanitize on every `onChange` before calling the parent callback, and on the initial `innerHTML` write from `value`. Image insertion already builds a controlled `<img>`; still routed through the same sanitizer after `execCommand`.
-- `src/routes/_authenticated/admin/notices.tsx`: wrap all three `dangerouslySetInnerHTML={{ __html: ... }}` sites (list preview, editor live preview, published preview) with `sanitizeHtml(...)`.
+## Database (one migration)
 
-## 3. Remove automatic first-user admin promotion
-Two places currently do this — both need to go:
+New tables in `public` (with GRANTs + RLS + updated_at triggers):
 
-- **DB trigger** `public.handle_new_user()`: strip the "if no admin exists, insert admin role" block. Keep the profile upsert. Migration will `CREATE OR REPLACE FUNCTION` with the cleaned body (same signature, security definer, search_path).
-- **Server fn** `bootstrapAdminIfEmpty` in `src/lib/admin.functions.ts`: remove the function entirely, plus any import/call sites (grep confirms it's only defined here; will re-verify call sites during build and delete them).
+- `employees` — employee_no, full_name, email, phone, national_id, position, department, hire_date, employment_status, basic_salary, allowances (jsonb), currency, user_id (nullable FK to auth.users), notes
+- `employee_documents` — reuses `documents` bucket; row links employee_id → document_id
+- `attendance` — employee_id, date, check_in, check_out, hours, status (present/absent/leave/holiday), notes  (unique on employee_id + date)
+- `leave_types` — code, name, days_per_year, paid
+- `leave_balances` — employee_id, leave_type_id, year, entitled, used
+- `leave_requests` — employee_id, leave_type_id, from_date, to_date, days, reason, status (pending/approved/rejected), reviewed_by, reviewed_at
+- `payroll_runs` — period_month, period_year, status (draft/approved/paid), totals, approved_by, approved_at, journal_entry_id (nullable)
+- `payslips` — payroll_run_id, employee_id, basic, allowances, overtime, deductions, leave_adjustment, net_pay, snapshot (jsonb)
+- `payroll_journal_drafts` — payroll_run_id, lines (jsonb: account_id, debit, credit, memo), status (pending_review/approved/rejected), reviewed_by
 
-Chat message will tell the user how to manually seed the first admin via SQL:
-```sql
-INSERT INTO public.user_roles (user_id, role)
-VALUES ('<auth-user-uuid>', 'admin');
-```
+New role: `hr` in `app_role` enum. Add `has_role(_, 'hr')` helper reuse.
 
-## Technical notes
-- DOMPurify runs client-side; SSR passes strings through untouched (editor is client-only). The sanitizer module uses `isomorphic-dompurify` OR guards `typeof window` — will use `isomorphic-dompurify` for a single import path that works in both environments (safer if any render ever moves to SSR).
-- Migration is schema-only (function replace), no table/policy changes.
-- No UI changes visible to users.
+RLS summary:
+- Admin + hr: full manage on all HR tables
+- Employee (via `user_id`): read own record, own attendance, own payslips; create/cancel own leave requests
+- Finance (`can_manage_sales`): read payroll_runs + payroll_journal_drafts; approve/reject drafts
 
-## Files touched
-- `.gitignore` (edit)
-- `package.json` (add `isomorphic-dompurify`)
-- `src/lib/sanitize-html.ts` (new)
-- `src/components/admin/RichTextEditor.tsx` (edit)
-- `src/routes/_authenticated/admin/notices.tsx` (edit)
-- `src/lib/admin.functions.ts` (remove `bootstrapAdminIfEmpty`; grep for callers)
-- Migration: replace `handle_new_user()` without admin auto-promotion
+## Sidebar
+
+New top-level group **HR** with:
+- Employees
+- Attendance
+- Leave
+- Payroll (list of runs + create run)
+- Payslips
+
+Payroll approval queue surfaces inside existing **Finance** area:
+- New tile in Finance: "Payroll Journals" — Finance reviews the auto-drafted entries and posts (creates journal entry using existing chart_of_accounts) or rejects.
+
+Employee self-service surfaces inside existing **Portal** (bottom nav gains "Work" tab, visible only when the signed-in user has a linked `employees.user_id`): my profile, my attendance, my leave requests, my payslips.
+
+## Server functions (new files, no edits to existing modules)
+
+- `src/lib/hr.functions.ts` — CRUD for employees, attendance, leave, payroll run generation, payslip PDF
+- `src/lib/hr-payroll.server.ts` — pure calc helpers (basic + allowances + OT − deductions ± leave)
+- Payroll run flow:
+  1. Admin/HR creates run for month → generates payslips from `employees` + `attendance` + approved `leave_requests`
+  2. On run approval, drafts journal lines into `payroll_journal_drafts` (status `pending_review`)
+  3. Finance approves → creates real journal entry, links `payroll_runs.journal_entry_id`, marks run `paid`
+
+## UI (new routes under existing admin/portal shells)
+
+Admin:
+- `/admin/hr/employees` — list, create, edit, deactivate, upload documents
+- `/admin/hr/attendance` — month grid per employee, bulk edit
+- `/admin/hr/leave` — requests table with approve/reject
+- `/admin/hr/payroll` — runs list + create-run wizard
+- `/admin/hr/payslips` — search + view/download PDF
+- `/admin/finance/payroll-journals` — Finance approval queue
+
+Portal (self-service):
+- `/portal/work` — profile, attendance history, leave request, payslip downloads
+
+## Reuse (no duplication)
+
+- `documents` storage bucket + `documents` table for employee files
+- `chart_of_accounts` for journal posting
+- Existing PDF helpers (`src/lib/pdf.server.ts`) for payslips
+- Existing `audit_log` trigger applied to new HR tables
+- Existing `currencies` + `useCurrency()` for payroll amounts
+- Existing `has_role` and approval patterns
+
+## Explicitly deferred (later phase, not in this plan)
+
+- Government grants & wage subsidies
+- Recruitment, performance, end-of-service
+- NFC mobile cards, gate-reader integration, physical card/QR fallback UI
+- Overtime auto-detection from attendance rules
+- Advanced reports (basic per-run and per-employee summaries only)
+
+## Technical details
+
+- New DB enum values: `app_role` += `'hr'`; add `employment_status` enum, `leave_status` enum, `payroll_run_status` enum, `payroll_draft_status` enum
+- Seed default `leave_types` (Annual 30, Sick 15, Unpaid 0) + populate balances on employee create
+- Every new public table gets: GRANTs to authenticated + service_role, RLS enabled, policies, updated_at trigger, audit_log trigger
+- No changes to existing files except: `src/routes/_authenticated/admin/route.tsx` (add HR sidebar group + Finance→Payroll Journals link), `src/routes/_authenticated/portal/route.tsx` bottom nav (conditional Work tab)
