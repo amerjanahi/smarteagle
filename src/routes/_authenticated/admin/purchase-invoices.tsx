@@ -41,7 +41,7 @@ function approvalBadge(s: string) {
 }
 
 function PurchaseInvoicesPage() {
-  const { format: money } = useCurrency();
+  const { format: money, code: currency } = useCurrency();
   const fetchList = useServerFn(listPurchaseInvoices);
   const fetchVendors = useServerFn(listVendors);
   const create = useServerFn(createPurchaseInvoice);
@@ -163,9 +163,9 @@ function PurchaseInvoicesPage() {
                 </div>
                 <div><Label>Issue Date</Label><Input type="date" value={form.issue_date} onChange={(e) => setForm({ ...form, issue_date: e.target.value })} /></div>
                 <div><Label>Due Date</Label><Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} /></div>
-                <div><Label>Subtotal (AED)</Label><Input type="number" value={form.subtotal} onChange={(e) => setForm({ ...form, subtotal: e.target.value })} /></div>
+                <div><Label>Subtotal ({currency})</Label><Input type="number" value={form.subtotal} onChange={(e) => setForm({ ...form, subtotal: e.target.value })} /></div>
                 <div><Label>VAT %</Label><Input type="number" value={form.vat_rate} onChange={(e) => setForm({ ...form, vat_rate: e.target.value })} /></div>
-                <div><Label>Discount (AED)</Label><Input type="number" value={form.discount_amount} onChange={(e) => setForm({ ...form, discount_amount: e.target.value })} /></div>
+                <div><Label>Discount ({currency})</Label><Input type="number" value={form.discount_amount} onChange={(e) => setForm({ ...form, discount_amount: e.target.value })} /></div>
                 <div><Label>Payment Terms</Label><Input value={form.payment_terms} onChange={(e) => setForm({ ...form, payment_terms: e.target.value })} /></div>
                 <div className="col-span-2"><Label>Reference</Label><Input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} /></div>
                 <div className="col-span-2"><Label>Description</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>

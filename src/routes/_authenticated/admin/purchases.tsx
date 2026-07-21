@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { purchasesDashboard } from "@/lib/purchases.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, FileText, Users, CreditCard, BarChart3 } from "lucide-react";
+import { Wallet, FileText, Users, CreditCard } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/purchases")({
   head: () => ({ meta: [{ title: "Purchases — Hayy Admin" }] }),
@@ -29,7 +29,7 @@ function PurchasesHub() {
     { to: "/admin/purchase-invoices", label: "Purchase Invoices", icon: FileText, desc: "Vendor bills with VAT & approval" },
     { to: "/admin/vendors", label: "Vendors", icon: Users, desc: "Manage your suppliers" },
     { to: "/admin/vendor-payments", label: "Payments", icon: CreditCard, desc: "Pay vendors and track balances" },
-    { to: "/admin/purchase-reports", label: "Reports", icon: BarChart3, desc: "Vendor statements & aging" },
+    
   ] as const;
 
   return (
