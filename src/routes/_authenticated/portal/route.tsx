@@ -1,10 +1,11 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut, Loader2 } from "lucide-react";
+import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut, Loader2, Briefcase } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { myVillas } from "@/lib/villa-link.functions";
+import { getMyEmployee } from "@/lib/hr.functions";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
