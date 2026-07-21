@@ -93,9 +93,11 @@ function AdminShell() {
   const inSales = salesItems.some((i) => pathname === i.to);
   const inPurch = purchasesItems.some((i) => pathname === i.to);
   const inBank = bankItems.some((i) => pathname === i.to);
+  const inHr = hrItems.some((i) => pathname === i.to);
   const [salesOpen, setSalesOpen] = useState(inSales);
   const [purchOpen, setPurchOpen] = useState(inPurch);
   const [bankOpen, setBankOpen] = useState(inBank);
+  const [hrOpen, setHrOpen] = useState(inHr);
 
   const pendingFn = useServerFn(pendingSignupCount);
   const { data: pendingCount = 0 } = useQuery({
