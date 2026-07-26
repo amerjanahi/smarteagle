@@ -691,7 +691,7 @@ export const addPayrollAdjustment = createServerFn({ method: "POST" })
     await context.supabase.from("payslip_lines").insert({ payslip_id: data.payslip_id, kind: "adjustment", label: `Adj: ${data.reason}`, amount: data.amount, is_locked: false });
     // Update net_pay
     const { data: ps } = await context.supabase.from("payslips").select("net_pay").eq("id", data.payslip_id).single();
-    await context.supabase.from("payslips").update({ net_pay: Number(ps.net_pay) + Number(data.amount) }).eq("id", data.payslip_id);
+    if (ps) await context.supabase.from("payslips").update({ net_pay: Number(ps.net_pay) + Number(data.amount) }).eq("id", data.payslip_id);
     return adj;
   });
 
