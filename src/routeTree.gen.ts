@@ -79,6 +79,7 @@ import { Route as AuthenticatedAdminHrPayslipsRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminHrPayrollRouteImport } from './routes/_authenticated/admin/hr/payroll'
 import { Route as AuthenticatedAdminHrLeaveRouteImport } from './routes/_authenticated/admin/hr/leave'
 import { Route as AuthenticatedAdminHrEmployeesRouteImport } from './routes/_authenticated/admin/hr/employees'
+import { Route as AuthenticatedAdminHrConfigRouteImport } from './routes/_authenticated/admin/hr/config'
 import { Route as AuthenticatedAdminHrAttendanceRouteImport } from './routes/_authenticated/admin/hr/attendance'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -480,6 +481,12 @@ const AuthenticatedAdminHrEmployeesRoute =
     path: '/hr/employees',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminHrConfigRoute =
+  AuthenticatedAdminHrConfigRouteImport.update({
+    id: '/hr/config',
+    path: '/hr/config',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminHrAttendanceRoute =
   AuthenticatedAdminHrAttendanceRouteImport.update({
     id: '/hr/attendance',
@@ -554,6 +561,7 @@ export interface FileRoutesByFullPath {
   '/gate/': typeof AuthenticatedGateIndexRoute
   '/portal/': typeof AuthenticatedPortalIndexRoute
   '/admin/hr/attendance': typeof AuthenticatedAdminHrAttendanceRoute
+  '/admin/hr/config': typeof AuthenticatedAdminHrConfigRoute
   '/admin/hr/employees': typeof AuthenticatedAdminHrEmployeesRoute
   '/admin/hr/leave': typeof AuthenticatedAdminHrLeaveRoute
   '/admin/hr/payroll': typeof AuthenticatedAdminHrPayrollRoute
@@ -623,6 +631,7 @@ export interface FileRoutesByTo {
   '/gate': typeof AuthenticatedGateIndexRoute
   '/portal': typeof AuthenticatedPortalIndexRoute
   '/admin/hr/attendance': typeof AuthenticatedAdminHrAttendanceRoute
+  '/admin/hr/config': typeof AuthenticatedAdminHrConfigRoute
   '/admin/hr/employees': typeof AuthenticatedAdminHrEmployeesRoute
   '/admin/hr/leave': typeof AuthenticatedAdminHrLeaveRoute
   '/admin/hr/payroll': typeof AuthenticatedAdminHrPayrollRoute
@@ -697,6 +706,7 @@ export interface FileRoutesById {
   '/_authenticated/gate/': typeof AuthenticatedGateIndexRoute
   '/_authenticated/portal/': typeof AuthenticatedPortalIndexRoute
   '/_authenticated/admin/hr/attendance': typeof AuthenticatedAdminHrAttendanceRoute
+  '/_authenticated/admin/hr/config': typeof AuthenticatedAdminHrConfigRoute
   '/_authenticated/admin/hr/employees': typeof AuthenticatedAdminHrEmployeesRoute
   '/_authenticated/admin/hr/leave': typeof AuthenticatedAdminHrLeaveRoute
   '/_authenticated/admin/hr/payroll': typeof AuthenticatedAdminHrPayrollRoute
@@ -771,6 +781,7 @@ export interface FileRouteTypes {
     | '/gate/'
     | '/portal/'
     | '/admin/hr/attendance'
+    | '/admin/hr/config'
     | '/admin/hr/employees'
     | '/admin/hr/leave'
     | '/admin/hr/payroll'
@@ -840,6 +851,7 @@ export interface FileRouteTypes {
     | '/gate'
     | '/portal'
     | '/admin/hr/attendance'
+    | '/admin/hr/config'
     | '/admin/hr/employees'
     | '/admin/hr/leave'
     | '/admin/hr/payroll'
@@ -913,6 +925,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gate/'
     | '/_authenticated/portal/'
     | '/_authenticated/admin/hr/attendance'
+    | '/_authenticated/admin/hr/config'
     | '/_authenticated/admin/hr/employees'
     | '/_authenticated/admin/hr/leave'
     | '/_authenticated/admin/hr/payroll'
@@ -1424,6 +1437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHrEmployeesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/hr/config': {
+      id: '/_authenticated/admin/hr/config'
+      path: '/hr/config'
+      fullPath: '/admin/hr/config'
+      preLoaderRoute: typeof AuthenticatedAdminHrConfigRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/hr/attendance': {
       id: '/_authenticated/admin/hr/attendance'
       path: '/hr/attendance'
@@ -1471,6 +1491,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminHrAttendanceRoute: typeof AuthenticatedAdminHrAttendanceRoute
+  AuthenticatedAdminHrConfigRoute: typeof AuthenticatedAdminHrConfigRoute
   AuthenticatedAdminHrEmployeesRoute: typeof AuthenticatedAdminHrEmployeesRoute
   AuthenticatedAdminHrLeaveRoute: typeof AuthenticatedAdminHrLeaveRoute
   AuthenticatedAdminHrPayrollRoute: typeof AuthenticatedAdminHrPayrollRoute
@@ -1523,6 +1544,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminHrAttendanceRoute: AuthenticatedAdminHrAttendanceRoute,
+    AuthenticatedAdminHrConfigRoute: AuthenticatedAdminHrConfigRoute,
     AuthenticatedAdminHrEmployeesRoute: AuthenticatedAdminHrEmployeesRoute,
     AuthenticatedAdminHrLeaveRoute: AuthenticatedAdminHrLeaveRoute,
     AuthenticatedAdminHrPayrollRoute: AuthenticatedAdminHrPayrollRoute,

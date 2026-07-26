@@ -1,93 +1,81 @@
+# HR Phase 2 — Payroll, Leave & Attendance Enhancements
 
-# HR Module — Phase 1
+## Scope
 
-Scope kept intentionally minimal per your answers. Recruitment, performance, EOS, government grants, and NFC access control are deferred to later phases.
+Extend the existing HR module (Employees, Leave, Payroll, Attendance) with configurable pay components, richer leave rules, a locked approval workflow, and bulk attendance import. Reuse existing tables where possible; add new tables only for component catalogs and per-payslip line items.
 
-## What's included
+## 1. Database changes
 
-- **Employees** — records, optional link to app user, documents
-- **Attendance** — manual daily entries (hours in/out, status)
-- **Leave** — request → approve/reject with balances
-- **Payroll** — monthly runs, payslips, PDF export
-- **Accounting** — auto-draft journal entries flagged for Finance review before posting
+New tables (all with RLS: HR staff manage; employees can read own where relevant):
 
-## Database (one migration)
+- `allowance_types` — code, name, is_taxable, default_amount, is_active
+- `deduction_types` — code, name, is_statutory, default_amount, is_active
+- `grant_types` — code, name, calc_type (rate|fixed), rate_or_amount, start_date, end_date, is_active
+- `social_security_config` — country/scheme, employee_rate, employer_rate, cap_amount, effective_from
+- `employee_compensation` — employee_id, currency, basic_salary, effective_from, effective_to (versioned)
+- `employee_allowances` — employee_id, allowance_type_id, amount, start_date, end_date
+- `employee_deductions` — employee_id, deduction_type_id, amount, start_date, end_date
+- `employee_grants` — employee_id, grant_type_id, amount_override, start_date, end_date
+- `payslip_lines` — payslip_id, kind (basic|allowance|deduction|grant|ss_ee|ss_er|overtime|unpaid_leave|adjustment), ref_id, label, amount, is_locked
+- `payroll_adjustments` — payslip_id, reason, amount, created_by, created_at (post-approval changes)
 
-New tables in `public` (with GRANTs + RLS + updated_at triggers):
+Alter existing:
+- `leave_types`: add `is_paid`, `carry_forward`, `max_carry_days`, `requires_document`, `allow_half_day`
+- `leave_requests`: add `is_half_day`, `document_url`, `unpaid_days` (computed on approval)
+- `payroll_runs`: add workflow status enum `draft|review|approved|paid`, `approved_by`, `approved_at`, `locked_at`
+- `payslips`: add `status`, `is_locked`, `overtime_hours`, `overtime_amount`, `unpaid_leave_days`, `unpaid_leave_amount`, `social_security_ee`, `social_security_er`, `grants_amount`, `allowances_total`, `deductions_total`, `payment_status`
+- `employees`: add `default_currency` (nullable → falls back to company_settings.default_currency)
 
-- `employees` — employee_no, full_name, email, phone, national_id, position, department, hire_date, employment_status, basic_salary, allowances (jsonb), currency, user_id (nullable FK to auth.users), notes
-- `employee_documents` — reuses `documents` bucket; row links employee_id → document_id
-- `attendance` — employee_id, date, check_in, check_out, hours, status (present/absent/leave/holiday), notes  (unique on employee_id + date)
-- `leave_types` — code, name, days_per_year, paid
-- `leave_balances` — employee_id, leave_type_id, year, entitled, used
-- `leave_requests` — employee_id, leave_type_id, from_date, to_date, days, reason, status (pending/approved/rejected), reviewed_by, reviewed_at
-- `payroll_runs` — period_month, period_year, status (draft/approved/paid), totals, approved_by, approved_at, journal_entry_id (nullable)
-- `payslips` — payroll_run_id, employee_id, basic, allowances, overtime, deductions, leave_adjustment, net_pay, snapshot (jsonb)
-- `payroll_journal_drafts` — payroll_run_id, lines (jsonb: account_id, debit, credit, memo), status (pending_review/approved/rejected), reviewed_by
+Audit: reuse existing `audit_log` via `log_audit_event` trigger on new tables.
 
-New role: `hr` in `app_role` enum. Add `has_role(_, 'hr')` helper reuse.
+## 2. Server functions (`src/lib/hr.functions.ts`)
 
-RLS summary:
-- Admin + hr: full manage on all HR tables
-- Employee (via `user_id`): read own record, own attendance, own payslips; create/cancel own leave requests
-- Finance (`can_manage_sales`): read payroll_runs + payroll_journal_drafts; approve/reject drafts
+Add CRUD for allowance/deduction/grant/leave types and employee compensation components. Extend payroll generation to:
 
-## Sidebar
+1. Resolve currency (employee → company setting; override on run).
+2. Sum active allowances, deductions, grants for the period.
+3. Compute social security from config.
+4. Pull approved **unpaid** leave days → deduct `(basic/working_days) × unpaid_days`.
+5. Add overtime lines (manual entry pre-approval).
+6. Persist as `payslip_lines` for full breakdown.
 
-New top-level group **HR** with:
-- Employees
-- Attendance
-- Leave
-- Payroll (list of runs + create run)
-- Payslips
+Workflow functions: `submitPayrollForReview`, `approvePayrollRun` (locks payslips + lines), `markPayrollPaid`, `addPayrollAdjustment`, `recalculatePayslip` (blocked when locked), `bulkApprovePayslips`.
 
-Payroll approval queue surfaces inside existing **Finance** area:
-- New tile in Finance: "Payroll Journals" — Finance reviews the auto-drafted entries and posts (creates journal entry using existing chart_of_accounts) or rejects.
+Attendance import: `importAttendanceCsv` / `importAttendanceXlsx` server fn accepting parsed rows `{ employee_no, date, check_in, check_out, hours, status }`.
 
-Employee self-service surfaces inside existing **Portal** (bottom nav gains "Work" tab, visible only when the signed-in user has a linked `employees.user_id`): my profile, my attendance, my leave requests, my payslips.
+Export: `exportPayrollExcel`, `exportPayrollPdf`, `exportBankTransferFile` (CSV of employee, IBAN, amount, currency).
 
-## Server functions (new files, no edits to existing modules)
+## 3. Admin UI
 
-- `src/lib/hr.functions.ts` — CRUD for employees, attendance, leave, payroll run generation, payslip PDF
-- `src/lib/hr-payroll.server.ts` — pure calc helpers (basic + allowances + OT − deductions ± leave)
-- Payroll run flow:
-  1. Admin/HR creates run for month → generates payslips from `employees` + `attendance` + approved `leave_requests`
-  2. On run approval, drafts journal lines into `payroll_journal_drafts` (status `pending_review`)
-  3. Finance approves → creates real journal entry, links `payroll_runs.journal_entry_id`, marks run `paid`
+- **Settings → HR Config** (new tabs page under `/admin/hr/config`): manage allowance types, deduction types, grant types, leave types, social security config.
+- **Employees**: add Compensation tab in the edit dialog for basic salary + currency dropdown + assign allowances/deductions/grants with dates.
+- **Leave**: form supports half-day toggle and document upload; type editor exposes new rule fields.
+- **Payroll**:
+  - Runs list gains status pipeline chips (Draft → Review → Approved → Paid) with bulk approve.
+  - Run detail: detailed table with columns Basic, Allowances, Deductions, SS (EE/ER), Grants, Overtime, Unpaid Leave, Gross, Net, Payment Status, Approval Status.
+  - Row actions: edit/delete/recalculate before approval; adjustment/reversal after.
+  - Toolbar: search, filters (dept, status, currency), Excel export, PDF export, bank file.
+- **Attendance**: add "Import CSV/Excel" button with column mapping preview and validation.
 
-## UI (new routes under existing admin/portal shells)
+## 4. Portal (employee self-service)
 
-Admin:
-- `/admin/hr/employees` — list, create, edit, deactivate, upload documents
-- `/admin/hr/attendance` — month grid per employee, bulk edit
-- `/admin/hr/leave` — requests table with approve/reject
-- `/admin/hr/payroll` — runs list + create-run wizard
-- `/admin/hr/payslips` — search + view/download PDF
-- `/admin/finance/payroll-journals` — Finance approval queue
+- Show payslip lines breakdown, currency, and adjustments.
+- Leave request form: half-day toggle + optional document upload when type requires it.
 
-Portal (self-service):
-- `/portal/work` — profile, attendance history, leave request, payslip downloads
+## 5. Currency
 
-## Reuse (no duplication)
+Reuse `useCurrency` for display defaults. Employee/run currency stored on records; formatter parameterized by decimals from `currencies` table.
 
-- `documents` storage bucket + `documents` table for employee files
-- `chart_of_accounts` for journal posting
-- Existing PDF helpers (`src/lib/pdf.server.ts`) for payslips
-- Existing `audit_log` trigger applied to new HR tables
-- Existing `currencies` + `useCurrency()` for payroll amounts
-- Existing `has_role` and approval patterns
+## 6. Out of scope (to keep credits low)
 
-## Explicitly deferred (later phase, not in this plan)
+- NFC access control (already deferred to later phase).
+- Recruitment/performance/EOS modules.
+- Multi-country tax engine — social security is a single configurable scheme.
 
-- Government grants & wage subsidies
-- Recruitment, performance, end-of-service
-- NFC mobile cards, gate-reader integration, physical card/QR fallback UI
-- Overtime auto-detection from attendance rules
-- Advanced reports (basic per-run and per-employee summaries only)
+## Technical notes
 
-## Technical details
-
-- New DB enum values: `app_role` += `'hr'`; add `employment_status` enum, `leave_status` enum, `payroll_run_status` enum, `payroll_draft_status` enum
-- Seed default `leave_types` (Annual 30, Sick 15, Unpaid 0) + populate balances on employee create
-- Every new public table gets: GRANTs to authenticated + service_role, RLS enabled, policies, updated_at trigger, audit_log trigger
-- No changes to existing files except: `src/routes/_authenticated/admin/route.tsx` (add HR sidebar group + Finance→Payroll Journals link), `src/routes/_authenticated/portal/route.tsx` bottom nav (conditional Work tab)
+- New `app_role` unchanged; HR staff use existing `is_hr_staff`.
+- Locking = `is_locked=true` on payslips + payslip_lines; server fns reject writes when locked unless via adjustment path.
+- CSV/XLSX import parsed client-side (papaparse + xlsx already candidates); server fn accepts array to keep bundle logic isomorphic.
+- Bank transfer file = generic CSV template (employee_no, name, iban, amount, currency, reference); no bank-specific formats.
+- Audit log auto-populates via `log_audit_event` trigger attached to new tables.

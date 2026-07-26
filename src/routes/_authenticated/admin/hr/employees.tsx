@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Users, CalendarCheck, Plane, Wallet, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, CalendarCheck, Plane, Wallet, FileText, Settings } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/hr/employees")({
   head: () => ({ meta: [{ title: "Employees — HR" }] }),
@@ -47,6 +47,7 @@ export function HrNav() {
     { to: "/admin/hr/leave", label: "Leave", icon: Plane },
     { to: "/admin/hr/payroll", label: "Payroll", icon: Wallet },
     { to: "/admin/hr/payslips", label: "Payslips", icon: FileText },
+    { to: "/admin/hr/config", label: "Config", icon: Settings },
   ];
   return (
     <div className="flex flex-wrap gap-2 border-b border-border pb-3">
