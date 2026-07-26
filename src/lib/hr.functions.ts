@@ -229,14 +229,14 @@ function makeCompFn(table: string, refField: string) {
         await assertHR(context);
         const payload: any = { ...data };
         if (!payload.end_date) payload.end_date = null;
-        const { data: row, error } = await context.supabase.from(table).upsert(payload).select().single();
+        const { data: row, error } = await (context.supabase.from as any)(table).upsert(payload).select().single();
         if (error) throw new Error(error.message); return row;
       }),
     del: createServerFn({ method: "POST" }).middleware([requireSupabaseAuth])
       .inputValidator((v) => z.object({ id: z.string().uuid() }).parse(v))
       .handler(async ({ data, context }) => {
         await assertHR(context);
-        const { error } = await context.supabase.from(table).delete().eq("id", data.id);
+        const { error } = await (context.supabase.from as any)(table).delete().eq("id", data.id);
         if (error) throw new Error(error.message); return { ok: true };
       }),
   };
