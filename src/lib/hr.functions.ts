@@ -314,12 +314,12 @@ export const bulkImportAttendance = createServerFn({ method: "POST" })
     for (const r of data.rows) {
       const id = byNo.get(String(r.employee_no).trim());
       if (!id) { errors.push(`Unknown employee_no: ${r.employee_no}`); continue; }
-      const status = ["present","absent","leave","holiday","weekend"].includes(r.status) ? r.status : "present";
+      const status = (["present","absent","leave","holiday","weekend"].includes(r.status) ? r.status : "present") as any;
       const { error } = await context.supabase.from("attendance").upsert({
         employee_id: id, date: r.date,
         check_in: r.check_in || null, check_out: r.check_out || null,
         hours: r.hours ?? null, status, notes: r.notes ?? null,
-      }, { onConflict: "employee_id,date" });
+      } as any, { onConflict: "employee_id,date" });
       if (error) errors.push(`${r.employee_no} ${r.date}: ${error.message}`);
       else ok++;
     }
