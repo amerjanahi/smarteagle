@@ -386,6 +386,7 @@ export const reviewLeaveRequest = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertHR(context);
     const { data: req } = await context.supabase.from("leave_requests").select("*, leave_types(paid)").eq("id", data.id).single();
+    if (!req) throw new Error("Leave request not found");
     const unpaid_days = data.decision === "approved" && req.leave_types && !req.leave_types.paid ? Number(req.days) : 0;
     const { data: updated, error } = await context.supabase
       .from("leave_requests")
