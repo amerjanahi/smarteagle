@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      allowance_types: {
+        Row: {
+          code: string
+          created_at: string
+          default_amount: number
+          id: string
+          is_active: boolean
+          is_taxable: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          default_amount?: number
+          id?: string
+          is_active?: boolean
+          is_taxable?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          default_amount?: number
+          id?: string
+          is_active?: boolean
+          is_taxable?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       amenities: {
         Row: {
           capacity: number | null
@@ -700,6 +733,39 @@ export type Database = {
         }
         Relationships: []
       }
+      deduction_types: {
+        Row: {
+          code: string
+          created_at: string
+          default_amount: number
+          id: string
+          is_active: boolean
+          is_statutory: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          default_amount?: number
+          id?: string
+          is_active?: boolean
+          is_statutory?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          default_amount?: number
+          id?: string
+          is_active?: boolean
+          is_statutory?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       document_counters: {
         Row: {
           doc_type: string
@@ -891,6 +957,108 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_allowances: {
+        Row: {
+          allowance_type_id: string
+          amount: number
+          created_at: string
+          employee_id: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          allowance_type_id: string
+          amount?: number
+          created_at?: string
+          employee_id: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          allowance_type_id?: string
+          amount?: number
+          created_at?: string
+          employee_id?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_allowances_allowance_type_id_fkey"
+            columns: ["allowance_type_id"]
+            isOneToOne: false
+            referencedRelation: "allowance_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_allowances_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_deductions: {
+        Row: {
+          amount: number
+          created_at: string
+          deduction_type_id: string
+          employee_id: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          deduction_type_id: string
+          employee_id: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          deduction_type_id?: string
+          employee_id?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_deductions_deduction_type_id_fkey"
+            columns: ["deduction_type_id"]
+            isOneToOne: false
+            referencedRelation: "deduction_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_deductions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_documents: {
         Row: {
           created_at: string
@@ -930,9 +1098,61 @@ export type Database = {
           },
         ]
       }
+      employee_grants: {
+        Row: {
+          amount_override: number | null
+          created_at: string
+          employee_id: string
+          end_date: string | null
+          grant_type_id: string
+          id: string
+          is_active: boolean
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          amount_override?: number | null
+          created_at?: string
+          employee_id: string
+          end_date?: string | null
+          grant_type_id: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_override?: number | null
+          created_at?: string
+          employee_id?: string
+          end_date?: string | null
+          grant_type_id?: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_grants_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_grants_grant_type_id_fkey"
+            columns: ["grant_type_id"]
+            isOneToOne: false
+            referencedRelation: "grant_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employees: {
         Row: {
           allowances: Json
+          bank_name: string | null
           basic_salary: number
           created_at: string
           currency: string
@@ -943,6 +1163,7 @@ export type Database = {
           employment_status: Database["public"]["Enums"]["employment_status"]
           full_name: string
           hire_date: string
+          iban: string | null
           id: string
           national_id: string | null
           notes: string | null
@@ -954,6 +1175,7 @@ export type Database = {
         }
         Insert: {
           allowances?: Json
+          bank_name?: string | null
           basic_salary?: number
           created_at?: string
           currency?: string
@@ -964,6 +1186,7 @@ export type Database = {
           employment_status?: Database["public"]["Enums"]["employment_status"]
           full_name: string
           hire_date?: string
+          iban?: string | null
           id?: string
           national_id?: string | null
           notes?: string | null
@@ -975,6 +1198,7 @@ export type Database = {
         }
         Update: {
           allowances?: Json
+          bank_name?: string | null
           basic_salary?: number
           created_at?: string
           currency?: string
@@ -985,6 +1209,7 @@ export type Database = {
           employment_status?: Database["public"]["Enums"]["employment_status"]
           full_name?: string
           hire_date?: string
+          iban?: string | null
           id?: string
           national_id?: string | null
           notes?: string | null
@@ -1098,6 +1323,45 @@ export type Database = {
           staff_id?: string | null
           unit_id?: string | null
           visitor_id?: string | null
+        }
+        Relationships: []
+      }
+      grant_types: {
+        Row: {
+          calc_type: string
+          code: string
+          created_at: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          name: string
+          rate_or_amount: number
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          calc_type?: string
+          code: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          rate_or_amount?: number
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          calc_type?: string
+          code?: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          rate_or_amount?: number
+          start_date?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1386,9 +1650,11 @@ export type Database = {
         Row: {
           created_at: string
           days: number
+          document_url: string | null
           employee_id: string
           from_date: string
           id: string
+          is_half_day: boolean
           leave_type_id: string
           reason: string | null
           review_notes: string | null
@@ -1396,14 +1662,17 @@ export type Database = {
           reviewed_by: string | null
           status: Database["public"]["Enums"]["leave_status"]
           to_date: string
+          unpaid_days: number
           updated_at: string
         }
         Insert: {
           created_at?: string
           days: number
+          document_url?: string | null
           employee_id: string
           from_date: string
           id?: string
+          is_half_day?: boolean
           leave_type_id: string
           reason?: string | null
           review_notes?: string | null
@@ -1411,14 +1680,17 @@ export type Database = {
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["leave_status"]
           to_date: string
+          unpaid_days?: number
           updated_at?: string
         }
         Update: {
           created_at?: string
           days?: number
+          document_url?: string | null
           employee_id?: string
           from_date?: string
           id?: string
+          is_half_day?: boolean
           leave_type_id?: string
           reason?: string | null
           review_notes?: string | null
@@ -1426,6 +1698,7 @@ export type Database = {
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["leave_status"]
           to_date?: string
+          unpaid_days?: number
           updated_at?: string
         }
         Relationships: [
@@ -1447,33 +1720,45 @@ export type Database = {
       }
       leave_types: {
         Row: {
+          allow_half_day: boolean
+          carry_forward: boolean
           code: string
           created_at: string
           days_per_year: number
           id: string
           is_active: boolean
+          max_carry_days: number
           name: string
           paid: boolean
+          requires_document: boolean
           updated_at: string
         }
         Insert: {
+          allow_half_day?: boolean
+          carry_forward?: boolean
           code: string
           created_at?: string
           days_per_year?: number
           id?: string
           is_active?: boolean
+          max_carry_days?: number
           name: string
           paid?: boolean
+          requires_document?: boolean
           updated_at?: string
         }
         Update: {
+          allow_half_day?: boolean
+          carry_forward?: boolean
           code?: string
           created_at?: string
           days_per_year?: number
           id?: string
           is_active?: boolean
+          max_carry_days?: number
           name?: string
           paid?: boolean
+          requires_document?: boolean
           updated_at?: string
         }
         Relationships: []
@@ -1744,6 +2029,41 @@ export type Database = {
           },
         ]
       }
+      payroll_adjustments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          id: string
+          payslip_id: string
+          reason: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          payslip_id: string
+          reason: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          payslip_id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_adjustments_payslip_id_fkey"
+            columns: ["payslip_id"]
+            isOneToOne: false
+            referencedRelation: "payslips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payroll_journal_drafts: {
         Row: {
           created_at: string
@@ -1797,11 +2117,14 @@ export type Database = {
           currency: string
           employee_count: number
           id: string
+          locked_at: string | null
           notes: string | null
           paid_at: string | null
           period_month: number
           period_year: number
           posted_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: Database["public"]["Enums"]["payroll_run_status"]
           total_deductions: number
           total_gross: number
@@ -1816,11 +2139,14 @@ export type Database = {
           currency?: string
           employee_count?: number
           id?: string
+          locked_at?: string | null
           notes?: string | null
           paid_at?: string | null
           period_month: number
           period_year: number
           posted_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["payroll_run_status"]
           total_deductions?: number
           total_gross?: number
@@ -1835,11 +2161,14 @@ export type Database = {
           currency?: string
           employee_count?: number
           id?: string
+          locked_at?: string | null
           notes?: string | null
           paid_at?: string | null
           period_month?: number
           period_year?: number
           posted_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["payroll_run_status"]
           total_deductions?: number
           total_gross?: number
@@ -1848,59 +2177,130 @@ export type Database = {
         }
         Relationships: []
       }
+      payslip_lines: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          is_locked: boolean
+          kind: string
+          label: string
+          payslip_id: string
+          ref_id: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          is_locked?: boolean
+          kind: string
+          label: string
+          payslip_id: string
+          ref_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          is_locked?: boolean
+          kind?: string
+          label?: string
+          payslip_id?: string
+          ref_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payslip_lines_payslip_id_fkey"
+            columns: ["payslip_id"]
+            isOneToOne: false
+            referencedRelation: "payslips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payslips: {
         Row: {
           allowances_total: number
+          approval_status: string
           basic: number
           created_at: string
+          currency: string
           days_absent: number
           days_leave: number
           days_worked: number
           deductions_total: number
           employee_id: string
+          grants_amount: number
           gross: number
           id: string
+          is_locked: boolean
           leave_adjustment: number
           net_pay: number
           overtime: number
+          overtime_hours: number
+          payment_status: string
           payroll_run_id: string
           snapshot: Json
+          social_security_ee: number
+          social_security_er: number
+          unpaid_leave_amount: number
+          unpaid_leave_days: number
           updated_at: string
         }
         Insert: {
           allowances_total?: number
+          approval_status?: string
           basic?: number
           created_at?: string
+          currency?: string
           days_absent?: number
           days_leave?: number
           days_worked?: number
           deductions_total?: number
           employee_id: string
+          grants_amount?: number
           gross?: number
           id?: string
+          is_locked?: boolean
           leave_adjustment?: number
           net_pay?: number
           overtime?: number
+          overtime_hours?: number
+          payment_status?: string
           payroll_run_id: string
           snapshot?: Json
+          social_security_ee?: number
+          social_security_er?: number
+          unpaid_leave_amount?: number
+          unpaid_leave_days?: number
           updated_at?: string
         }
         Update: {
           allowances_total?: number
+          approval_status?: string
           basic?: number
           created_at?: string
+          currency?: string
           days_absent?: number
           days_leave?: number
           days_worked?: number
           deductions_total?: number
           employee_id?: string
+          grants_amount?: number
           gross?: number
           id?: string
+          is_locked?: boolean
           leave_adjustment?: number
           net_pay?: number
           overtime?: number
+          overtime_hours?: number
+          payment_status?: string
           payroll_run_id?: string
           snapshot?: Json
+          social_security_ee?: number
+          social_security_er?: number
+          unpaid_leave_amount?: number
+          unpaid_leave_days?: number
           updated_at?: string
         }
         Relationships: [
@@ -2204,6 +2604,42 @@ export type Database = {
           id?: string
           module?: string
           role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      social_security_config: {
+        Row: {
+          cap_amount: number | null
+          created_at: string
+          effective_from: string
+          employee_rate: number
+          employer_rate: number
+          id: string
+          is_active: boolean
+          scheme_name: string
+          updated_at: string
+        }
+        Insert: {
+          cap_amount?: number | null
+          created_at?: string
+          effective_from?: string
+          employee_rate?: number
+          employer_rate?: number
+          id?: string
+          is_active?: boolean
+          scheme_name?: string
+          updated_at?: string
+        }
+        Update: {
+          cap_amount?: number | null
+          created_at?: string
+          effective_from?: string
+          employee_rate?: number
+          employer_rate?: number
+          id?: string
+          is_active?: boolean
+          scheme_name?: string
           updated_at?: string
         }
         Relationships: []
@@ -2586,7 +3022,7 @@ export type Database = {
       maintenance_status: "pending" | "in_progress" | "completed" | "cancelled"
       payment_method: "card" | "bank_transfer" | "cash" | "cheque" | "mock"
       payroll_draft_status: "pending_review" | "approved" | "rejected"
-      payroll_run_status: "draft" | "approved" | "posted" | "paid"
+      payroll_run_status: "draft" | "review" | "approved" | "posted" | "paid"
       purchase_invoice_status:
         | "unpaid"
         | "partial"
@@ -2787,7 +3223,7 @@ export const Constants = {
       maintenance_status: ["pending", "in_progress", "completed", "cancelled"],
       payment_method: ["card", "bank_transfer", "cash", "cheque", "mock"],
       payroll_draft_status: ["pending_review", "approved", "rejected"],
-      payroll_run_status: ["draft", "approved", "posted", "paid"],
+      payroll_run_status: ["draft", "review", "approved", "posted", "paid"],
       purchase_invoice_status: [
         "unpaid",
         "partial",
