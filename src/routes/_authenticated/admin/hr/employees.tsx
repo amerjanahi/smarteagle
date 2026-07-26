@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Users, CalendarCheck, Plane, Wallet, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, CalendarCheck, Plane, Wallet, FileText, Settings } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/hr/employees")({
   head: () => ({ meta: [{ title: "Employees — HR" }] }),
