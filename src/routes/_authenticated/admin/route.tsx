@@ -83,6 +83,7 @@ const hrItems: NavItem[] = [
   { to: "/admin/hr/leave", label: "Leave", icon: Plane },
   { to: "/admin/hr/payroll", label: "Payroll", icon: Wallet },
   { to: "/admin/hr/payslips", label: "Payslips", icon: ReceiptIcon },
+  { to: "/admin/hr/config", label: "Config", icon: Settings },
 ];
 
 function AdminShell() {
