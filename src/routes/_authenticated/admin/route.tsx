@@ -7,7 +7,7 @@ import {
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
-  Bell, Briefcase, CalendarCheck, Plane, Receipt as ReceiptIcon,
+  Bell, Briefcase, CalendarCheck, Plane, Receipt as ReceiptIcon, Vote,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -65,6 +65,7 @@ const purchasesItems: NavItem[] = [
 ];
 
 const commsItems: NavItem[] = [
+  { to: "/admin/owners-association", label: "Owners Association", icon: Vote },
   { to: "/admin/notices", label: "Notices", icon: Megaphone },
   { to: "/admin/notice-groups", label: "Groups", icon: Users },
   { to: "/admin/bulk-email", label: "Bulk Email", icon: Mail },

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, Calculator, Bell, LogOut, ChevronRight } from "lucide-react";
+import { CalendarDays, Calculator, Bell, LogOut, ChevronRight, Vote } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -12,6 +12,7 @@ const items = [
   { to: "/portal/amenities", label: "Book amenities", icon: CalendarDays },
   { to: "/portal/calculator", label: "Service charge calculator", icon: Calculator },
   { to: "/portal/announcements", label: "Announcements", icon: Bell },
+  { to: "/portal/owners-association", label: "Owners Association", icon: Vote },
 ] as const;
 
 function MorePage() {
