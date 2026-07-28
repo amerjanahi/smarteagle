@@ -173,6 +173,28 @@ function InvoicesPage() {
     qc.invalidateQueries({ queryKey: ["invoices"] });
   }
 
+  function downloadCsvTemplate() {
+    const headers = [
+      "unit_number", "customer_name", "customer_email", "customer_phone",
+      "description", "due_date", "quantity", "unit_price", "tax_rate",
+      "account_code", "discount", "payment_terms",
+    ];
+    const example = [
+      "101", "Example Resident", "resident@example.com", "+97300000000",
+      "Monthly service charge", "2026-08-31", "1", "50.00", "5",
+      "4100", "0", "Net 30",
+    ];
+    const csv = [headers, example].map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "invoice-import-template.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="space-y-4">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -188,6 +210,9 @@ function InvoicesPage() {
             className="hidden"
             onChange={handleCsv}
           />
+          <Button variant="outline" onClick={downloadCsvTemplate}>
+            <Download className="mr-2 h-4 w-4" /> Download CSV template
+          </Button>
           <Button variant="outline" onClick={() => csvRef.current?.click()}>
             <Upload className="mr-2 h-4 w-4" /> Import CSV
           </Button>
@@ -198,7 +223,7 @@ function InvoicesPage() {
       </header>
 
       <p className="text-xs text-muted-foreground">
-        CSV columns: <code>unit_number, customer_name, customer_email, customer_phone, description, due_date, quantity, unit_price, tax_rate, account_code, discount, payment_terms</code>
+        Download the template, replace the example row with your invoice data, then upload it. The <code>account_code</code> is the GL account code, such as <code>4100</code>.
       </p>
 
       <div className="rounded-xl border border-border bg-card">
