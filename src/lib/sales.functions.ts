@@ -28,7 +28,7 @@ export const listInvoices = createServerFn({ method: "GET" })
     await assertSalesManager(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("invoices")
-      .select("*, units(unit_number, building, residents(full_name, email, is_active)), invoice_line_items(*), payment_allocations(*), credit_note_allocations(*)")
+      .select("*, units(unit_number, building, residents(full_name, email, is_active)), invoice_line_items(*), payment_allocations(*)")
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) throw new Error(error.message);
