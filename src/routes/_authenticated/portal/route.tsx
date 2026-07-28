@@ -57,7 +57,7 @@ function PortalShell() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-10 border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <div>
@@ -74,7 +74,7 @@ function PortalShell() {
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-card/95 backdrop-blur">
+      <nav aria-label="Resident navigation" className="safe-bottom fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-card/95 backdrop-blur">
         <ul className="mx-auto flex max-w-2xl items-stretch">
           {tabs.map((t) => {
             const active = pathname === t.to;
@@ -82,6 +82,8 @@ function PortalShell() {
               <li key={t.to} className="flex-1">
                 <Link
                   to={t.to}
+                  preload="intent"
+                  aria-current={active ? "page" : undefined}
                   className={`flex flex-col items-center gap-1 py-2 text-xs transition-colors ${
                     active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
