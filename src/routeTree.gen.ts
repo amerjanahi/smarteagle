@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_authenticated/admin/notice-groups'
 import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
 import { Route as AuthenticatedAdminOwnersAssociationRouteImport } from './routes/_authenticated/admin/owners-association'
+import { Route as AuthenticatedAdminProfileChangeRequestsRouteImport } from './routes/_authenticated/admin/profile-change-requests'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 import { Route as AuthenticatedAdminPayrollJournalsRouteImport } from './routes/_authenticated/admin/payroll-journals'
 import { Route as AuthenticatedAdminPortalAccessRequestsRouteImport } from './routes/_authenticated/admin/portal-access-requests'
@@ -74,6 +75,7 @@ import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_aut
 import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authenticated/portal/invoices'
 import { Route as AuthenticatedPortalMaintenanceRouteImport } from './routes/_authenticated/portal/maintenance'
 import { Route as AuthenticatedPortalMoreRouteImport } from './routes/_authenticated/portal/more'
+import { Route as AuthenticatedPortalProfileRouteImport } from './routes/_authenticated/portal/profile'
 import { Route as AuthenticatedPortalOwnersAssociationRouteImport } from './routes/_authenticated/portal/owners-association'
 import { Route as AuthenticatedPortalVisitorsRouteImport } from './routes/_authenticated/portal/visitors'
 import { Route as AuthenticatedPortalWorkRouteImport } from './routes/_authenticated/portal/work'
@@ -280,6 +282,12 @@ const AuthenticatedAdminOwnersAssociationRoute =
     path: '/owners-association',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminProfileChangeRequestsRoute =
+  AuthenticatedAdminProfileChangeRequestsRouteImport.update({
+    id: '/profile-change-requests',
+    path: '/profile-change-requests',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
     id: '/payments',
@@ -452,6 +460,11 @@ const AuthenticatedPortalMaintenanceRoute =
 const AuthenticatedPortalMoreRoute = AuthenticatedPortalMoreRouteImport.update({
   id: '/more',
   path: '/more',
+  getParentRoute: () => AuthenticatedPortalRouteRoute,
+} as any)
+const AuthenticatedPortalProfileRoute = AuthenticatedPortalProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AuthenticatedPortalRouteRoute,
 } as any)
 const AuthenticatedPortalOwnersAssociationRoute =
@@ -1514,6 +1527,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminNoticeGroupsRoute: typeof AuthenticatedAdminNoticeGroupsRoute
   AuthenticatedAdminNoticesRoute: typeof AuthenticatedAdminNoticesRoute
   AuthenticatedAdminOwnersAssociationRoute: typeof AuthenticatedAdminOwnersAssociationRoute
+  AuthenticatedAdminProfileChangeRequestsRoute: typeof AuthenticatedAdminProfileChangeRequestsRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPayrollJournalsRoute: typeof AuthenticatedAdminPayrollJournalsRoute
   AuthenticatedAdminPortalAccessRequestsRoute: typeof AuthenticatedAdminPortalAccessRequestsRoute
@@ -1565,6 +1579,8 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminNoticesRoute: AuthenticatedAdminNoticesRoute,
     AuthenticatedAdminOwnersAssociationRoute:
       AuthenticatedAdminOwnersAssociationRoute,
+    AuthenticatedAdminProfileChangeRequestsRoute:
+      AuthenticatedAdminProfileChangeRequestsRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
     AuthenticatedAdminPayrollJournalsRoute:
       AuthenticatedAdminPayrollJournalsRoute,
@@ -1632,6 +1648,7 @@ interface AuthenticatedPortalRouteRouteChildren {
   AuthenticatedPortalInvoicesRoute: typeof AuthenticatedPortalInvoicesRoute
   AuthenticatedPortalMaintenanceRoute: typeof AuthenticatedPortalMaintenanceRoute
   AuthenticatedPortalMoreRoute: typeof AuthenticatedPortalMoreRoute
+  AuthenticatedPortalProfileRoute: typeof AuthenticatedPortalProfileRoute
   AuthenticatedPortalOwnersAssociationRoute: typeof AuthenticatedPortalOwnersAssociationRoute
   AuthenticatedPortalVisitorsRoute: typeof AuthenticatedPortalVisitorsRoute
   AuthenticatedPortalWorkRoute: typeof AuthenticatedPortalWorkRoute
@@ -1647,6 +1664,7 @@ const AuthenticatedPortalRouteRouteChildren: AuthenticatedPortalRouteRouteChildr
     AuthenticatedPortalInvoicesRoute: AuthenticatedPortalInvoicesRoute,
     AuthenticatedPortalMaintenanceRoute: AuthenticatedPortalMaintenanceRoute,
     AuthenticatedPortalMoreRoute: AuthenticatedPortalMoreRoute,
+    AuthenticatedPortalProfileRoute: AuthenticatedPortalProfileRoute,
     AuthenticatedPortalOwnersAssociationRoute:
       AuthenticatedPortalOwnersAssociationRoute,
     AuthenticatedPortalVisitorsRoute: AuthenticatedPortalVisitorsRoute,
