@@ -6,7 +6,6 @@ type LineItemInput = {
   quantity: number;
   unit_price: number;
   tax_rate: number;
-  account_id?: string | null;
 };
 
 async function assertSalesManager(supabase: any, userId: string) {
@@ -71,20 +70,6 @@ export const listUnits = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
-export const listInvoiceIncomeAccounts = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    await assertSalesManager(context.supabase, context.userId);
-    const { data, error } = await context.supabase
-      .from("chart_of_accounts")
-      .select("id, code, name")
-      .eq("account_type", "income")
-      .eq("is_active", true)
-      .order("code");
-    if (error) throw new Error(error.message);
-    return data ?? [];
-  });
-
 export const salesDashboard = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -132,19 +117,6 @@ export const createInvoice = createServerFn({ method: "POST" })
   }) => d)
   .handler(async ({ context, data }) => {
     await assertSalesManager(context.supabase, context.userId);
-    const accountIds = [...new Set(data.line_items.map((line) => line.account_id).filter(Boolean))] as string[];
-    if (accountIds.length) {
-      const { data: accounts, error: accountsError } = await context.supabase
-        .from("chart_of_accounts")
-        .select("id")
-        .in("id", accountIds)
-        .eq("account_type", "income")
-        .eq("is_active", true);
-      if (accountsError) throw new Error(accountsError.message);
-      if ((accounts ?? []).length !== accountIds.length) {
-        throw new Error("Each selected invoice account must be an active income account.");
-      }
-    }
     let subtotal = 0, tax = 0;
     const items = data.line_items.map((li, i) => {
       const lineSub = Number(li.quantity) * Number(li.unit_price);
@@ -180,8 +152,8 @@ export const createInvoice = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (items.length) {
       const { error: liErr } = await context.supabase
-      .from("invoice_line_items" as any)
-        .insert(items.map((li) => ({ ...li, invoice_id: inv.id })) as any);
+        .from("invoice_line_items")
+        .insert(items.map((li) => ({ ...li, invoice_id: inv.id })));
       if (liErr) throw new Error(liErr.message);
     }
     return { id: inv.id };
