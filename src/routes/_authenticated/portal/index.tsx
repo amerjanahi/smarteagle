@@ -10,7 +10,6 @@ import {
   ArrowRight,
   CheckCircle2,
   Megaphone,
-  Sparkles,
   LifeBuoy,
   Receipt,
   CreditCard,
@@ -155,12 +154,6 @@ function PortalHome() {
           body="Pool maintenance scheduled this Friday 8am–12pm. Thank you for your patience."
           cta={{ label: "See all", to: "/portal/announcements" }}
           accent="primary"
-        />
-        <InfoCard
-          icon={Sparkles}
-          title="Upcoming Features"
-          body="One-tap invoice payment, visitor QR codes, and amenity calendar are coming soon."
-          accent="accent"
         />
         <InfoCard
           icon={LifeBuoy}
