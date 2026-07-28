@@ -15,5 +15,17 @@ export default defineConfig({
   },
   vite: {
     plugins: [mcpPlugin()],
+    build: {
+      // Keep large, infrequently used features out of the initial mobile download.
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            charts: ["recharts"],
+            spreadsheets: ["xlsx"],
+            pdf: ["pdf-lib"],
+          },
+        },
+      },
+    },
   },
 });
