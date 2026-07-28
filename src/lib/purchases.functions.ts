@@ -17,19 +17,99 @@ export const listVendors = createServerFn({ method: "GET" })
       .select("*")
       .order("name");
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const vendorIds = (data ?? []).map((v: any) => v.id);
+    if (!vendorIds.length) return [];
+    const [{ data: bills }, { data: documents }] = await Promise.all([
+      context.supabase.from("purchase_invoices")
+        .select("vendor_id, total_amount, balance_due, issue_date, status")
+        .in("vendor_id", vendorIds),
+      context.supabase.from("vendor_compliance_documents")
+        .select("vendor_id, expiry_date").in("vendor_id", vendorIds),
+    ]);
+    return (data ?? []).map((vendor: any) => {
+      const vendorBills = (bills ?? []).filter((bill: any) => bill.vendor_id === vendor.id);
+      const vendorDocuments = (documents ?? []).filter((doc: any) => doc.vendor_id === vendor.id);
+      return {
+        ...vendor,
+        purchase_count: vendorBills.length,
+        total_spend: vendorBills.reduce((sum: number, bill: any) => sum + Number(bill.total_amount || 0), 0),
+        outstanding_balance: vendorBills.reduce((sum: number, bill: any) => sum + Number(bill.balance_due || 0), 0),
+        compliance_count: vendorDocuments.length,
+        next_expiry: vendorDocuments.map((doc: any) => doc.expiry_date).filter(Boolean).sort()[0] ?? null,
+      };
+    });
   });
 
 export const upsertVendor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id?: string; name: string; email?: string; phone?: string; address?: string; tax_id?: string; notes?: string; is_active?: boolean }) => d)
+  .inputValidator((d: { id?: string; name: string; email?: string; phone?: string; address?: string; tax_id?: string; notes?: string; is_active?: boolean; contact_person?: string; category?: string; commercial_registration?: string; bank_name?: string; iban?: string; payment_terms_days?: number; status?: string; is_preferred?: boolean }) => d)
   .handler(async ({ context, data }) => {
     await assertManager(context.supabase, context.userId);
-    const payload: any = { ...data };
+    if (!data.name?.trim()) throw new Error("Vendor name is required");
+    const payload: any = { ...data, name: data.name.trim() };
+    for (const key of ["email", "phone", "address", "tax_id", "notes", "contact_person", "category", "commercial_registration", "bank_name", "iban"]) {
+      payload[key] = payload[key]?.trim() || null;
+    }
+    if (payload.email) payload.email = payload.email.toLowerCase();
+    if (payload.iban) payload.iban = payload.iban.replace(/\s+/g, "").toUpperCase();
+    payload.payment_terms_days = Number(payload.payment_terms_days ?? 30);
     if (!payload.id) payload.created_by = context.userId;
+    const otherVendor = (column: string, value: string) => {
+      let query = context.supabase.from("vendors").select("id, name").ilike(column, value);
+      if (payload.id) query = query.neq("id", payload.id);
+      return query.limit(1);
+    };
+    const duplicateChecks = [otherVendor("name", payload.name)];
+    if (payload.tax_id) duplicateChecks.push(otherVendor("tax_id", payload.tax_id));
+    if (payload.iban) duplicateChecks.push(otherVendor("iban", payload.iban));
+    const duplicateResults = await Promise.all(duplicateChecks);
+    const match = duplicateResults.find((result: any) => result.data?.length)?.data?.[0];
+    if (match) throw new Error(`Possible duplicate vendor: ${match.name}`);
     const { data: res, error } = await context.supabase.from("vendors").upsert(payload).select().single();
     if (error) throw new Error(error.message);
     return res;
+  });
+
+export const getVendorOverview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { vendor_id: string }) => d)
+  .handler(async ({ context, data }) => {
+    await assertManager(context.supabase, context.userId);
+    const [{ data: vendor, error }, { data: bills }, { data: payments }, { data: compliance }] = await Promise.all([
+      context.supabase.from("vendors").select("*").eq("id", data.vendor_id).single(),
+      context.supabase.from("purchase_invoices").select("id, bill_number, issue_date, due_date, total_amount, amount_paid, balance_due, status, approval_status").eq("vendor_id", data.vendor_id).order("issue_date", { ascending: false }).limit(50),
+      context.supabase.from("vendor_payments").select("id, payment_number, payment_date, amount, method, reference").eq("vendor_id", data.vendor_id).order("payment_date", { ascending: false }).limit(50),
+      context.supabase.from("vendor_compliance_documents").select("*").eq("vendor_id", data.vendor_id).order("expiry_date", { ascending: true }),
+    ]);
+    if (error) throw new Error(error.message);
+    return { vendor, bills: bills ?? [], payments: payments ?? [], compliance: compliance ?? [] };
+  });
+
+export const saveVendorComplianceDocument = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id?: string; vendor_id: string; document_type: string; document_number?: string; issue_date?: string | null; expiry_date?: string | null; file_path?: string | null; notes?: string }) => d)
+  .handler(async ({ context, data }) => {
+    await assertManager(context.supabase, context.userId);
+    if (!data.document_type?.trim()) throw new Error("Document type is required");
+    const payload: any = { ...data, document_type: data.document_type.trim() };
+    delete payload.id;
+    if (!data.id) payload.created_by = context.userId;
+    const query = data.id
+      ? context.supabase.from("vendor_compliance_documents").update(payload).eq("id", data.id)
+      : context.supabase.from("vendor_compliance_documents").insert(payload);
+    const { error } = await query;
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteVendorComplianceDocument = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => d)
+  .handler(async ({ context, data }) => {
+    await assertManager(context.supabase, context.userId);
+    const { error } = await context.supabase.from("vendor_compliance_documents").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 export const deleteVendor = createServerFn({ method: "POST" })

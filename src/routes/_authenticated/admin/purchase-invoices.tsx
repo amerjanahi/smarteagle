@@ -64,6 +64,19 @@ function PurchaseInvoicesPage() {
     setOpen(true);
   }
 
+  function selectVendor(vendorId: string) {
+    const vendor = vendors.find((item: any) => item.id === vendorId);
+    const days = Number(vendor?.payment_terms_days ?? 30);
+    const due = new Date(`${form.issue_date}T12:00:00`);
+    due.setDate(due.getDate() + days);
+    setForm({
+      ...form,
+      vendor_id: vendorId,
+      payment_terms: `Net ${days}`,
+      due_date: due.toISOString().slice(0, 10),
+    });
+  }
+
   const totals = useMemo(() => {
     if (!form) return { vat: 0, total: 0 };
     const vat = (Number(form.subtotal) * Number(form.vat_rate)) / 100;
@@ -147,7 +160,7 @@ function PurchaseInvoicesPage() {
               <div className="grid grid-cols-2 gap-3 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
                   <Label>Vendor</Label>
-                  <Select value={form.vendor_id} onValueChange={(v) => setForm({ ...form, vendor_id: v })}>
+                  <Select value={form.vendor_id} onValueChange={selectVendor}>
                     <SelectTrigger><SelectValue placeholder="Pick vendor" /></SelectTrigger>
                     <SelectContent>{vendors.map((v: any) => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}</SelectContent>
                   </Select>
