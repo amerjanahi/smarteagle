@@ -78,6 +78,15 @@ const bankItems: NavItem[] = [
   { to: "/admin/bank-reconciliation", label: "Reconciliation", icon: GitCompare },
 ];
 
+const financeItems: NavItem[] = [
+  ...salesItems,
+  ...purchasesItems,
+  ...bankItems,
+  { to: "/admin/chart-of-accounts", label: "Chart of Accounts", icon: BookOpen },
+  { to: "/admin/annual-fees", label: "Annual Fees", icon: Calculator },
+  { to: "/admin/payroll-journals", label: "Payroll Journals", icon: ReceiptIcon },
+];
+
 const hrItems: NavItem[] = [
   { to: "/admin/hr/employees", label: "Employees", icon: Users },
   { to: "/admin/hr/attendance", label: "Attendance", icon: CalendarCheck },
@@ -92,13 +101,9 @@ function AdminShell() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const inSales = salesItems.some((i) => pathname === i.to);
-  const inPurch = purchasesItems.some((i) => pathname === i.to);
-  const inBank = bankItems.some((i) => pathname === i.to);
+  const inFinance = financeItems.some((i) => pathname === i.to);
   const inHr = hrItems.some((i) => pathname === i.to);
-  const [salesOpen, setSalesOpen] = useState(inSales);
-  const [purchOpen, setPurchOpen] = useState(inPurch);
-  const [bankOpen, setBankOpen] = useState(inBank);
+  const [financeOpen, setFinanceOpen] = useState(inFinance);
   const [hrOpen, setHrOpen] = useState(inHr);
 
   const pendingFn = useServerFn(pendingSignupCount);
@@ -201,33 +206,7 @@ function AdminShell() {
               <SidebarGroupLabel>Finance</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {renderSubsection("Sales", TrendingUp, salesItems, salesOpen, setSalesOpen)}
-                  {renderSubsection("Purchases", ShoppingBag, purchasesItems, purchOpen, setPurchOpen)}
-                  {renderSubsection("Bank", Landmark, bankItems, bankOpen, setBankOpen)}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={pathname === "/admin/chart-of-accounts"}>
-                      <Link to="/admin/chart-of-accounts">
-                        <BookOpen className="h-4 w-4" />
-                        <span>Chart of Accounts</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={pathname === "/admin/annual-fees"}>
-                      <Link to="/admin/annual-fees">
-                        <Calculator className="h-4 w-4" />
-                        <span>Annual Fees</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={pathname === "/admin/payroll-journals"}>
-                      <Link to="/admin/payroll-journals">
-                        <ReceiptIcon className="h-4 w-4" />
-                        <span>Payroll Journals</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {renderSubsection("Finance", Wallet, financeItems, financeOpen, setFinanceOpen)}
                 </SidebarMenu>
 
               </SidebarGroupContent>
