@@ -71,14 +71,13 @@ export const listUnits = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
-export const listInvoiceIncomeAccounts = createServerFn({ method: "GET" })
+export const listInvoiceAccounts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertSalesManager(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("chart_of_accounts")
-      .select("id, code, name")
-      .eq("account_type", "income")
+      .select("id, code, name, account_type")
       .eq("is_active", true)
       .order("code");
     if (error) throw new Error(error.message);
@@ -138,11 +137,10 @@ export const createInvoice = createServerFn({ method: "POST" })
         .from("chart_of_accounts")
         .select("id")
         .in("id", accountIds)
-        .eq("account_type", "income")
         .eq("is_active", true);
       if (accountsError) throw new Error(accountsError.message);
       if ((accounts ?? []).length !== accountIds.length) {
-        throw new Error("Each selected invoice account must be an active income account.");
+        throw new Error("Each selected invoice account must be an active General Ledger account.");
       }
     }
     let subtotal = 0, tax = 0;

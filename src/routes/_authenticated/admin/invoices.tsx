@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useRef, useState } from "react";
-import { listInvoices, listUnits, listInvoiceIncomeAccounts, createInvoice, voidInvoice, generateDocumentPdf } from "@/lib/sales.functions";
+import { listInvoices, listUnits, listInvoiceAccounts, createInvoice, voidInvoice, generateDocumentPdf } from "@/lib/sales.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,15 +32,15 @@ function InvoicesPage() {
   const qc = useQueryClient();
   const fetchInvoices = useServerFn(listInvoices);
   const fetchUnits = useServerFn(listUnits);
-  const fetchIncomeAccounts = useServerFn(listInvoiceIncomeAccounts);
+  const fetchAccounts = useServerFn(listInvoiceAccounts);
   const create = useServerFn(createInvoice);
   const voidFn = useServerFn(voidInvoice);
   const genPdf = useServerFn(generateDocumentPdf);
 
   const invoices = useQuery({ queryKey: ["invoices"], queryFn: () => fetchInvoices() });
   const units = useQuery({ queryKey: ["units-sales"], queryFn: () => fetchUnits() });
-  const incomeAccounts = useQuery({ queryKey: ["invoice-income-accounts"], queryFn: () => fetchIncomeAccounts() });
-  const defaultIncomeAccountId = incomeAccounts.data?.find((account: any) => account.code === "4100")?.id ?? incomeAccounts.data?.[0]?.id ?? null;
+  const accounts = useQuery({ queryKey: ["invoice-gl-accounts"], queryFn: () => fetchAccounts() });
+  const defaultAccountId = accounts.data?.find((account: any) => account.code === "4100")?.id ?? accounts.data?.[0]?.id ?? null;
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
@@ -73,7 +73,7 @@ function InvoicesPage() {
       due_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
       payment_terms: "Net 30", discount_amount: 0, notes: "",
     });
-    setLines([{ description: "Service charge", quantity: 1, unit_price: 0, tax_rate: 5, account_id: defaultIncomeAccountId }]);
+    setLines([{ description: "Service charge", quantity: 1, unit_price: 0, tax_rate: 5, account_id: defaultAccountId }]);
     setAttachments([]);
   }
 
@@ -162,7 +162,7 @@ function InvoicesPage() {
             quantity: Number(cols[idx("quantity")] || 1),
             unit_price: Number(cols[idx("unit_price")] || 0),
             tax_rate: Number(cols[idx("tax_rate")] || 5),
-            account_id: incomeAccounts.data?.find((account: any) => account.code === cols[idx("account_code")])?.id ?? defaultIncomeAccountId,
+            account_id: accounts.data?.find((account: any) => account.code === cols[idx("account_code")])?.id ?? defaultAccountId,
           }],
         } });
         ok++;
@@ -332,7 +332,7 @@ function InvoicesPage() {
                     <div className="space-y-2">
                       <div className="grid grid-cols-12 gap-2 px-1 text-xs font-medium text-muted-foreground">
                         <span className="col-span-3">Description</span>
-                        <span className="col-span-2">Income account</span>
+                        <span className="col-span-2">GL account</span>
                         <span className="col-span-2">Qty</span>
                         <span className="col-span-2">Unit price</span>
                         <span className="col-span-2">VAT %</span>
@@ -343,11 +343,11 @@ function InvoicesPage() {
                           <Input className="col-span-3" placeholder="Description" value={l.description}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, description: e.target.value } : x))} />
                           <Select value={l.account_id ?? "unmapped"} onValueChange={(value) => setLines(lines.map((x, j) => j === i ? { ...x, account_id: value === "unmapped" ? null : value } : x))}>
-                            <SelectTrigger className="col-span-2"><SelectValue placeholder="Income account" /></SelectTrigger>
+                            <SelectTrigger className="col-span-2"><SelectValue placeholder="GL account" /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="unmapped">Unmapped</SelectItem>
-                              {incomeAccounts.data?.map((account: any) => (
-                                <SelectItem key={account.id} value={account.id}>{account.code} — {account.name}</SelectItem>
+                              {accounts.data?.map((account: any) => (
+                                <SelectItem key={account.id} value={account.id}>{account.code} — {account.name} ({account.account_type})</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -363,7 +363,7 @@ function InvoicesPage() {
                           </Button>
                         </div>
                       ))}
-                      <Button variant="outline" size="sm" onClick={() => setLines([...lines, { ...blankLine(), account_id: defaultIncomeAccountId }])}>
+                      <Button variant="outline" size="sm" onClick={() => setLines([...lines, { ...blankLine(), account_id: defaultAccountId }])}>
                         <Plus className="mr-2 h-4 w-4" /> Add line
                       </Button>
                     </div>
