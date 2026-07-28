@@ -178,10 +178,27 @@ export const createInvoice = createServerFn({ method: "POST" })
       .select("id").single();
     if (error) throw new Error(error.message);
     if (items.length) {
-      const { error: liErr } = await context.supabase
-      .from("invoice_line_items" as any)
-        .insert(items.map((li) => ({ ...li, invoice_id: inv.id })) as any);
-      if (liErr) throw new Error(liErr.message);
+      const lineItems = items.map((li) => ({ ...li, invoice_id: inv.id }));
+      let { error: liErr } = await context.supabase
+        .from("invoice_line_items" as any)
+        .insert(lineItems as any);
+
+      // Lovable can deploy application code before its database migration is applied.
+      // Keep invoice creation working on that older schema, while retaining GL links
+      // automatically as soon as the account_id column becomes available.
+      if (liErr?.message?.includes("'account_id' column") && liErr.message.includes("invoice_line_items")) {
+        const legacyLineItems = lineItems.map(({ account_id: _accountId, ...line }) => line);
+        const retry = await context.supabase
+          .from("invoice_line_items" as any)
+          .insert(legacyLineItems as any);
+        liErr = retry.error;
+      }
+
+      if (liErr) {
+        // Do not leave an empty invoice behind when its line items cannot be saved.
+        await context.supabase.from("invoices").delete().eq("id", inv.id);
+        throw new Error(liErr.message);
+      }
     }
     return { id: inv.id };
   });
