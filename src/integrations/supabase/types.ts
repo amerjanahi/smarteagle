@@ -2320,6 +2320,54 @@ export type Database = {
           },
         ]
       }
+      profile_change_requests: {
+        Row: {
+          created_at: string
+          current_email: string
+          id: string
+          requested_at: string
+          requested_email: string
+          requested_full_name: string | null
+          requested_phone: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_email: string
+          id?: string
+          requested_at?: string
+          requested_email: string
+          requested_full_name?: string | null
+          requested_phone?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_email?: string
+          id?: string
+          requested_at?: string
+          requested_email?: string
+          requested_full_name?: string | null
+          requested_phone?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           approval_status: string
