@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Bell,
+  Award,
   CheckCircle2,
   Clock3,
   MessageSquare,
@@ -19,6 +20,7 @@ import {
   ThumbsDown,
   ThumbsUp,
   Users,
+  Vote,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -81,6 +83,7 @@ function OwnersAssociationPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
+  const [section, setSection] = useState<"proposals" | "elections">("proposals");
 
   const { data, isLoading } = useQuery({
     queryKey: ["owners-association", user?.id],
@@ -206,14 +209,20 @@ function OwnersAssociationPage() {
     return map;
   }, [data?.comments]);
 
+  if (section === "elections") {
+    return <div className="space-y-5">
+      <AssociationHeader section={section} setSection={setSection} />
+      <ResidentElections userId={user?.id ?? ""} />
+    </div>;
+  }
+
   return (
     <div className="space-y-5">
+      <AssociationHeader section={section} setSection={setSection} />
       <header className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold">Owners Association</h1>
-          <p className="text-sm text-muted-foreground">
-            Share ideas, review proposals, and take part in community decisions.
-          </p>
+          <h2 className="text-lg font-semibold">Suggestions and proposals</h2>
+          <p className="text-sm text-muted-foreground">Share ideas and take part in community decisions.</p>
         </div>
         <Dialog open={suggestionOpen} onOpenChange={setSuggestionOpen}>
           <DialogTrigger asChild>
@@ -432,4 +441,103 @@ function OwnersAssociationPage() {
       </div>
     </div>
   );
+}
+
+function AssociationHeader({ section, setSection }: {
+  section: "proposals" | "elections";
+  setSection: (value: "proposals" | "elections") => void;
+}) {
+  return <header className="space-y-3">
+    <div><h1 className="font-display text-2xl font-bold">Owners Association</h1><p className="text-sm text-muted-foreground">Community decisions, representation and board governance.</p></div>
+    <div className="grid grid-cols-2 rounded-lg bg-muted p-1">
+      <Button variant={section === "proposals" ? "default" : "ghost"} size="sm" onClick={() => setSection("proposals")}><MessageSquare className="mr-2 h-4 w-4" />Proposals</Button>
+      <Button variant={section === "elections" ? "default" : "ghost"} size="sm" onClick={() => setSection("elections")}><Award className="mr-2 h-4 w-4" />Board elections</Button>
+    </div>
+  </header>;
+}
+
+function ResidentElections({ userId }: { userId: string }) {
+  const qc = useQueryClient();
+  const [nominationPosition, setNominationPosition] = useState<any>(null);
+  const [statement, setStatement] = useState("");
+  const [experience, setExperience] = useState("");
+  const electionQuery = useQuery({
+    queryKey: ["association-elections-resident", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const [electionsResult, positionsResult, candidatesResult, ballotsResult] = await Promise.all([
+        db.from("association_elections").select("*").neq("status", "draft").order("created_at", { ascending: false }),
+        db.from("association_election_positions").select("*").order("display_order"),
+        db.from("association_election_candidates").select("*, units(unit_number, building)").order("created_at"),
+        db.from("association_election_ballots").select("election_id,position_id,candidate_id,voter_user_id"),
+      ]);
+      for (const result of [electionsResult, positionsResult, candidatesResult, ballotsResult]) if (result.error) throw result.error;
+      const results: Record<string, Record<string, number>> = {};
+      for (const election of electionsResult.data ?? []) {
+        const response = await db.rpc("aggregate_election_results", { _election_id: election.id });
+        if (!response.error) results[election.id] = Object.fromEntries((response.data ?? []).map((row: any) => [row.candidate_id, Number(row.vote_count)]));
+      }
+      return { elections: electionsResult.data ?? [], positions: positionsResult.data ?? [], candidates: candidatesResult.data ?? [], ballots: ballotsResult.data ?? [], results };
+    },
+  });
+  const nominate = useMutation({
+    mutationFn: async () => {
+      const { error } = await db.rpc("nominate_board_candidate", {
+        _position_id: nominationPosition.id, _statement: statement, _experience: experience || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Your nomination was sent for review.");
+      setNominationPosition(null); setStatement(""); setExperience("");
+      qc.invalidateQueries({ queryKey: ["association-elections-resident"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+  const vote = useMutation({
+    mutationFn: async ({ positionId, candidateId }: { positionId: string; candidateId: string }) => {
+      const { error } = await db.rpc("cast_board_election_vote", { _position_id: positionId, _candidate_id: candidateId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Your secret ballot has been recorded.");
+      qc.invalidateQueries({ queryKey: ["association-elections-resident"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+  if (electionQuery.isLoading) return <div className="rounded-xl border p-8 text-center text-sm text-muted-foreground">Loading board elections…</div>;
+  const data = electionQuery.data;
+  if (!data?.elections.length) return <div className="rounded-xl border border-dashed p-8 text-center"><Vote className="mx-auto mb-2 h-7 w-7 text-muted-foreground" /><p className="font-medium">No board elections are open</p><p className="text-sm text-muted-foreground">Election information will appear here when published.</p></div>;
+  return <div className="space-y-5">
+    {data.elections.map((election: any) => {
+      const positions = data.positions.filter((position: any) => position.election_id === election.id);
+      const results = data.results[election.id];
+      return <article key={election.id} className="space-y-4 rounded-xl border bg-card p-4 shadow-[var(--shadow-soft)]">
+        <div className="flex flex-wrap items-start justify-between gap-2"><div><h2 className="text-lg font-semibold">{election.title}</h2><p className="mt-1 text-sm text-muted-foreground">{election.description}</p></div><Badge className="capitalize">{election.status.replace("_", " ")}</Badge></div>
+        <div className="grid gap-2 text-xs sm:grid-cols-2"><p className="rounded-lg bg-muted/50 p-2">Nominations: {formatDate(election.nominations_open_at)} – {formatDate(election.nominations_close_at)}</p><p className="rounded-lg bg-muted/50 p-2">Voting: {formatDate(election.voting_open_at)} – {formatDate(election.voting_close_at)}</p></div>
+        {election.secret_ballot && <p className="flex items-center gap-2 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" />Secret ballot: administrators see totals, not individual choices.</p>}
+        <div className="space-y-4">
+          {positions.map((position: any) => {
+            const candidates = data.candidates.filter((candidate: any) => candidate.position_id === position.id && ["approved", "elected"].includes(candidate.status));
+            const ownNomination = data.candidates.find((candidate: any) => candidate.position_id === position.id && candidate.user_id === userId);
+            const ownVotes = data.ballots.filter((ballot: any) => ballot.position_id === position.id && ballot.voter_user_id === userId);
+            return <section key={position.id} className="rounded-lg border p-3">
+              <div className="mb-3 flex items-center justify-between"><div><h3 className="font-semibold">{position.title}</h3><p className="text-xs text-muted-foreground">{position.seats} seat{position.seats === 1 ? "" : "s"} · choose up to {position.seats}</p></div>{election.status === "nominations" && !ownNomination && <Button size="sm" variant="outline" onClick={() => setNominationPosition(position)}>Nominate myself</Button>}</div>
+              {ownNomination && !["approved", "elected"].includes(ownNomination.status) && <p className="mb-3 rounded-md bg-muted p-2 text-xs capitalize">Your nomination: {ownNomination.status}</p>}
+              <div className="grid gap-2 sm:grid-cols-2">
+                {candidates.map((candidate: any) => {
+                  const chosen = ownVotes.some((ballot: any) => ballot.candidate_id === candidate.id);
+                  return <div key={candidate.id} className={`rounded-lg border p-3 ${chosen ? "border-primary bg-primary/5" : ""}`}><div className="flex justify-between gap-2"><div><p className="font-medium">{candidate.display_name}</p><p className="text-xs text-muted-foreground">{candidate.units?.building} · {candidate.units?.unit_number}</p></div>{candidate.status === "elected" && <Award className="h-5 w-5 text-amber-500" />}</div><p className="mt-2 text-sm">{candidate.statement}</p>{candidate.experience && <p className="mt-2 text-xs text-muted-foreground">Experience: {candidate.experience}</p>}{results && <p className="mt-2 text-sm font-medium">{results[candidate.id] ?? 0} votes</p>}{election.status === "voting" && <Button className="mt-3 w-full" size="sm" variant={chosen ? "default" : "outline"} disabled={chosen || ownVotes.length >= position.seats || vote.isPending} onClick={() => vote.mutate({ positionId: position.id, candidateId: candidate.id })}>{chosen ? "Vote recorded" : "Vote for candidate"}</Button>}</div>;
+                })}
+                {!candidates.length && <p className="text-sm text-muted-foreground">No approved candidates yet.</p>}
+              </div>
+            </section>;
+          })}
+        </div>
+      </article>;
+    })}
+    <Dialog open={!!nominationPosition} onOpenChange={(open) => !open && setNominationPosition(null)}>
+      <DialogContent><DialogHeader><DialogTitle>Nominate yourself for {nominationPosition?.title}</DialogTitle></DialogHeader><div className="space-y-3"><div><Label>Candidate statement</Label><Textarea rows={5} value={statement} onChange={(event) => setStatement(event.target.value)} placeholder="Explain why owners should elect you (minimum 20 characters)." /></div><div><Label>Relevant experience</Label><Textarea rows={3} value={experience} onChange={(event) => setExperience(event.target.value)} /></div><Button className="w-full" disabled={statement.trim().length < 20 || nominate.isPending} onClick={() => nominate.mutate()}>Submit nomination</Button></div></DialogContent>
+    </Dialog>
+  </div>;
 }
