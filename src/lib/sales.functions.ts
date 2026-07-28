@@ -27,7 +27,7 @@ export const listInvoices = createServerFn({ method: "GET" })
     await assertSalesManager(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("invoices")
-      .select("*, units(unit_number, building), invoice_line_items(*)")
+      .select("*, units(unit_number, building, residents(full_name, email, is_active)), invoice_line_items(*), payment_allocations(*), credit_note_allocations(*)")
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) throw new Error(error.message);
@@ -214,22 +214,41 @@ export const recordPayment = createServerFn({ method: "POST" })
 
     // Auto-allocate FIFO across open invoices if not specified
     let allocations = data.allocations ?? [];
+    const amount = Number(data.amount);
+    if (!(amount > 0)) throw new Error("Payment amount must be greater than zero.");
     if (allocations.length === 0) {
       const { data: openInv } = await context.supabase
         .from("invoices")
-        .select("id, amount, amount_paid")
+        .select("id, amount, amount_paid, credit_applied")
         .eq("unit_id", data.unit_id)
         .in("status", ["unpaid", "partial", "overdue"])
         .order("due_date");
       let remaining = data.amount;
       for (const inv of openInv ?? []) {
         if (remaining <= 0) break;
-        const bal = Number(inv.amount) - Number(inv.amount_paid);
+        const bal = Number(inv.amount) - Number(inv.amount_paid) - Number(inv.credit_applied || 0);
         const apply = Math.min(bal, remaining);
         if (apply > 0) {
           allocations.push({ invoice_id: inv.id, amount_applied: +apply.toFixed(2) });
           remaining -= apply;
         }
+      }
+    }
+
+    const allocationTotal = allocations.reduce((sum, item) => sum + Number(item.amount_applied || 0), 0);
+    if (allocationTotal > amount + 0.001) throw new Error("Applied amount cannot exceed the payment amount.");
+    if (allocations.length) {
+      const ids = [...new Set(allocations.map((item) => item.invoice_id))];
+      const { data: targets, error: targetError } = await context.supabase.from("invoices")
+        .select("id, unit_id, amount, amount_paid, credit_applied, status").in("id", ids);
+      if (targetError) throw new Error(targetError.message);
+      if ((targets ?? []).length !== ids.length || (targets ?? []).some((invoice: any) => invoice.unit_id !== data.unit_id || invoice.status === "cancelled")) {
+        throw new Error("Payments can only be applied to valid invoices for the selected unit.");
+      }
+      for (const allocation of allocations) {
+        const invoice: any = targets?.find((item: any) => item.id === allocation.invoice_id);
+        const balance = Number(invoice.amount) - Number(invoice.amount_paid || 0) - Number(invoice.credit_applied || 0);
+        if (Number(allocation.amount_applied) > balance + 0.001) throw new Error("An applied amount exceeds the invoice balance.");
       }
     }
 
@@ -240,7 +259,7 @@ export const recordPayment = createServerFn({ method: "POST" })
       .from("payments")
       .insert({
         invoice_id: firstInvoice,
-        amount: data.amount,
+        amount,
         payment_method: data.payment_method,
         paid_by_user_id: context.userId,
         paid_at: data.paid_at ?? new Date().toISOString(),
@@ -273,15 +292,36 @@ export const issueCreditNote = createServerFn({ method: "POST" })
     amount: number;
     reason: string;
     line_items?: LineItemInput[];
+    allocations?: { invoice_id: string; amount_applied: number }[];
   }) => d)
   .handler(async ({ context, data }) => {
     await assertSalesManager(context.supabase, context.userId);
+    const amount = Number(data.amount);
+    if (!(amount > 0)) throw new Error("Credit note amount must be greater than zero.");
+    let allocations = data.allocations ?? [];
+    if (!allocations.length && data.invoice_id) allocations = [{ invoice_id: data.invoice_id, amount_applied: amount }];
+    const allocationTotal = allocations.reduce((sum, item) => sum + Number(item.amount_applied || 0), 0);
+    if (allocationTotal > amount + 0.001) throw new Error("Applied amount cannot exceed the credit note amount.");
+    if (allocations.length) {
+      const ids = [...new Set(allocations.map((item) => item.invoice_id))];
+      const { data: targets, error: targetError } = await context.supabase.from("invoices")
+        .select("id, unit_id, amount, amount_paid, credit_applied, status").in("id", ids);
+      if (targetError) throw new Error(targetError.message);
+      if ((targets ?? []).length !== ids.length || (targets ?? []).some((invoice: any) => invoice.unit_id !== data.unit_id || invoice.status === "cancelled")) {
+        throw new Error("Credits can only be applied to valid invoices for the selected unit.");
+      }
+      for (const allocation of allocations) {
+        const invoice: any = targets?.find((item: any) => item.id === allocation.invoice_id);
+        const balance = Number(invoice.amount) - Number(invoice.amount_paid || 0) - Number(invoice.credit_applied || 0);
+        if (Number(allocation.amount_applied) > balance + 0.001) throw new Error("An applied credit exceeds the invoice balance.");
+      }
+    }
     const { data: cn, error } = await context.supabase
       .from("credit_notes")
       .insert({
         unit_id: data.unit_id,
         invoice_id: data.invoice_id,
-        amount: data.amount,
+        amount,
         reason: data.reason,
         issued_by: context.userId,
         status: "issued",
@@ -307,6 +347,17 @@ export const issueCreditNote = createServerFn({ method: "POST" })
       const { error: liErr } = await context.supabase
         .from("credit_note_line_items").insert(items);
       if (liErr) throw new Error(liErr.message);
+    }
+    if (allocations.length) {
+      const { error: allocationError } = await context.supabase.from("credit_note_allocations").insert(
+        allocations.map((allocation) => ({
+          credit_note_id: cn.id,
+          invoice_id: allocation.invoice_id,
+          amount_applied: Number(allocation.amount_applied),
+          created_by: context.userId,
+        }))
+      );
+      if (allocationError) throw new Error(allocationError.message);
     }
     return { id: cn.id };
   });

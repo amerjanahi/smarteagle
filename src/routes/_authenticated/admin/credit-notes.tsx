@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { listCreditNotes, listUnits, issueCreditNote, generateDocumentPdf } from "@/lib/sales.functions";
+import { useMemo, useState } from "react";
+import { listCreditNotes, listInvoices, listUnits, issueCreditNote, generateDocumentPdf } from "@/lib/sales.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,23 +26,33 @@ function CreditNotesPage() {
   const qc = useQueryClient();
   const fetchList = useServerFn(listCreditNotes);
   const fetchUnits = useServerFn(listUnits);
+  const fetchInvoices = useServerFn(listInvoices);
   const issue = useServerFn(issueCreditNote);
   const genPdf = useServerFn(generateDocumentPdf);
 
   const list = useQuery({ queryKey: ["credit-notes"], queryFn: () => fetchList() });
   const units = useQuery({ queryKey: ["units-sales"], queryFn: () => fetchUnits() });
+  const invoices = useQuery({ queryKey: ["invoices"], queryFn: () => fetchInvoices() });
 
   const [open, setOpen] = useState(false);
   const [unitId, setUnitId] = useState("");
   const [amount, setAmount] = useState(0);
   const [reason, setReason] = useState("");
+  const [invoiceId, setInvoiceId] = useState("");
+  const openInvoices = useMemo(() => (invoices.data ?? []).filter((invoice: any) =>
+    invoice.unit_id === unitId && invoice.status !== "paid" && invoice.status !== "cancelled"
+  ), [invoices.data, unitId]);
 
   const mut = useMutation({
-    mutationFn: async () => issue({ data: { unit_id: unitId, amount, reason } }),
+    mutationFn: async () => issue({ data: {
+      unit_id: unitId, amount, reason, invoice_id: invoiceId || null,
+      allocations: invoiceId ? [{ invoice_id: invoiceId, amount_applied: amount }] : [],
+    } }),
     onSuccess: () => {
       toast.success("Credit note issued");
       qc.invalidateQueries({ queryKey: ["credit-notes"] });
-      setOpen(false); setUnitId(""); setAmount(0); setReason("");
+      qc.invalidateQueries({ queryKey: ["invoices"] });
+      setOpen(false); setUnitId(""); setInvoiceId(""); setAmount(0); setReason("");
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -68,7 +78,7 @@ function CreditNotesPage() {
             <div className="grid gap-3">
               <div>
                 <Label>Unit</Label>
-                <Select value={unitId} onValueChange={setUnitId}>
+                <Select value={unitId} onValueChange={(value) => { setUnitId(value); setInvoiceId(""); setAmount(0); }}>
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     {units.data?.map((u: any) => (
@@ -76,6 +86,25 @@ function CreditNotesPage() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div>
+                <Label>Apply to invoice</Label>
+                <Select value={invoiceId || "unapplied"} onValueChange={(value) => {
+                  if (value === "unapplied") { setInvoiceId(""); return; }
+                  setInvoiceId(value);
+                  const invoice: any = openInvoices.find((item: any) => item.id === value);
+                  setAmount(Math.max(Number(invoice?.amount || 0) - Number(invoice?.amount_paid || 0) - Number(invoice?.credit_applied || 0), 0));
+                }}>
+                  <SelectTrigger><SelectValue placeholder="Select an invoice" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unapplied">Keep as available credit</SelectItem>
+                    {openInvoices.map((invoice: any) => {
+                      const balance = Number(invoice.amount) - Number(invoice.amount_paid || 0) - Number(invoice.credit_applied || 0);
+                      return <SelectItem key={invoice.id} value={invoice.id}>{invoice.invoice_number} · {money(balance)} due</SelectItem>;
+                    })}
+                  </SelectContent>
+                </Select>
+                <p className="mt-1 text-xs text-muted-foreground">Selecting an invoice applies this credit and reduces its outstanding balance.</p>
               </div>
               <div>
                 <Label>Amount</Label>

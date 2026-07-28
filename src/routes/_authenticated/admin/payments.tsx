@@ -119,23 +119,26 @@ function PaymentsPage() {
 
               {unitId && (
                 <div>
-                  <Label>Allocate to open invoices (leave blank to auto-allocate FIFO)</Label>
+                  <Label>Apply payment to invoice(s)</Label>
                   <div className="mt-2 space-y-2">
                     {openInvoices.length === 0 && <p className="text-sm text-muted-foreground">No open invoices for this unit.</p>}
                     {openInvoices.map((i: any) => {
-                      const bal = Number(i.amount) - Number(i.amount_paid);
+                      const bal = Number(i.amount) - Number(i.amount_paid) - Number(i.credit_applied || 0);
                       return (
                         <div key={i.id} className="grid grid-cols-12 items-center gap-2 text-sm">
                           <div className="col-span-7">
                             <div className="font-mono text-xs">{i.invoice_number}</div>
-                            <div className="text-xs text-muted-foreground">Balance: {i.currency} {bal.toFixed(2)}</div>
+                            <div className="text-xs text-muted-foreground">Balance: {money(bal)}{Number(i.credit_applied || 0) > 0 ? ` · credit ${money(i.credit_applied)}` : ""}</div>
                           </div>
                           <Input className="col-span-3" type="number" step="0.01"
                             placeholder="0.00"
                             value={allocs[i.id] ?? ""}
                             onChange={(e) => setAllocs({ ...allocs, [i.id]: +e.target.value })} />
                           <Button variant="ghost" size="sm" className="col-span-2"
-                            onClick={() => setAllocs({ ...allocs, [i.id]: bal })}>Fill</Button>
+                            onClick={() => {
+                              const remaining = Math.max(Number(amount) - allocSum + Number(allocs[i.id] || 0), 0);
+                              setAllocs({ ...allocs, [i.id]: Math.min(bal, remaining) });
+                            }}>Apply</Button>
                         </div>
                       );
                     })}
@@ -153,7 +156,7 @@ function PaymentsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={() => mut.mutate()} disabled={!unitId || !amount || mut.isPending}>
+              <Button onClick={() => mut.mutate()} disabled={!unitId || !amount || allocSum <= 0 || allocSum > amount || mut.isPending}>
                 {mut.isPending ? "Saving…" : "Record"}
               </Button>
             </DialogFooter>

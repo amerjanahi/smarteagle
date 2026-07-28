@@ -599,6 +599,48 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_note_allocations: {
+        Row: {
+          amount_applied: number
+          created_at: string
+          created_by: string | null
+          credit_note_id: string
+          id: string
+          invoice_id: string
+        }
+        Insert: {
+          amount_applied: number
+          created_at?: string
+          created_by?: string | null
+          credit_note_id: string
+          id?: string
+          invoice_id: string
+        }
+        Update: {
+          amount_applied?: number
+          created_at?: string
+          created_by?: string | null
+          credit_note_id?: string
+          id?: string
+          invoice_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_note_allocations_credit_note_id_fkey"
+            columns: ["credit_note_id"]
+            isOneToOne: false
+            referencedRelation: "credit_notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credit_note_allocations_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       credit_note_line_items: {
         Row: {
           created_at: string
@@ -1514,6 +1556,7 @@ export type Database = {
           amount: number
           amount_paid: number
           attachments: Json
+          credit_applied: number
           created_at: string
           currency: string
           customer_email: string | null
@@ -1540,6 +1583,7 @@ export type Database = {
           amount: number
           amount_paid?: number
           attachments?: Json
+          credit_applied?: number
           created_at?: string
           currency?: string
           customer_email?: string | null
@@ -1566,6 +1610,7 @@ export type Database = {
           amount?: number
           amount_paid?: number
           attachments?: Json
+          credit_applied?: number
           created_at?: string
           currency?: string
           customer_email?: string | null
