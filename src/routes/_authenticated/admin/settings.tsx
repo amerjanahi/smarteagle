@@ -13,7 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PortalAccessRequestsInner } from "./portal-access-requests";
+import { ProfileChangeRequestsInner } from "./profile-change-requests";
 import { AllUsersTab } from "@/components/admin/AllUsersTab";
+import { Building2, CircleDollarSign, FileStack, ShieldCheck, UsersRound } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({ meta: [{ title: "Settings — Hayy Admin" }] }),
@@ -36,24 +38,23 @@ function SettingsPage() {
   return (
     <div className="space-y-4">
       <header>
-        <h2 className="font-display text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-sm text-muted-foreground">Company profile, users, currencies, VAT, and role permissions.</p>
+        <h2 className="font-display text-2xl font-bold tracking-tight">Settings &amp; Administration</h2>
+        <p className="text-sm text-muted-foreground">A secure workspace for organization, people, finance controls, permissions, and documents.</p>
       </header>
-      <Tabs defaultValue="company">
-        <TabsList className="flex-wrap">
-          <TabsTrigger value="company">Company</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="currency">Currency</TabsTrigger>
-          <TabsTrigger value="vat">VAT</TabsTrigger>
-          <TabsTrigger value="roles">Roles &amp; Permissions</TabsTrigger>
-          <TabsTrigger value="templates">Document Templates</TabsTrigger>
+      <Tabs defaultValue="organization" className="space-y-4">
+        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1">
+          <TabsTrigger value="organization" className="gap-2"><Building2 className="h-4 w-4" />Organization</TabsTrigger>
+          <TabsTrigger value="people" className="gap-2"><UsersRound className="h-4 w-4" />People &amp; Access</TabsTrigger>
+          <TabsTrigger value="finance" className="gap-2"><CircleDollarSign className="h-4 w-4" />Finance</TabsTrigger>
+          <TabsTrigger value="security" className="gap-2"><ShieldCheck className="h-4 w-4" />Security &amp; Roles</TabsTrigger>
+          <TabsTrigger value="templates" className="gap-2"><FileStack className="h-4 w-4" />Documents</TabsTrigger>
         </TabsList>
-        <TabsContent value="company"><CompanyTab /></TabsContent>
-        <TabsContent value="users"><UsersTab /></TabsContent>
-        <TabsContent value="currency"><CurrencyTab /></TabsContent>
-        <TabsContent value="vat"><VatTab /></TabsContent>
-        <TabsContent value="roles"><RolesTab /></TabsContent>
+        <TabsContent value="organization"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
+        <TabsContent value="people"><SectionHeading title="People & access" description="Manage users and review resident access or verified profile changes in one place." /><UsersTab /></TabsContent>
+        <TabsContent value="finance"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
+        <TabsContent value="security"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
         <TabsContent value="templates">
+          <SectionHeading title="Document templates" description="Manage the controlled layouts used for operational and financial documents." />
           <div className="rounded-md border p-4 text-sm">
             Manage document templates for Invoice, Receipt, Credit Note, Statement, Work Order, and Purchase Order.
             <div className="mt-3">
@@ -66,17 +67,34 @@ function SettingsPage() {
   );
 }
 
+function SectionHeading({ title, description }: { title: string; description: string }) {
+  return <div className="mb-3"><h3 className="font-semibold">{title}</h3><p className="text-sm text-muted-foreground">{description}</p></div>;
+}
+
 function UsersTab() {
   return (
     <Tabs defaultValue="all" className="space-y-3">
-      <TabsList>
+      <TabsList className="h-auto flex-wrap">
         <TabsTrigger value="all">All Users</TabsTrigger>
-        <TabsTrigger value="approvals">Approvals</TabsTrigger>
+        <TabsTrigger value="approvals">Portal Access</TabsTrigger>
+        <TabsTrigger value="profile-changes">Profile Changes</TabsTrigger>
       </TabsList>
       <TabsContent value="all"><AllUsersTab /></TabsContent>
       <TabsContent value="approvals"><PortalAccessRequestsInner /></TabsContent>
+      <TabsContent value="profile-changes"><ProfileChangeRequestsInner /></TabsContent>
     </Tabs>
   );
+}
+
+function FinanceTab() {
+  return <Tabs defaultValue="currency" className="space-y-3">
+    <TabsList>
+      <TabsTrigger value="currency">Currency</TabsTrigger>
+      <TabsTrigger value="tax">Tax &amp; Fees</TabsTrigger>
+    </TabsList>
+    <TabsContent value="currency"><CurrencyTab /></TabsContent>
+    <TabsContent value="tax"><VatTab /></TabsContent>
+  </Tabs>;
 }
 
 function useSettings() {
@@ -98,8 +116,18 @@ function CompanyTab() {
 
   const save = useMutation({
     mutationFn: async () => {
-      const { id, created_at, updated_at, ...rest } = form;
-      const { error } = await (supabase.from("company_settings" as any).update(rest).eq("id", id) as any);
+      if (!form.id) throw new Error("Settings are still loading.");
+      if (!String(form.company_name ?? "").trim()) throw new Error("Company name is required.");
+      if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) throw new Error("Enter a valid company email.");
+      const payload = {
+        company_name: String(form.company_name).trim(),
+        cr_number: form.cr_number?.trim() || null,
+        address: form.address?.trim() || null,
+        phone: form.phone?.trim() || null,
+        email: form.email?.trim().toLowerCase() || null,
+        logo_url: form.logo_url || null,
+      };
+      const { error } = await (supabase.from("company_settings" as any).update(payload).eq("id", form.id) as any);
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Saved"); qc.invalidateQueries({ queryKey: ["company-settings"] }); },
@@ -107,6 +135,14 @@ function CompanyTab() {
   });
 
   async function handleLogo(file: File) {
+    if (!["image/png", "image/jpeg", "image/webp", "image/svg+xml"].includes(file.type)) {
+      toast.error("Use a PNG, JPG, WebP, or SVG logo.");
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      toast.error("Logo must be 1 MB or smaller.");
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => setForm({ ...form, logo_url: reader.result as string });
     reader.readAsDataURL(file);
@@ -147,10 +183,12 @@ function CurrencyTab() {
 
   const updateRate = useMutation({
     mutationFn: async ({ code, exchange_rate }: { code: string; exchange_rate: number }) => {
+      if (!Number.isFinite(exchange_rate) || exchange_rate <= 0) throw new Error("Exchange rate must be greater than zero.");
       const { error } = await (supabase.from("currencies" as any).update({ exchange_rate }).eq("code", code) as any);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["currencies"] }),
+    onSuccess: () => { toast.success("Exchange rate updated"); qc.invalidateQueries({ queryKey: ["currencies"] }); },
+    onError: (error: any) => toast.error(error.message),
   });
 
   const setDefault = useMutation({
@@ -261,6 +299,10 @@ function RolesTab() {
 
   return (
     <div className="space-y-3">
+      <div className="flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
+        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <p><span className="font-medium">Least privilege:</span> only grant actions required for the selected role. Permission changes take effect immediately.</p>
+      </div>
       <div className="flex items-center gap-2">
         <Label>Role</Label>
         <Select value={role} onValueChange={setRole}>
@@ -283,7 +325,7 @@ function RolesTab() {
                   <TableCell className="font-medium capitalize">{m}</TableCell>
                   {PERMS.map(p => (
                     <TableCell key={p.key} className="text-center">
-                      <Switch checked={!!row[p.key]} onCheckedChange={(v) => toggle.mutate({ id: row.id, key: p.key, value: v })} />
+                      <Switch aria-label={`${role} ${m} ${p.label}`} checked={!!row[p.key]} disabled={toggle.isPending} onCheckedChange={(v) => toggle.mutate({ id: row.id, key: p.key, value: v })} />
                     </TableCell>
                   ))}
                 </TableRow>
