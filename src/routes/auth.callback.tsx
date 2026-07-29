@@ -47,11 +47,26 @@ function AuthCallback() {
           return;
         }
 
-        // Decide destination by role
+        const { data: profile } = await supabase
+          .from("profiles").select("approval_status").eq("id", session.user.id).maybeSingle();
+        if (profile?.approval_status !== "approved") {
+          navigate({ to: "/auth" });
+          return;
+        }
+
+        // Decide destination only after the account is approved.
         const { data: roles } = await supabase
           .from("user_roles").select("role").eq("user_id", session.user.id);
+        if (!roles?.length) {
+          navigate({ to: "/auth" });
+          return;
+        }
         const isAdmin = (roles ?? []).some((r: any) => r.role === "admin");
         if (isAdmin) { navigate({ to: "/admin" }); return; }
+        const isSecurity = (roles ?? []).some((r: any) => r.role === "security");
+        if (isSecurity) { navigate({ to: "/gate" }); return; }
+        const isStaff = (roles ?? []).some((r: any) => ["operations", "hr"].includes(r.role));
+        if (isStaff) { navigate({ to: "/portal" }); return; }
         const { data: links } = await supabase
           .from("user_villas").select("id").eq("user_id", session.user.id).eq("status", "active").limit(1);
         navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
