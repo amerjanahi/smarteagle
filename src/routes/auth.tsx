@@ -97,9 +97,7 @@ function AuthPage() {
     if (roles.includes("admin")) return; // effect above routes to /admin
     if (roles.includes("security")) { navigate({ to: "/gate" }); return; }
     if (roles.includes("operations")) { navigate({ to: "/portal" }); return; }
-    const { data: links } = await supabase
-      .from("user_villas").select("id").eq("user_id", s.user.id).eq("status", "active").limit(1);
-    navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
+    navigate({ to: "/portal" });
   }
 
   useEffect(() => {
