@@ -68,8 +68,11 @@ export function AllUsersTab() {
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return (data as any[]).filter((u) => {
-      if (status !== "all" && u.approval_status !== status) return false;
+    return (data as any[]).map((u) => ({
+      ...u,
+      effective_status: u.approval_status === "approved" && u.roles.length === 0 ? "pending" : u.approval_status,
+    })).filter((u) => {
+      if (status !== "all" && u.effective_status !== status) return false;
       if (!q) return true;
       return (
         u.full_name?.toLowerCase().includes(q) ||
@@ -123,12 +126,12 @@ export function AllUsersTab() {
                 </TableCell>
                 <TableCell className="tabular-nums">{u.villa_count}</TableCell>
                 <TableCell>
-                  <Badge variant={STATUS_VARIANT[u.approval_status] ?? "outline"} className="capitalize">{u.approval_status}</Badge>
+                  <Badge variant={STATUS_VARIANT[u.effective_status] ?? "outline"} className="capitalize">{u.effective_status}</Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
-                    {u.approval_status === "pending" && <>
+                    {u.effective_status === "pending" && <>
                       <Button size="sm" title="Approve user" onClick={() => approve.mutate(u)} disabled={approve.isPending || reject.isPending}>
                         <Check className="mr-1 h-4 w-4" /> Approve
                       </Button>
