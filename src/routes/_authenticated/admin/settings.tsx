@@ -12,9 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PortalAccessRequestsInner } from "./portal-access-requests";
-import { ProfileChangeRequestsInner } from "./profile-change-requests";
 import { AllUsersTab } from "@/components/admin/AllUsersTab";
+import { ApprovalCenter } from "@/components/admin/ApprovalCenter";
 import { Building2, CircleDollarSign, FileStack, ShieldCheck, UsersRound } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
@@ -76,12 +75,10 @@ function UsersTab() {
     <Tabs defaultValue="all" className="space-y-3">
       <TabsList className="h-auto flex-wrap">
         <TabsTrigger value="all">All Users</TabsTrigger>
-        <TabsTrigger value="approvals">Portal Access</TabsTrigger>
-        <TabsTrigger value="profile-changes">Profile Changes</TabsTrigger>
+        <TabsTrigger value="approvals">Approvals</TabsTrigger>
       </TabsList>
       <TabsContent value="all"><AllUsersTab /></TabsContent>
-      <TabsContent value="approvals"><PortalAccessRequestsInner /></TabsContent>
-      <TabsContent value="profile-changes"><ProfileChangeRequestsInner /></TabsContent>
+      <TabsContent value="approvals"><ApprovalCenter /></TabsContent>
     </Tabs>
   );
 }
