@@ -274,7 +274,7 @@ function AdminShell() {
             <SidebarTrigger />
             <h1 className="font-display text-base font-semibold">Admin Portal</h1>
             <div className="ml-auto">
-              <Link to="/admin/approvals" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent">
+              <Link to="/admin/settings" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent" title="Open Users">
                 <Bell className="h-5 w-5" />
                 {pendingCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
