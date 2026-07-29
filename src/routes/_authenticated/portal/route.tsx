@@ -1,12 +1,10 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut, Loader2, Briefcase } from "lucide-react";
+import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut, Briefcase } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { myVillas } from "@/lib/villa-link.functions";
 import { getMyEmployee } from "@/lib/hr.functions";
-import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   component: PortalShell,
@@ -25,13 +23,7 @@ function PortalShell() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const villasFn = useServerFn(myVillas);
   const meEmpFn = useServerFn(getMyEmployee);
-  const { data: villas, isLoading } = useQuery({
-    queryKey: ["my-villas"],
-    queryFn: () => villasFn(),
-    enabled: role === "resident",
-  });
   const { data: meEmp } = useQuery({
     queryKey: ["me-emp"],
     queryFn: () => meEmpFn(),
@@ -39,21 +31,11 @@ function PortalShell() {
   });
   const tabs = meEmp ? [...baseTabs.slice(0, 4), workTab, baseTabs[4]] : baseTabs;
 
-  useEffect(() => {
-    if (role === "resident" && !isLoading && villas && villas.length === 0) {
-      navigate({ to: "/link-villa", replace: true });
-    }
-  }, [role, isLoading, villas, navigate]);
-
   async function handleSignOut() {
     const { biometric } = await import("@/lib/biometric");
     await biometric.clear();
     await signOut();
     navigate({ to: "/auth", replace: true });
-  }
-
-  if (role === "resident" && isLoading) {
-    return <div className="min-h-screen grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (
