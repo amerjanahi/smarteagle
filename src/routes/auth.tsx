@@ -65,8 +65,10 @@ function AuthPage() {
 
   useEffect(() => {
     if (authLoading || !session || role) return;
+    // A legacy trigger may mark the profile approved before an admin assigns a
+    // role. A user without a role is still pending and must not enter a portal.
     supabase.from("profiles").select("approval_status").eq("id", session.user.id).maybeSingle()
-      .then(({ data }) => setPending(data?.approval_status !== "approved"));
+      .then(({ data }) => setPending(data?.approval_status !== "rejected"));
   }, [authLoading, session, role]);
 
   async function checkApprovalAndRoute() {
@@ -88,6 +90,10 @@ function AuthPage() {
     const { data: roleRow } = await supabase
       .from("user_roles").select("role").eq("user_id", s.user.id);
     const roles = (roleRow ?? []).map((r: any) => r.role);
+    if (roles.length === 0) {
+      setPending(true);
+      return;
+    }
     if (roles.includes("admin")) return; // effect above routes to /admin
     if (roles.includes("security")) { navigate({ to: "/gate" }); return; }
     if (roles.includes("operations")) { navigate({ to: "/portal" }); return; }
@@ -111,7 +117,14 @@ function AuthPage() {
         if (error) throw error;
         // Save phone on profile (trigger created the row)
         if (signUpData.user) {
-          await supabase.from("profiles").update({ phone, full_name: fullName }).eq("id", signUpData.user.id);
+          await supabase.from("profiles").update({
+            phone,
+            full_name: fullName,
+            requested_role: requestedRole,
+            approval_status: "pending",
+            reviewed_at: null,
+            reviewed_by: null,
+          }).eq("id", signUpData.user.id);
         }
         toast.success("Account created. Verify your email, then wait for administrator approval.");
       } else {
