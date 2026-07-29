@@ -30,7 +30,7 @@ function PortalShell() {
   const { data: villas, isLoading } = useQuery({
     queryKey: ["my-villas"],
     queryFn: () => villasFn(),
-    enabled: role !== "admin",
+    enabled: role === "resident",
   });
   const { data: meEmp } = useQuery({
     queryKey: ["me-emp"],
@@ -40,7 +40,7 @@ function PortalShell() {
   const tabs = meEmp ? [...baseTabs.slice(0, 4), workTab, baseTabs[4]] : baseTabs;
 
   useEffect(() => {
-    if (role !== "admin" && !isLoading && villas && villas.length === 0) {
+    if (role === "resident" && !isLoading && villas && villas.length === 0) {
       navigate({ to: "/link-villa", replace: true });
     }
   }, [role, isLoading, villas, navigate]);
@@ -52,7 +52,7 @@ function PortalShell() {
     navigate({ to: "/auth", replace: true });
   }
 
-  if (role !== "admin" && isLoading) {
+  if (role === "resident" && isLoading) {
     return <div className="min-h-screen grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   }
 
