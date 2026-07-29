@@ -7,7 +7,7 @@ import {
   BarChart3, Wrench, UserCheck, LogOut, Building2,
   TrendingUp, Wallet, Settings, FileSignature, ShieldCheck, ChevronDown,
   ShoppingBag, Truck, Sparkles, Megaphone, Mail, BookOpen, Landmark, ArrowLeftRight, ListPlus, GitCompare, Calculator,
-  Bell, Briefcase, CalendarCheck, Plane, Receipt as ReceiptIcon, Vote, MailCheck,
+  Bell, Briefcase, CalendarCheck, Plane, Receipt as ReceiptIcon, Vote,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -41,7 +41,6 @@ const opsItems: NavItem[] = [
 ];
 const sysGroup: NavGroup = { label: "System", items: [
   { to: "/admin/settings", label: "Settings", icon: Settings },
-  { to: "/admin/profile-change-requests", label: "Profile Requests", icon: MailCheck },
 ]};
 
 const salesItems: NavItem[] = [
