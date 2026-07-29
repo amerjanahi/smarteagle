@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PortalAccessRequestsInner } from "./portal-access-requests";
+import { ApprovalCenter } from "@/components/admin/ApprovalCenter";
 
 export const Route = createFileRoute("/_authenticated/admin/approvals")({
   head: () => ({ meta: [{ title: "Approvals — Hayy Admin" }] }),
@@ -12,11 +12,10 @@ function ApprovalsPage() {
       <header>
         <h2 className="font-display text-2xl font-bold tracking-tight">Approvals</h2>
         <p className="text-sm text-muted-foreground">
-          Review resident villa-link requests. Approving a request instantly grants portal access —
-          no separate signup approval is required.
+          Review user access and security-sensitive account changes from one queue.
         </p>
       </header>
-      <PortalAccessRequestsInner />
+      <ApprovalCenter />
     </div>
   );
 }
