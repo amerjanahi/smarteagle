@@ -67,9 +67,7 @@ function AuthCallback() {
         if (isSecurity) { navigate({ to: "/gate" }); return; }
         const isStaff = (roles ?? []).some((r: any) => ["operations", "hr"].includes(r.role));
         if (isStaff) { navigate({ to: "/portal" }); return; }
-        const { data: links } = await supabase
-          .from("user_villas").select("id").eq("user_id", session.user.id).eq("status", "active").limit(1);
-        navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
+        navigate({ to: "/portal" });
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Could not verify link");
         navigate({ to: "/auth" });
