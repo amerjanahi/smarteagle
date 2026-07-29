@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Search, Plus, Pencil, Trash2, Home } from "lucide-react";
-import { listAllSignups, adminDeleteUser } from "@/lib/approvals.functions";
+import { Search, Plus, Pencil, Trash2, Home, Check, X } from "lucide-react";
+import { listAllSignups, adminDeleteUser, approveSignup, rejectSignup } from "@/lib/approvals.functions";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,8 @@ export function AllUsersTab() {
   const qc = useQueryClient();
   const listFn = useServerFn(listAllSignups);
   const deleteFn = useServerFn(adminDeleteUser);
+  const approveFn = useServerFn(approveSignup);
+  const rejectFn = useServerFn(rejectSignup);
   const { data = [], isLoading } = useQuery({ queryKey: ["all-signups"], queryFn: () => listFn() });
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "pending" | "approved" | "rejected">("all");
@@ -38,6 +40,30 @@ export function AllUsersTab() {
       setDeleteUser(null);
     },
     onError: (e: any) => toast.error(e.message),
+  });
+
+  const approve = useMutation({
+    mutationFn: (user: any) => approveFn({ data: {
+      userId: user.id,
+      role: user.requested_role === "staff" ? "operations" : "resident",
+      fullName: user.full_name ?? "User",
+    } }),
+    onSuccess: () => {
+      toast.success("User approved and portal access granted");
+      qc.invalidateQueries({ queryKey: ["all-signups"] });
+      qc.invalidateQueries({ queryKey: ["pending-count"] });
+    },
+    onError: (e: any) => toast.error(e.message ?? "Could not approve user"),
+  });
+
+  const reject = useMutation({
+    mutationFn: (userId: string) => rejectFn({ data: { userId } }),
+    onSuccess: () => {
+      toast.success("User rejected");
+      qc.invalidateQueries({ queryKey: ["all-signups"] });
+      qc.invalidateQueries({ queryKey: ["pending-count"] });
+    },
+    onError: (e: any) => toast.error(e.message ?? "Could not reject user"),
   });
 
   const rows = useMemo(() => {
@@ -78,7 +104,7 @@ export function AllUsersTab() {
         <Table>
           <TableHeader><TableRow>
             <TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead>
-            <TableHead>Roles</TableHead><TableHead>Villas</TableHead>
+            <TableHead>Type</TableHead><TableHead>Roles</TableHead><TableHead>Villas</TableHead>
             <TableHead>Status</TableHead><TableHead>Signed up</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow></TableHeader>
@@ -90,6 +116,7 @@ export function AllUsersTab() {
                 <TableCell className="font-medium">{u.full_name ?? "—"}</TableCell>
                 <TableCell>{u.email}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">{u.phone ?? "—"}</TableCell>
+                <TableCell><Badge variant="outline" className="capitalize">{u.requested_role === "staff" ? "Staff" : "Resident"}</Badge></TableCell>
                 <TableCell className="space-x-1">
                   {u.roles.length === 0 && <span className="text-muted-foreground text-sm">—</span>}
                   {u.roles.map((r: string) => <Badge key={r} variant="outline" className="capitalize">{r}</Badge>)}
@@ -101,6 +128,14 @@ export function AllUsersTab() {
                 <TableCell className="text-sm text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
+                    {u.approval_status === "pending" && <>
+                      <Button size="sm" title="Approve user" onClick={() => approve.mutate(u)} disabled={approve.isPending || reject.isPending}>
+                        <Check className="mr-1 h-4 w-4" /> Approve
+                      </Button>
+                      <Button size="sm" variant="outline" title="Reject user" onClick={() => reject.mutate(u.id)} disabled={approve.isPending || reject.isPending}>
+                        <X className="mr-1 h-4 w-4" /> Reject
+                      </Button>
+                    </>}
                     <Button size="icon" variant="ghost" title="Link villas" onClick={() => setLinkUser(u)}>
                       <Home className="h-4 w-4" />
                     </Button>
