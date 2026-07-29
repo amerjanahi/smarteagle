@@ -102,6 +102,12 @@ function AuthPage() {
     navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
   }
 
+  useEffect(() => {
+    if (!pending || !session) return;
+    const timer = window.setInterval(() => { void checkApprovalAndRoute(); }, 10_000);
+    return () => window.clearInterval(timer);
+  }, [pending, session]);
+
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -233,7 +239,13 @@ function AuthPage() {
             Your account has been created. A building administrator needs to approve your access before you can sign in.
             You'll be notified once approved.
           </p>
-          <Button className="mt-6 w-full" variant="outline" onClick={async () => { await supabase.auth.signOut(); setPending(false); }}>
+          <Button className="mt-6 w-full" onClick={async () => {
+            setBusy(true);
+            try { await checkApprovalAndRoute(); } finally { setBusy(false); }
+          }} disabled={busy}>
+            {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Check access now
+          </Button>
+          <Button className="mt-2 w-full" variant="outline" onClick={async () => { await supabase.auth.signOut(); setPending(false); }}>
             Sign out
           </Button>
         </div>
