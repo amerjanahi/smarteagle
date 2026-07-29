@@ -40,6 +40,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [requestedRole, setRequestedRole] = useState<"resident" | "staff">("resident");
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(false);
   const [signInMethod, setSignInMethod] = useState<SignInMethod>("password");
@@ -62,6 +63,12 @@ function AuthPage() {
     }
   }, [authLoading, session, role, navigate, search.next]);
 
+  useEffect(() => {
+    if (authLoading || !session || role) return;
+    supabase.from("profiles").select("approval_status").eq("id", session.user.id).maybeSingle()
+      .then(({ data }) => setPending(data?.approval_status !== "approved"));
+  }, [authLoading, session, role]);
+
   async function checkApprovalAndRoute() {
     const { data: { session: s } } = await supabase.auth.getSession();
     if (!s) return;
@@ -72,6 +79,10 @@ function AuthPage() {
       toast.error("Your account has been rejected. Contact the building administrator.");
       return;
     }
+    if (profile?.approval_status !== "approved") {
+      setPending(true);
+      return;
+    }
     // First admin must be assigned manually in the database — no auto-promotion.
     await refreshRole();
     const { data: roleRow } = await supabase
@@ -79,6 +90,7 @@ function AuthPage() {
     const roles = (roleRow ?? []).map((r: any) => r.role);
     if (roles.includes("admin")) return; // effect above routes to /admin
     if (roles.includes("security")) { navigate({ to: "/gate" }); return; }
+    if (roles.includes("operations")) { navigate({ to: "/portal" }); return; }
     const { data: links } = await supabase
       .from("user_villas").select("id").eq("user_id", s.user.id).eq("status", "active").limit(1);
     navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
@@ -92,7 +104,7 @@ function AuthPage() {
         const { data: signUpData, error } = await supabase.auth.signUp({
           email, password,
           options: {
-            data: { full_name: fullName, phone },
+            data: { full_name: fullName, phone, requested_role: requestedRole },
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         });
@@ -101,7 +113,7 @@ function AuthPage() {
         if (signUpData.user) {
           await supabase.from("profiles").update({ phone, full_name: fullName }).eq("id", signUpData.user.id);
         }
-        toast.success("Account created. Please verify your email, then link your villa.");
+        toast.success("Account created. Verify your email, then wait for administrator approval.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -233,7 +245,7 @@ function AuthPage() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "signup"
-              ? "The first account becomes the building admin."
+              ? "Create your account. An administrator will approve portal access."
               : "Sign in to access your community portal."}
           </p>
 
@@ -360,6 +372,15 @@ function AuthPage() {
                     value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div>
+                  <Label>Access requested</Label>
+                  <Tabs value={requestedRole} onValueChange={(value) => setRequestedRole(value as "resident" | "staff")}>
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="resident">Resident</TabsTrigger>
+                      <TabsTrigger value="staff">Staff</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+                <div>
                   <Label htmlFor="password-up">Password</Label>
                   <Input id="password-up" type="password" autoComplete="new-password" required minLength={6}
                     value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -381,7 +402,7 @@ function AuthPage() {
           </Button>
 
           <p className="mt-6 text-xs text-muted-foreground">
-            Demo tip: the first account to sign up automatically becomes the admin. After that, new signups join as residents and you can link them to a unit from the admin Residents page.
+            New accounts remain disabled until an administrator approves Resident or Staff portal access.
           </p>
         </div>
       </div>
