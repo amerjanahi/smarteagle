@@ -13,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AllUsersTab } from "@/components/admin/AllUsersTab";
-import { ApprovalCenter } from "@/components/admin/ApprovalCenter";
 import { Building2, CircleDollarSign, FileStack, ShieldCheck, UsersRound } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
@@ -49,7 +48,7 @@ function SettingsPage() {
           <TabsTrigger value="templates" className="gap-2"><FileStack className="h-4 w-4" />Documents</TabsTrigger>
         </TabsList>
         <TabsContent value="organization"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
-        <TabsContent value="people"><SectionHeading title="People & access" description="Manage users and review resident access or verified profile changes in one place." /><UsersTab /></TabsContent>
+        <TabsContent value="people"><SectionHeading title="Users" description="Manage user access, type, status, and portal permissions in one place." /><UsersTab /></TabsContent>
         <TabsContent value="finance"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
         <TabsContent value="security"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
         <TabsContent value="templates">
@@ -70,18 +69,7 @@ function SectionHeading({ title, description }: { title: string; description: st
   return <div className="mb-3"><h3 className="font-semibold">{title}</h3><p className="text-sm text-muted-foreground">{description}</p></div>;
 }
 
-function UsersTab() {
-  return (
-    <Tabs defaultValue="all" className="space-y-3">
-      <TabsList className="h-auto flex-wrap">
-        <TabsTrigger value="all">All Users</TabsTrigger>
-        <TabsTrigger value="approvals">Approvals</TabsTrigger>
-      </TabsList>
-      <TabsContent value="all"><AllUsersTab /></TabsContent>
-      <TabsContent value="approvals"><ApprovalCenter /></TabsContent>
-    </Tabs>
-  );
-}
+function UsersTab() { return <AllUsersTab />; }
 
 function FinanceTab() {
   return <Tabs defaultValue="currency" className="space-y-3">
