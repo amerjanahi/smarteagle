@@ -31,12 +31,12 @@ export const pendingSignupCount = createServerFn({ method: "GET" })
       _role: "admin",
     });
     if (!isAdmin) return 0;
-    // Unified queue: pending villa-link requests are the single approval step.
-    const { count } = await context.supabase
-      .from("resident_villa_requests")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending");
-    return count ?? 0;
+    const [{ count: signupCount }, { count: villaCount }, { count: profileCount }] = await Promise.all([
+      context.supabase.from("profiles").select("id", { count: "exact", head: true }).eq("approval_status", "pending"),
+      context.supabase.from("resident_villa_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      context.supabase.from("profile_change_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    ]);
+    return (signupCount ?? 0) + (villaCount ?? 0) + (profileCount ?? 0);
   });
 
 export const listAllSignups = createServerFn({ method: "GET" })
@@ -73,15 +73,15 @@ export const listAllSignups = createServerFn({ method: "GET" })
 
 export const approveSignup = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { userId: string; role: "admin" | "resident"; unitId?: string | null; fullName?: string }) => d)
+  .inputValidator((d: { userId: string; role: "resident" | "operations"; unitId?: string | null; fullName?: string }) => d)
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    await supabaseAdmin
+    const { error: roleError } = await supabaseAdmin
       .from("user_roles")
-      .insert({ user_id: data.userId, role: data.role })
-      .then(() => {}, () => {}); // ignore duplicate
+      .upsert({ user_id: data.userId, role: data.role }, { onConflict: "user_id,role" });
+    if (roleError) throw new Error(roleError.message);
 
     if (data.role === "resident" && data.unitId) {
       const { data: existing } = await supabaseAdmin
