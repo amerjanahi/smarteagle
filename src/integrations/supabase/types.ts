@@ -3022,7 +3022,6 @@ export type Database = {
     Enums: {
       app_role:
         | "admin"
-        | "property_manager"
         | "resident"
         | "accountant"
         | "viewer"
@@ -3220,7 +3219,6 @@ export const Constants = {
     Enums: {
       app_role: [
         "admin",
-        "property_manager",
         "resident",
         "accountant",
         "viewer",
