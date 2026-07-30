@@ -2,7 +2,16 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 
-type Role = "admin" | "resident" | "security" | "operations";
+export type Role =
+  | "admin"
+  | "property_manager"
+  | "finance"
+  | "accountant"
+  | "hr"
+  | "operations"
+  | "security"
+  | "viewer"
+  | "resident";
 
 interface AuthState {
   session: Session | null;
@@ -27,11 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .select("role")
       .eq("user_id", userId);
     const roles = (data ?? []).map((r: { role: string }) => r.role);
-    if (roles.includes("admin")) setRole("admin");
-    else if (roles.includes("security")) setRole("security");
-    else if (roles.includes("operations")) setRole("operations");
-    else if (roles.length > 0) setRole("resident");
-    else setRole(null);
+    const priority: Role[] = [
+      "admin", "property_manager", "finance", "accountant", "hr",
+      "operations", "security", "viewer", "resident",
+    ];
+    setRole(priority.find((candidate) => roles.includes(candidate)) ?? null);
   }
 
   useEffect(() => {

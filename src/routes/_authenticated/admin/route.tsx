@@ -114,7 +114,10 @@ function AdminShell() {
     refetchInterval: 30000,
   });
 
-  if (!loading && role !== "admin") {
+  const isTopAdmin = role === "admin";
+  const isPropertyManager = role === "property_manager";
+
+  if (!loading && !isTopAdmin && !isPropertyManager) {
     navigate({ to: "/portal", replace: true });
   }
 
@@ -202,7 +205,7 @@ function AdminShell() {
             {renderGroup(propertyGroup)}
 
             {/* Finance group */}
-            <SidebarGroup>
+            {isTopAdmin && <SidebarGroup>
               <SidebarGroupLabel>Finance</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -210,17 +213,17 @@ function AdminShell() {
                 </SidebarMenu>
 
               </SidebarGroupContent>
-            </SidebarGroup>
+            </SidebarGroup>}
 
             {/* HR group */}
-            <SidebarGroup>
+            {isTopAdmin && <SidebarGroup>
               <SidebarGroupLabel>HR</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {renderSubsection("Human Resources", Briefcase, hrItems, hrOpen, setHrOpen)}
                 </SidebarMenu>
               </SidebarGroupContent>
-            </SidebarGroup>
+            </SidebarGroup>}
 
             {/* Operations group */}
             <SidebarGroup>
@@ -260,7 +263,7 @@ function AdminShell() {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {renderGroup(sysGroup)}
+            {isTopAdmin && renderGroup(sysGroup)}
           </SidebarContent>
           <SidebarFooter>
             <Button variant="ghost" size="sm" onClick={handleSignOut} className="justify-start">
