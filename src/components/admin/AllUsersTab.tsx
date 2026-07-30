@@ -34,7 +34,7 @@ export function AllUsersTab() {
   const [editing, setEditing] = useState<any>(null);
   const [linkUser, setLinkUser] = useState<any>(null);
   const [deleteUser, setDeleteUser] = useState<any>(null);
-  const [approvalRoles, setApprovalRoles] = useState<Record<string, "resident" | "operations">>({});
+  const [approvalRoles, setApprovalRoles] = useState<Record<string, "resident" | "property_manager" | "finance" | "accountant" | "hr" | "operations" | "security" | "viewer">>({});
 
   const del = useMutation({
     mutationFn: (userId: string) => deleteFn({ data: { userId }}),
@@ -47,7 +47,7 @@ export function AllUsersTab() {
   });
 
   const approve = useMutation({
-    mutationFn: ({ user, role }: { user: any; role: "resident" | "operations" }) => approveFn({ data: {
+    mutationFn: ({ user, role }: { user: any; role: "resident" | "property_manager" | "finance" | "accountant" | "hr" | "operations" | "security" | "viewer" }) => approveFn({ data: {
       userId: user.id,
       role,
       fullName: user.full_name ?? "User",
@@ -177,7 +177,7 @@ export function AllUsersTab() {
                         value={approvalRoles[u.id] ?? (u.requested_role === "staff" ? "operations" : "resident")}
                         onValueChange={(value) => setApprovalRoles((current) => ({
                           ...current,
-                          [u.id]: value as "resident" | "operations",
+                          [u.id]: value as "resident" | "property_manager" | "finance" | "accountant" | "hr" | "operations" | "security" | "viewer",
                         }))}
                       >
                         <SelectTrigger className="h-9 w-[118px]" aria-label={`Role for ${u.full_name ?? u.email}`}>
@@ -185,7 +185,13 @@ export function AllUsersTab() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="resident">Resident</SelectItem>
-                          <SelectItem value="operations">Staff</SelectItem>
+                          <SelectItem value="property_manager">Property Manager</SelectItem>
+                          <SelectItem value="finance">Finance Manager</SelectItem>
+                          <SelectItem value="accountant">Accountant</SelectItem>
+                          <SelectItem value="hr">Human Resources</SelectItem>
+                          <SelectItem value="operations">Operations</SelectItem>
+                          <SelectItem value="security">Security</SelectItem>
+                          <SelectItem value="viewer">Viewer</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button

@@ -10,7 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
-const ROLES = ["admin", "accountant", "resident", "owner", "tenant", "security"] as const;
+const ROLES = ["admin", "property_manager", "finance", "accountant", "hr", "operations", "security", "viewer", "resident"] as const;
+const ROLE_LABELS: Record<(typeof ROLES)[number], string> = {
+  admin: "Top Admin", property_manager: "Property Manager", finance: "Finance Manager",
+  accountant: "Accountant", hr: "Human Resources", operations: "Operations",
+  security: "Security", viewer: "Viewer", resident: "Resident",
+};
 type Role = (typeof ROLES)[number];
 
 type Existing = {
@@ -105,7 +110,7 @@ export function UserFormDialog({ open, onOpenChange, user }: Props) {
               {ROLES.map((r) => (
                 <label key={r} className="flex items-center gap-2 text-sm capitalize">
                   <Checkbox checked={roles.includes(r)} onCheckedChange={() => toggleRole(r)} />
-                  {r}
+                  {ROLE_LABELS[r]}
                 </label>
               ))}
             </div>

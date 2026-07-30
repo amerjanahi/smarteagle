@@ -88,7 +88,7 @@ export const listAllSignups = createServerFn({ method: "GET" })
 
 export const approveSignup = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { userId: string; role: "resident" | "operations"; unitId?: string | null; fullName?: string }) => d)
+  .inputValidator((d: { userId: string; role: "resident" | "property_manager" | "finance" | "accountant" | "hr" | "operations" | "security" | "viewer"; unitId?: string | null; fullName?: string }) => d)
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -193,7 +193,7 @@ export const revokeInvitation = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-type AppRole = "admin" | "resident" | "accountant" | "security" | "owner" | "tenant";
+type AppRole = "admin" | "property_manager" | "finance" | "accountant" | "hr" | "operations" | "security" | "viewer" | "resident";
 
 export const adminCreateUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
