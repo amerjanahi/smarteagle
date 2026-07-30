@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Building2, Search, Loader2, CheckCircle2, Clock, XCircle, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,15 +27,17 @@ function LinkVillaPage() {
   const villasFn = useServerFn(myVillas);
   const submit = useServerFn(submitVillaRequest);
 
-  const { data: myReqs = [] } = useQuery({ queryKey: ["my-villa-requests"], queryFn: () => reqsFn() });
-  const { data: myLinks = [] } = useQuery({ queryKey: ["my-villas"], queryFn: () => villasFn() });
+  const { data: myReqs = [] } = useQuery({
+    queryKey: ["my-villa-requests"],
+    queryFn: () => reqsFn(),
+    refetchInterval: 10_000,
+  });
+  const { data: myLinks = [] } = useQuery({
+    queryKey: ["my-villas"],
+    queryFn: () => villasFn(),
+    refetchInterval: 10_000,
+  });
   const { data: villas = [], isLoading } = useQuery({ queryKey: ["villas-for-link"], queryFn: () => listFn() });
-
-  // If already approved, send to portal
-  if (myLinks.length > 0) {
-    navigate({ to: "/portal", replace: true });
-    return null;
-  }
 
   const pending = myReqs.find((r: any) => r.status === "pending");
   const lastRejected = myReqs.find((r: any) => r.status === "rejected");
@@ -44,6 +46,12 @@ function LinkVillaPage() {
   const [selectedVilla, setSelectedVilla] = useState<any>(null);
   const [relationship, setRelationship] = useState<string>("");
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    if (myLinks.length > 0) {
+      navigate({ to: "/portal", replace: true });
+    }
+  }, [myLinks.length, navigate]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
