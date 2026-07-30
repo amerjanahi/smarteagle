@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Search, Plus, Pencil, Trash2, Home, Check, X } from "lucide-react";
 import { listAllSignups, adminDeleteUser, approveSignup, rejectSignup } from "@/lib/approvals.functions";
+import { approveVillaRequest, rejectVillaRequest } from "@/lib/villa-link.functions";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,8 @@ export function AllUsersTab() {
   const deleteFn = useServerFn(adminDeleteUser);
   const approveFn = useServerFn(approveSignup);
   const rejectFn = useServerFn(rejectSignup);
+  const approveVillaFn = useServerFn(approveVillaRequest);
+  const rejectVillaFn = useServerFn(rejectVillaRequest);
   const { data = [], isLoading } = useQuery({ queryKey: ["all-signups"], queryFn: () => listFn() });
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "pending" | "approved" | "rejected">("all");
@@ -31,6 +34,7 @@ export function AllUsersTab() {
   const [editing, setEditing] = useState<any>(null);
   const [linkUser, setLinkUser] = useState<any>(null);
   const [deleteUser, setDeleteUser] = useState<any>(null);
+  const [approvalRoles, setApprovalRoles] = useState<Record<string, "resident" | "operations">>({});
 
   const del = useMutation({
     mutationFn: (userId: string) => deleteFn({ data: { userId }}),
@@ -43,9 +47,9 @@ export function AllUsersTab() {
   });
 
   const approve = useMutation({
-    mutationFn: (user: any) => approveFn({ data: {
+    mutationFn: ({ user, role }: { user: any; role: "resident" | "operations" }) => approveFn({ data: {
       userId: user.id,
-      role: user.requested_role === "staff" ? "operations" : "resident",
+      role,
       fullName: user.full_name ?? "User",
     } }),
     onSuccess: () => {
@@ -66,11 +70,39 @@ export function AllUsersTab() {
     onError: (e: any) => toast.error(e.message ?? "Could not reject user"),
   });
 
+  const approveVilla = useMutation({
+    mutationFn: (requestId: string) => approveVillaFn({ data: { requestId } }),
+    onSuccess: () => {
+      toast.success("Villa relationship approved and portal access activated");
+      qc.invalidateQueries({ queryKey: ["all-signups"] });
+      qc.invalidateQueries({ queryKey: ["pending-count"] });
+    },
+    onError: (e: any) => toast.error(e.message ?? "Could not approve villa request"),
+  });
+
+  const rejectVilla = useMutation({
+    mutationFn: (requestId: string) => rejectVillaFn({
+      data: { requestId, reason: "Rejected by administrator" },
+    }),
+    onSuccess: () => {
+      toast.success("Villa relationship rejected");
+      qc.invalidateQueries({ queryKey: ["all-signups"] });
+      qc.invalidateQueries({ queryKey: ["pending-count"] });
+    },
+    onError: (e: any) => toast.error(e.message ?? "Could not reject villa request"),
+  });
+
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
     return (data as any[]).map((u) => ({
       ...u,
       effective_status: u.approval_status === "approved" && u.roles.length === 0 ? "pending" : u.approval_status,
+      access_stage:
+        u.approval_status === "rejected" ? "Rejected" :
+        u.approval_status !== "approved" || u.roles.length === 0 ? "Account review" :
+        u.roles.includes("resident") && u.villa_count === 0 && u.pending_villa_count > 0 ? "Villa review" :
+        u.roles.includes("resident") && u.villa_count === 0 ? "Villa onboarding" :
+        "Active",
     })).filter((u) => {
       if (status !== "all" && u.effective_status !== status) return false;
       if (!q) return true;
@@ -112,8 +144,8 @@ export function AllUsersTab() {
             <TableHead className="text-right">Actions</TableHead>
           </TableRow></TableHeader>
           <TableBody>
-            {isLoading && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Loading…</TableCell></TableRow>}
-            {!isLoading && rows.length === 0 && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No users.</TableCell></TableRow>}
+            {isLoading && <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Loading…</TableCell></TableRow>}
+            {!isLoading && rows.length === 0 && <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">No users.</TableCell></TableRow>}
             {rows.map((u) => (
               <TableRow key={u.id}>
                 <TableCell className="font-medium">{u.full_name ?? "—"}</TableCell>
@@ -124,18 +156,69 @@ export function AllUsersTab() {
                   {u.roles.length === 0 && <span className="text-muted-foreground text-sm">—</span>}
                   {u.roles.map((r: string) => <Badge key={r} variant="outline" className="capitalize">{r}</Badge>)}
                 </TableCell>
-                <TableCell className="tabular-nums">{u.villa_count}</TableCell>
+                <TableCell className="tabular-nums">
+                  {u.pending_villa_request ? (
+                    <span className="text-sm">
+                      {u.pending_villa_request.units?.unit_number ?? "Villa"} ·{" "}
+                      <span className="capitalize">
+                        {String(u.pending_villa_request.relationship_type).replaceAll("_", " ")}
+                      </span>
+                    </span>
+                  ) : u.villa_count}
+                </TableCell>
                 <TableCell>
-                  <Badge variant={STATUS_VARIANT[u.effective_status] ?? "outline"} className="capitalize">{u.effective_status}</Badge>
+                  <Badge variant={STATUS_VARIANT[u.effective_status] ?? "outline"}>{u.access_stage}</Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
                     {u.effective_status === "pending" && <>
-                      <Button size="sm" title="Approve user" onClick={() => approve.mutate(u)} disabled={approve.isPending || reject.isPending}>
+                      <Select
+                        value={approvalRoles[u.id] ?? (u.requested_role === "staff" ? "operations" : "resident")}
+                        onValueChange={(value) => setApprovalRoles((current) => ({
+                          ...current,
+                          [u.id]: value as "resident" | "operations",
+                        }))}
+                      >
+                        <SelectTrigger className="h-9 w-[118px]" aria-label={`Role for ${u.full_name ?? u.email}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="resident">Resident</SelectItem>
+                          <SelectItem value="operations">Staff</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        size="sm"
+                        title="Approve user"
+                        onClick={() => approve.mutate({
+                          user: u,
+                          role: approvalRoles[u.id] ?? (u.requested_role === "staff" ? "operations" : "resident"),
+                        })}
+                        disabled={approve.isPending || reject.isPending}
+                      >
                         <Check className="mr-1 h-4 w-4" /> Approve
                       </Button>
                       <Button size="sm" variant="outline" title="Reject user" onClick={() => reject.mutate(u.id)} disabled={approve.isPending || reject.isPending}>
+                        <X className="mr-1 h-4 w-4" /> Reject
+                      </Button>
+                    </>}
+                    {u.access_stage === "Villa review" && u.pending_villa_request && <>
+                      <Button
+                        size="sm"
+                        title="Approve villa relationship"
+                        onClick={() => approveVilla.mutate(u.pending_villa_request.id)}
+                        disabled={approveVilla.isPending || rejectVilla.isPending}
+                      >
+                        <Check className="mr-1 h-4 w-4" /> Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        title="Reject villa relationship"
+                        onClick={() => rejectVilla.mutate(u.pending_villa_request.id)}
+                        disabled={approveVilla.isPending || rejectVilla.isPending}
+                      >
                         <X className="mr-1 h-4 w-4" /> Reject
                       </Button>
                     </>}
