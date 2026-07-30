@@ -20,7 +20,18 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
 });
 
-const ROLES = ["admin", "finance", "operations", "security", "viewer", "resident"] as const;
+const ROLES = ["admin", "property_manager", "finance", "accountant", "hr", "operations", "security", "viewer", "resident"] as const;
+const ROLE_LABELS: Record<(typeof ROLES)[number], string> = {
+  admin: "Top Admin",
+  property_manager: "Property Manager",
+  finance: "Finance Manager",
+  accountant: "Accountant",
+  hr: "Human Resources",
+  operations: "Operations",
+  security: "Security",
+  viewer: "Viewer",
+  resident: "Resident",
+};
 const MODULES = ["property", "sales", "purchases", "bank", "operations", "communication", "settings"] as const;
 const PERMS = [
   { key: "can_view", label: "View" },
@@ -39,19 +50,19 @@ function SettingsPage() {
         <h2 className="font-display text-2xl font-bold tracking-tight">Settings &amp; Administration</h2>
         <p className="text-sm text-muted-foreground">A secure workspace for organization, people, finance controls, permissions, and documents.</p>
       </header>
-      <Tabs defaultValue="organization" className="space-y-4">
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1">
-          <TabsTrigger value="organization" className="gap-2"><Building2 className="h-4 w-4" />Organization</TabsTrigger>
-          <TabsTrigger value="people" className="gap-2"><UsersRound className="h-4 w-4" />People &amp; Access</TabsTrigger>
-          <TabsTrigger value="finance" className="gap-2"><CircleDollarSign className="h-4 w-4" />Finance</TabsTrigger>
-          <TabsTrigger value="security" className="gap-2"><ShieldCheck className="h-4 w-4" />Security &amp; Roles</TabsTrigger>
-          <TabsTrigger value="templates" className="gap-2"><FileStack className="h-4 w-4" />Documents</TabsTrigger>
+      <Tabs defaultValue="organization" className="md:grid md:grid-cols-[240px_minmax(0,1fr)] md:items-start md:gap-6">
+        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:sticky md:top-4 md:flex-col md:overflow-visible md:rounded-xl md:border md:bg-card md:p-2">
+          <TabsTrigger value="organization" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><Building2 className="h-4 w-4" />Organization</TabsTrigger>
+          <TabsTrigger value="people" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><UsersRound className="h-4 w-4" />People &amp; Access</TabsTrigger>
+          <TabsTrigger value="finance" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><CircleDollarSign className="h-4 w-4" />Finance</TabsTrigger>
+          <TabsTrigger value="security" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><ShieldCheck className="h-4 w-4" />Security &amp; Roles</TabsTrigger>
+          <TabsTrigger value="templates" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><FileStack className="h-4 w-4" />Documents</TabsTrigger>
         </TabsList>
-        <TabsContent value="organization"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
-        <TabsContent value="people"><SectionHeading title="Users" description="Manage user access, type, status, and portal permissions in one place." /><UsersTab /></TabsContent>
-        <TabsContent value="finance"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
-        <TabsContent value="security"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
-        <TabsContent value="templates">
+        <TabsContent value="organization" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
+        <TabsContent value="people" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Users" description="Manage user access, type, status, and portal permissions in one place." /><UsersTab /></TabsContent>
+        <TabsContent value="finance" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
+        <TabsContent value="security" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
+        <TabsContent value="templates" className="mt-4 min-w-0 md:mt-0">
           <SectionHeading title="Document templates" description="Manage the controlled layouts used for operational and financial documents." />
           <div className="rounded-md border p-4 text-sm">
             Manage document templates for Invoice, Receipt, Credit Note, Statement, Work Order, and Purchase Order.
@@ -292,7 +303,7 @@ function RolesTab() {
         <Label>Role</Label>
         <Select value={role} onValueChange={setRole}>
           <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r} className="capitalize">{r}</SelectItem>)}</SelectContent>
+          <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}</SelectContent>
         </Select>
       </div>
       <div className="rounded-xl border border-border bg-card overflow-x-auto">
