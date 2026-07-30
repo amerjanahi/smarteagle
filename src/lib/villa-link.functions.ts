@@ -9,13 +9,37 @@ async function assertAdmin(ctx: { supabase: any; userId: string }) {
 export const listVillasForLink = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: units, error } = await context.supabase
+    const [{ data: profile }, { data: isResident }, { data: activeVilla }] = await Promise.all([
+      context.supabase
+        .from("profiles")
+        .select("approval_status")
+        .eq("id", context.userId)
+        .maybeSingle(),
+      context.supabase.rpc("has_role", {
+        _user_id: context.userId,
+        _role: "resident",
+      }),
+      context.supabase
+        .from("user_villas")
+        .select("id")
+        .eq("user_id", context.userId)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle(),
+    ]);
+    if (profile?.approval_status !== "approved" || !isResident || activeVilla) {
+      throw new Error("Villa selection is available only during approved resident onboarding.");
+    }
+
+    // Use the server-only client after validating the exact onboarding state.
+    // This avoids granting every unlinked authenticated user direct table access.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: units, error } = await supabaseAdmin
       .from("units")
       .select("id, unit_number, building, floor, is_occupied")
       .order("unit_number");
     if (error) throw new Error(error.message);
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [linksRes, reqsRes] = await Promise.all([
       supabaseAdmin.from("user_villas").select("villa_id").eq("status", "active"),
       supabaseAdmin.from("resident_villa_requests").select("villa_id").eq("status", "pending"),
