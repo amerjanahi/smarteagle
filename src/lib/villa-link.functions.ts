@@ -56,10 +56,22 @@ export const submitVillaRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { villaId: string; relationshipType: "owner" | "tenant" | "family_member" | "authorized_rep"; notes?: string }) => d)
   .handler(async ({ context, data }) => {
+    const [{ data: profile }, { data: isResident }] = await Promise.all([
+      context.supabase
+        .from("profiles")
+        .select("approval_status")
+        .eq("id", context.userId)
+        .maybeSingle(),
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "resident" }),
+    ]);
+    if (profile?.approval_status !== "approved" || !isResident) {
+      throw new Error("Your account must be approved as a resident before villa onboarding.");
+    }
+
     const { data: existing } = await context.supabase
       .from("resident_villa_requests").select("id")
-      .eq("user_id", context.userId).eq("villa_id", data.villaId).eq("status", "pending").maybeSingle();
-    if (existing) throw new Error("You already have a pending request for this villa.");
+      .eq("user_id", context.userId).eq("status", "pending").limit(1).maybeSingle();
+    if (existing) throw new Error("You already have a villa request under review.");
     const { error } = await context.supabase.from("resident_villa_requests").insert({
       user_id: context.userId,
       villa_id: data.villaId,
@@ -104,6 +116,15 @@ export const approveVillaRequest = createServerFn({ method: "POST" })
     if (rerr || !req) throw new Error(rerr?.message ?? "Request not found");
     if (req.status !== "pending") throw new Error("Request already reviewed");
 
+    const [{ data: accountProfile }, { data: roles }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("approval_status").eq("id", req.user_id).maybeSingle(),
+      supabaseAdmin.from("user_roles").select("role").eq("user_id", req.user_id),
+    ]);
+    const roleNames = (roles ?? []).map((row: any) => row.role);
+    if (accountProfile?.approval_status !== "approved" || !roleNames.includes("resident")) {
+      throw new Error("Approve this account as a resident before approving its villa request.");
+    }
+
     // Insert user_villas link
     await supabaseAdmin.from("user_villas").upsert({
       user_id: req.user_id,
@@ -113,12 +134,8 @@ export const approveVillaRequest = createServerFn({ method: "POST" })
       approved_by: context.userId,
     }, { onConflict: "user_id,villa_id" });
 
-    // Ensure resident role
-    await supabaseAdmin.from("user_roles").insert({ user_id: req.user_id, role: "resident" })
-      .then(() => {}, () => {});
-
     // Mirror into residents table so unit occupancy and resident lists reflect the link.
-    const { data: profile } = await supabaseAdmin
+    const { data: residentProfile } = await supabaseAdmin
       .from("profiles").select("full_name, email, phone").eq("id", req.user_id).maybeSingle();
     const { data: existingResident } = await supabaseAdmin
       .from("residents").select("id").eq("user_id", req.user_id).eq("unit_id", req.villa_id).maybeSingle();
@@ -126,20 +143,13 @@ export const approveVillaRequest = createServerFn({ method: "POST" })
       await supabaseAdmin.from("residents").insert({
         user_id: req.user_id,
         unit_id: req.villa_id,
-        full_name: profile?.full_name ?? "Resident",
-        email: profile?.email ?? null,
-        phone: profile?.phone ?? null,
+        full_name: residentProfile?.full_name ?? "Resident",
+        email: residentProfile?.email ?? null,
+        phone: residentProfile?.phone ?? null,
         resident_type: req.relationship_type === "owner" ? "owner" : "tenant",
         is_active: true,
       }).then(() => {}, () => {});
     }
-
-    // Approve profile if still pending
-    await supabaseAdmin.from("profiles").update({
-      approval_status: "approved",
-      reviewed_by: context.userId,
-      reviewed_at: new Date().toISOString(),
-    }).eq("id", req.user_id);
 
     // Mark request approved
     const { error } = await supabaseAdmin.from("resident_villa_requests").update({

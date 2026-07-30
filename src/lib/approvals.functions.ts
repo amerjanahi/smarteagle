@@ -51,9 +51,14 @@ export const listAllSignups = createServerFn({ method: "GET" })
     const ids = (profiles ?? []).map((p: any) => p.id);
     if (ids.length === 0) return [];
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: roles }, { data: villas }] = await Promise.all([
+    const [{ data: roles }, { data: villas }, { data: villaRequests }] = await Promise.all([
       supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
-      supabaseAdmin.from("user_villas").select("user_id, unit_id, status").in("user_id", ids),
+      supabaseAdmin.from("user_villas").select("user_id, villa_id, status").in("user_id", ids),
+      supabaseAdmin
+        .from("resident_villa_requests")
+        .select("id, user_id, villa_id, relationship_type, status, submitted_at, units:villa_id(unit_number, building)")
+        .in("user_id", ids)
+        .order("submitted_at", { ascending: false }),
     ]);
     const roleMap = new Map<string, string[]>();
     (roles ?? []).forEach((r: any) => {
@@ -64,10 +69,20 @@ export const listAllSignups = createServerFn({ method: "GET" })
     (villas ?? []).filter((v: any) => v.status === "active").forEach((v: any) => {
       villaMap.set(v.user_id, (villaMap.get(v.user_id) ?? 0) + 1);
     });
+    const pendingVillaMap = new Map<string, number>();
+    const pendingVillaRequestMap = new Map<string, any>();
+    (villaRequests ?? []).filter((request: any) => request.status === "pending").forEach((request: any) => {
+      pendingVillaMap.set(request.user_id, (pendingVillaMap.get(request.user_id) ?? 0) + 1);
+      if (!pendingVillaRequestMap.has(request.user_id)) {
+        pendingVillaRequestMap.set(request.user_id, request);
+      }
+    });
     return (profiles ?? []).map((p: any) => ({
       ...p,
       roles: roleMap.get(p.id) ?? [],
       villa_count: villaMap.get(p.id) ?? 0,
+      pending_villa_count: pendingVillaMap.get(p.id) ?? 0,
+      pending_villa_request: pendingVillaRequestMap.get(p.id) ?? null,
     }));
   });
 
@@ -115,6 +130,11 @@ export const rejectSignup = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .delete()
+      .eq("user_id", data.userId);
+    if (roleError) throw new Error(roleError.message);
     const { error } = await supabaseAdmin
       .from("profiles")
       .update({

@@ -110,7 +110,7 @@ export const reviewProfileChangeRequest = createServerFn({ method: "POST" })
     if (data.approve) {
       const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(request.user_id, {
         email: request.requested_email,
-        user_metadata: { full_name: request.requested_full_name },
+        user_metadata: { full_name: request.requested_full_name ?? undefined },
       });
       if (authError) throw new Error(authError.message);
       const { error: profileError } = await supabaseAdmin.from("profiles").update({
@@ -118,7 +118,10 @@ export const reviewProfileChangeRequest = createServerFn({ method: "POST" })
       }).eq("id", request.user_id);
       if (profileError) throw new Error(profileError.message);
       await supabaseAdmin.from("residents").update({
-        full_name: request.requested_full_name, email: request.requested_email, phone: request.requested_phone, updated_at: now,
+        full_name: request.requested_full_name ?? undefined,
+        email: request.requested_email,
+        phone: request.requested_phone ?? undefined,
+        updated_at: now,
       }).eq("user_id", request.user_id).eq("is_active", true);
     }
     const { error: reviewError } = await supabaseAdmin.from("profile_change_requests").update({
