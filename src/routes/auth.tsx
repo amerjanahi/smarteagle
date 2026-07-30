@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 import { Building2, Fingerprint, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -40,7 +40,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [requestedRole, setRequestedRole] = useState<"resident" | "staff">("resident");
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(false);
   const [signInMethod, setSignInMethod] = useState<SignInMethod>("password");
@@ -71,7 +70,7 @@ function AuthPage() {
       .then(({ data }) => setPending(data?.approval_status !== "rejected"));
   }, [authLoading, session, role]);
 
-  async function checkApprovalAndRoute() {
+  const checkApprovalAndRoute = useCallback(async () => {
     const { data: { session: s } } = await supabase.auth.getSession();
     if (!s) return;
     const { data: profile } = await supabase
@@ -97,14 +96,16 @@ function AuthPage() {
     if (roles.includes("admin")) return; // effect above routes to /admin
     if (roles.includes("security")) { navigate({ to: "/gate" }); return; }
     if (roles.includes("operations")) { navigate({ to: "/portal" }); return; }
-    navigate({ to: "/portal" });
-  }
+    const { data: links } = await supabase
+      .from("user_villas").select("id").eq("user_id", s.user.id).eq("status", "active").limit(1);
+    navigate({ to: (links && links.length > 0) ? "/portal" : "/link-villa" });
+  }, [navigate, refreshRole]);
 
   useEffect(() => {
     if (!pending || !session) return;
     const timer = window.setInterval(() => { void checkApprovalAndRoute(); }, 10_000);
     return () => window.clearInterval(timer);
-  }, [pending, session]);
+  }, [pending, session, checkApprovalAndRoute]);
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -114,7 +115,7 @@ function AuthPage() {
         const { data: signUpData, error } = await supabase.auth.signUp({
           email, password,
           options: {
-            data: { full_name: fullName, phone, requested_role: requestedRole },
+            data: { full_name: fullName, phone, requested_role: "resident" },
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         });
@@ -124,10 +125,6 @@ function AuthPage() {
           await supabase.from("profiles").update({
             phone,
             full_name: fullName,
-            requested_role: requestedRole,
-            approval_status: "pending",
-            reviewed_at: null,
-            reviewed_by: null,
           }).eq("id", signUpData.user.id);
         }
         toast.success("Account created. Verify your email, then wait for administrator approval.");
@@ -393,15 +390,6 @@ function AuthPage() {
                   <Label htmlFor="email-up">Email</Label>
                   <Input id="email-up" type="email" autoComplete="email" required
                     value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div>
-                  <Label>Access requested</Label>
-                  <Tabs value={requestedRole} onValueChange={(value) => setRequestedRole(value as "resident" | "staff")}>
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="resident">Resident</TabsTrigger>
-                      <TabsTrigger value="staff">Staff</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
                 </div>
                 <div>
                   <Label htmlFor="password-up">Password</Label>
