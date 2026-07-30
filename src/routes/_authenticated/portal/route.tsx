@@ -1,12 +1,32 @@
-import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate, redirect } from "@tanstack/react-router";
 import { Home, FileText, Wrench, UserPlus, MoreHorizontal, LogOut, Briefcase } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyEmployee } from "@/lib/hr.functions";
 
 export const Route = createFileRoute("/_authenticated/portal")({
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw redirect({ to: "/auth" });
+
+    const [{ data: roles }, { data: villaLinks }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", user.id),
+      supabase.from("user_villas").select("id").eq("user_id", user.id).eq("status", "active").limit(1),
+    ]);
+    const roleNames = (roles ?? []).map((row: any) => row.role);
+    const isResidentOnly =
+      roleNames.includes("resident") &&
+      !roleNames.some((role: string) => ["admin", "operations", "security", "hr", "accountant"].includes(role));
+
+    // Stage two: a resident approved by the admin may only complete villa
+    // onboarding until the selected relationship is approved.
+    if (isResidentOnly && !villaLinks?.length) {
+      throw redirect({ to: "/link-villa" });
+    }
+  },
   component: PortalShell,
 });
 
