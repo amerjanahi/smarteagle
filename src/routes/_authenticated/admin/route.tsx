@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { pendingSignupCount } from "@/lib/approvals.functions";
@@ -18,8 +18,26 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  beforeLoad: async () => {
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) throw redirect({ to: "/auth" });
+
+    // Authorize the protected route from the database, rather than relying on
+    // the shell's client-side redirect after the page has started rendering.
+    const { data: roles, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", auth.user.id);
+    if (error) throw redirect({ to: "/portal" });
+
+    const roleNames = (roles ?? []).map((row: { role: string }) => row.role);
+    if (!roleNames.includes("admin") && !roleNames.includes("property_manager")) {
+      throw redirect({ to: "/portal" });
+    }
+  },
   component: AdminShell,
 });
 
@@ -117,8 +135,11 @@ function AdminShell() {
   const isTopAdmin = role === "admin";
   const isPropertyManager = role === "property_manager";
 
+  // `beforeLoad` above prevents an unauthorized page render. This is retained
+  // only as a client-side fallback if a role changes while the app is open.
   if (!loading && !isTopAdmin && !isPropertyManager) {
     navigate({ to: "/portal", replace: true });
+    return null;
   }
 
   async function handleSignOut() {

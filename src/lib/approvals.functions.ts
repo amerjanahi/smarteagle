@@ -93,9 +93,18 @@ export const approveSignup = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    // Approval is the single authority for an applicant's initial role. Clear
+    // any legacy or accidental role first so a pending user can never retain
+    // elevated access alongside the role selected by the administrator.
+    const { error: clearRolesError } = await supabaseAdmin
+      .from("user_roles")
+      .delete()
+      .eq("user_id", data.userId);
+    if (clearRolesError) throw new Error(clearRolesError.message);
+
     const { error: roleError } = await supabaseAdmin
       .from("user_roles")
-      .upsert({ user_id: data.userId, role: data.role }, { onConflict: "user_id,role" });
+      .insert({ user_id: data.userId, role: data.role });
     if (roleError) throw new Error(roleError.message);
 
     if (data.role === "resident" && data.unitId) {

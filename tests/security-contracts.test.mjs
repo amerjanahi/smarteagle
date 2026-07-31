@@ -54,3 +54,13 @@ test("top admin cannot be denied by a user override", async () => {
 
   assert.match(migration, /WHEN public\.is_top_admin\(_user_id\) THEN true/);
 });
+
+test("account approval replaces legacy roles and admin routes validate roles before rendering", async () => {
+  const approvals = await read("src/lib/approvals.functions.ts");
+  const adminRoute = await read("src/routes/_authenticated/admin/route.tsx");
+
+  assert.match(approvals, /from\("user_roles"\)[\s\S]*?delete\(\)[\s\S]*?eq\("user_id", data\.userId\)/);
+  assert.match(approvals, /from\("user_roles"\)[\s\S]*?insert\(\{ user_id: data\.userId, role: data\.role \}\)/);
+  assert.match(adminRoute, /beforeLoad: async \(\) =>/);
+  assert.match(adminRoute, /!roleNames\.includes\("admin"\) && !roleNames\.includes\("property_manager"\)/);
+});
