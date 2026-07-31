@@ -2811,6 +2811,56 @@ export type Database = {
           },
         ]
       }
+      vendor_compliance_documents: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          document_number: string | null
+          document_type: string
+          expiry_date: string | null
+          file_path: string | null
+          id: string
+          issue_date: string | null
+          notes: string | null
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          document_number?: string | null
+          document_type: string
+          expiry_date?: string | null
+          file_path?: string | null
+          id?: string
+          issue_date?: string | null
+          notes?: string | null
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          document_number?: string | null
+          document_type?: string
+          expiry_date?: string | null
+          file_path?: string | null
+          id?: string
+          issue_date?: string | null
+          notes?: string | null
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_compliance_documents_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_payments: {
         Row: {
           amount: number
@@ -3035,6 +3085,7 @@ export type Database = {
         | "authorized_rep"
         | "read_only"
         | "hr"
+        | "property_manager"
       approval_status: "draft" | "pending" | "approved" | "rejected"
       attendance_status: "present" | "absent" | "leave" | "holiday" | "weekend"
       bank_txn_direction: "in" | "out"
@@ -3232,6 +3283,7 @@ export const Constants = {
         "authorized_rep",
         "read_only",
         "hr",
+        "property_manager",
       ],
       approval_status: ["draft", "pending", "approved", "rejected"],
       attendance_status: ["present", "absent", "leave", "holiday", "weekend"],
