@@ -13,7 +13,6 @@ const items = [
   { to: "/portal/amenities", label: "Book amenities", icon: CalendarDays },
   { to: "/portal/calculator", label: "Service charge calculator", icon: Calculator },
   { to: "/portal/announcements", label: "Announcements", icon: Bell },
-  { to: "/portal/owners-association", label: "Owners Association", icon: Vote },
 ] as const;
 
 function MorePage() {
