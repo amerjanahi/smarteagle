@@ -14,6 +14,7 @@ import {
   Receipt,
   CreditCard,
   ClipboardList,
+  Vote,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCurrency } from "@/hooks/use-currency";
@@ -39,6 +40,7 @@ function PortalHome() {
     { to: "/portal/amenities", label: "Book Amenity", icon: CalendarCheck, tone: "from-primary/15 to-primary/5 text-primary" },
     { to: "/portal/visitors", label: "Register Visitor", icon: UserPlus, tone: "from-accent/25 to-accent/5 text-accent-foreground" },
     { to: "/portal/calculator", label: "Fees Calculator", icon: Calculator, tone: "from-accent/25 to-accent/5 text-accent-foreground" },
+    { to: "/portal/owners-association", label: "Owners Association", icon: Vote, tone: "from-primary/15 to-primary/5 text-primary" },
     { to: "/portal/more", label: "Contact Management", icon: Phone, tone: "from-primary/15 to-primary/5 text-primary" },
   ] as const;
 

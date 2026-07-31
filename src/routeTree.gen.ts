@@ -9,100 +9,86 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
-import { Route as AuthenticatedGateRouteRouteImport } from './routes/_authenticated/gate/route'
-import { Route as AuthenticatedLinkVillaRouteImport } from './routes/_authenticated/link-villa'
-import { Route as AuthenticatedPortalRouteRouteImport } from './routes/_authenticated/portal/route'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
-import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
-import { Route as AuthenticatedAdminAnnualFeesRouteImport } from './routes/_authenticated/admin/annual-fees'
-import { Route as AuthenticatedAdminApprovalsRouteImport } from './routes/_authenticated/admin/approvals'
-import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
-import { Route as AuthenticatedAdminBankAccountsRouteImport } from './routes/_authenticated/admin/bank-accounts'
-import { Route as AuthenticatedAdminBankBulkEntryRouteImport } from './routes/_authenticated/admin/bank-bulk-entry'
-import { Route as AuthenticatedAdminBankReconciliationRouteImport } from './routes/_authenticated/admin/bank-reconciliation'
-import { Route as AuthenticatedAdminBankTransactionsRouteImport } from './routes/_authenticated/admin/bank-transactions'
-import { Route as AuthenticatedAdminBulkEmailRouteImport } from './routes/_authenticated/admin/bulk-email'
-import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
-import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
-import { Route as AuthenticatedAdminDocumentsRouteImport } from './routes/_authenticated/admin/documents'
-import { Route as AuthenticatedAdminEmergencyContactsRouteImport } from './routes/_authenticated/admin/emergency-contacts'
-import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
-import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
-import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_authenticated/admin/maintenance'
-import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_authenticated/admin/notice-groups'
-import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
-import { Route as AuthenticatedAdminOwnersAssociationRouteImport } from './routes/_authenticated/admin/owners-association'
-import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
-import { Route as AuthenticatedAdminPayrollJournalsRouteImport } from './routes/_authenticated/admin/payroll-journals'
-import { Route as AuthenticatedAdminPortalAccessRequestsRouteImport } from './routes/_authenticated/admin/portal-access-requests'
-import { Route as AuthenticatedAdminProfileChangeRequestsRouteImport } from './routes/_authenticated/admin/profile-change-requests'
-import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
-import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
-import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
-import { Route as AuthenticatedAdminReportsHubRouteImport } from './routes/_authenticated/admin/reports-hub'
-import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authenticated/admin/residents'
-import { Route as AuthenticatedAdminSalesRouteImport } from './routes/_authenticated/admin/sales'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
-import { Route as AuthenticatedAdminStatementsRouteImport } from './routes/_authenticated/admin/statements'
-import { Route as AuthenticatedAdminTemplatesRouteImport } from './routes/_authenticated/admin/templates'
-import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin/units'
-import { Route as AuthenticatedAdminVendorPaymentsRouteImport } from './routes/_authenticated/admin/vendor-payments'
-import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin/vendors'
-import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin/visitors'
-import { Route as AuthenticatedGateIndexRouteImport } from './routes/_authenticated/gate/index'
-import { Route as AuthenticatedGateApprovedRouteImport } from './routes/_authenticated/gate/approved'
-import { Route as AuthenticatedGateCheckinRouteImport } from './routes/_authenticated/gate/checkin'
-import { Route as AuthenticatedGateEmergencyRouteImport } from './routes/_authenticated/gate/emergency'
-import { Route as AuthenticatedGateIncidentsRouteImport } from './routes/_authenticated/gate/incidents'
-import { Route as AuthenticatedGateScanRouteImport } from './routes/_authenticated/gate/scan'
-import { Route as AuthenticatedGateSearchRouteImport } from './routes/_authenticated/gate/search'
+import { Route as AuthenticatedLinkVillaRouteImport } from './routes/_authenticated/link-villa'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as AuthenticatedPortalRouteRouteImport } from './routes/_authenticated/portal/route'
+import { Route as AuthenticatedGateRouteRouteImport } from './routes/_authenticated/gate/route'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedPortalIndexRouteImport } from './routes/_authenticated/portal/index'
-import { Route as AuthenticatedPortalAmenitiesRouteImport } from './routes/_authenticated/portal/amenities'
-import { Route as AuthenticatedPortalAnnouncementsRouteImport } from './routes/_authenticated/portal/announcements'
-import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_authenticated/portal/calculator'
-import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authenticated/portal/invoices'
-import { Route as AuthenticatedPortalMaintenanceRouteImport } from './routes/_authenticated/portal/maintenance'
-import { Route as AuthenticatedPortalMoreRouteImport } from './routes/_authenticated/portal/more'
-import { Route as AuthenticatedPortalOwnersAssociationRouteImport } from './routes/_authenticated/portal/owners-association'
-import { Route as AuthenticatedPortalProfileRouteImport } from './routes/_authenticated/portal/profile'
-import { Route as AuthenticatedPortalVisitorsRouteImport } from './routes/_authenticated/portal/visitors'
+import { Route as AuthenticatedGateIndexRouteImport } from './routes/_authenticated/gate/index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedPortalWorkRouteImport } from './routes/_authenticated/portal/work'
-import { Route as AuthenticatedAdminHrAttendanceRouteImport } from './routes/_authenticated/admin/hr/attendance'
-import { Route as AuthenticatedAdminHrConfigRouteImport } from './routes/_authenticated/admin/hr/config'
-import { Route as AuthenticatedAdminHrEmployeesRouteImport } from './routes/_authenticated/admin/hr/employees'
-import { Route as AuthenticatedAdminHrLeaveRouteImport } from './routes/_authenticated/admin/hr/leave'
-import { Route as AuthenticatedAdminHrPayrollRouteImport } from './routes/_authenticated/admin/hr/payroll'
+import { Route as AuthenticatedPortalVisitorsRouteImport } from './routes/_authenticated/portal/visitors'
+import { Route as AuthenticatedPortalProfileRouteImport } from './routes/_authenticated/portal/profile'
+import { Route as AuthenticatedPortalOwnersAssociationRouteImport } from './routes/_authenticated/portal/owners-association'
+import { Route as AuthenticatedPortalMoreRouteImport } from './routes/_authenticated/portal/more'
+import { Route as AuthenticatedPortalMaintenanceRouteImport } from './routes/_authenticated/portal/maintenance'
+import { Route as AuthenticatedPortalInvoicesRouteImport } from './routes/_authenticated/portal/invoices'
+import { Route as AuthenticatedPortalCalculatorRouteImport } from './routes/_authenticated/portal/calculator'
+import { Route as AuthenticatedPortalAnnouncementsRouteImport } from './routes/_authenticated/portal/announcements'
+import { Route as AuthenticatedPortalAmenitiesRouteImport } from './routes/_authenticated/portal/amenities'
+import { Route as AuthenticatedGateSearchRouteImport } from './routes/_authenticated/gate/search'
+import { Route as AuthenticatedGateScanRouteImport } from './routes/_authenticated/gate/scan'
+import { Route as AuthenticatedGateIncidentsRouteImport } from './routes/_authenticated/gate/incidents'
+import { Route as AuthenticatedGateEmergencyRouteImport } from './routes/_authenticated/gate/emergency'
+import { Route as AuthenticatedGateCheckinRouteImport } from './routes/_authenticated/gate/checkin'
+import { Route as AuthenticatedGateApprovedRouteImport } from './routes/_authenticated/gate/approved'
+import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin/visitors'
+import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin/vendors'
+import { Route as AuthenticatedAdminVendorPaymentsRouteImport } from './routes/_authenticated/admin/vendor-payments'
+import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin/units'
+import { Route as AuthenticatedAdminTemplatesRouteImport } from './routes/_authenticated/admin/templates'
+import { Route as AuthenticatedAdminStatementsRouteImport } from './routes/_authenticated/admin/statements'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
+import { Route as AuthenticatedAdminSalesRouteImport } from './routes/_authenticated/admin/sales'
+import { Route as AuthenticatedAdminResidentsRouteImport } from './routes/_authenticated/admin/residents'
+import { Route as AuthenticatedAdminReportsHubRouteImport } from './routes/_authenticated/admin/reports-hub'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
+import { Route as AuthenticatedAdminPurchasesRouteImport } from './routes/_authenticated/admin/purchases'
+import { Route as AuthenticatedAdminPurchaseInvoicesRouteImport } from './routes/_authenticated/admin/purchase-invoices'
+import { Route as AuthenticatedAdminProfileChangeRequestsRouteImport } from './routes/_authenticated/admin/profile-change-requests'
+import { Route as AuthenticatedAdminPortalAccessRequestsRouteImport } from './routes/_authenticated/admin/portal-access-requests'
+import { Route as AuthenticatedAdminPayrollJournalsRouteImport } from './routes/_authenticated/admin/payroll-journals'
+import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
+import { Route as AuthenticatedAdminOwnersAssociationRouteImport } from './routes/_authenticated/admin/owners-association'
+import { Route as AuthenticatedAdminNoticesRouteImport } from './routes/_authenticated/admin/notices'
+import { Route as AuthenticatedAdminNoticeGroupsRouteImport } from './routes/_authenticated/admin/notice-groups'
+import { Route as AuthenticatedAdminMaintenanceRouteImport } from './routes/_authenticated/admin/maintenance'
+import { Route as AuthenticatedAdminInvoicesRouteImport } from './routes/_authenticated/admin/invoices'
+import { Route as AuthenticatedAdminExpensesRouteImport } from './routes/_authenticated/admin/expenses'
+import { Route as AuthenticatedAdminEmergencyContactsRouteImport } from './routes/_authenticated/admin/emergency-contacts'
+import { Route as AuthenticatedAdminDocumentsRouteImport } from './routes/_authenticated/admin/documents'
+import { Route as AuthenticatedAdminCreditNotesRouteImport } from './routes/_authenticated/admin/credit-notes'
+import { Route as AuthenticatedAdminChartOfAccountsRouteImport } from './routes/_authenticated/admin/chart-of-accounts'
+import { Route as AuthenticatedAdminBulkEmailRouteImport } from './routes/_authenticated/admin/bulk-email'
+import { Route as AuthenticatedAdminBankTransactionsRouteImport } from './routes/_authenticated/admin/bank-transactions'
+import { Route as AuthenticatedAdminBankReconciliationRouteImport } from './routes/_authenticated/admin/bank-reconciliation'
+import { Route as AuthenticatedAdminBankBulkEntryRouteImport } from './routes/_authenticated/admin/bank-bulk-entry'
+import { Route as AuthenticatedAdminBankAccountsRouteImport } from './routes/_authenticated/admin/bank-accounts'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
+import { Route as AuthenticatedAdminApprovalsRouteImport } from './routes/_authenticated/admin/approvals'
+import { Route as AuthenticatedAdminAnnualFeesRouteImport } from './routes/_authenticated/admin/annual-fees'
+import { Route as AuthenticatedAdminAmenitiesRouteImport } from './routes/_authenticated/admin/amenities'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminHrPayslipsRouteImport } from './routes/_authenticated/admin/hr/payslips'
+import { Route as AuthenticatedAdminHrPayrollRouteImport } from './routes/_authenticated/admin/hr/payroll'
+import { Route as AuthenticatedAdminHrLeaveRouteImport } from './routes/_authenticated/admin/hr/leave'
+import { Route as AuthenticatedAdminHrEmployeesRouteImport } from './routes/_authenticated/admin/hr/employees'
+import { Route as AuthenticatedAdminHrConfigRouteImport } from './routes/_authenticated/admin/hr/config'
+import { Route as AuthenticatedAdminHrAttendanceRouteImport } from './routes/_authenticated/admin/hr/attendance'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -110,316 +96,62 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedGateRouteRoute = AuthenticatedGateRouteRouteImport.update({
-  id: '/gate',
-  path: '/gate',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthenticatedLinkVillaRoute = AuthenticatedLinkVillaRouteImport.update({
   id: '/link-villa',
   path: '/link-villa',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedPortalRouteRoute =
   AuthenticatedPortalRouteRouteImport.update({
     id: '/portal',
     path: '/portal',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/callback',
-  path: '/callback',
-  getParentRoute: () => AuthRoute,
+const AuthenticatedGateRouteRoute = AuthenticatedGateRouteRouteImport.update({
+  id: '/gate',
+  path: '/gate',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminAmenitiesRoute =
-  AuthenticatedAdminAmenitiesRouteImport.update({
-    id: '/amenities',
-    path: '/amenities',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminAnnualFeesRoute =
-  AuthenticatedAdminAnnualFeesRouteImport.update({
-    id: '/annual-fees',
-    path: '/annual-fees',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminApprovalsRoute =
-  AuthenticatedAdminApprovalsRouteImport.update({
-    id: '/approvals',
-    path: '/approvals',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminBankAccountsRoute =
-  AuthenticatedAdminBankAccountsRouteImport.update({
-    id: '/bank-accounts',
-    path: '/bank-accounts',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminBankBulkEntryRoute =
-  AuthenticatedAdminBankBulkEntryRouteImport.update({
-    id: '/bank-bulk-entry',
-    path: '/bank-bulk-entry',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminBankReconciliationRoute =
-  AuthenticatedAdminBankReconciliationRouteImport.update({
-    id: '/bank-reconciliation',
-    path: '/bank-reconciliation',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminBankTransactionsRoute =
-  AuthenticatedAdminBankTransactionsRouteImport.update({
-    id: '/bank-transactions',
-    path: '/bank-transactions',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminBulkEmailRoute =
-  AuthenticatedAdminBulkEmailRouteImport.update({
-    id: '/bulk-email',
-    path: '/bulk-email',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminChartOfAccountsRoute =
-  AuthenticatedAdminChartOfAccountsRouteImport.update({
-    id: '/chart-of-accounts',
-    path: '/chart-of-accounts',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminCreditNotesRoute =
-  AuthenticatedAdminCreditNotesRouteImport.update({
-    id: '/credit-notes',
-    path: '/credit-notes',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminDocumentsRoute =
-  AuthenticatedAdminDocumentsRouteImport.update({
-    id: '/documents',
-    path: '/documents',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminEmergencyContactsRoute =
-  AuthenticatedAdminEmergencyContactsRouteImport.update({
-    id: '/emergency-contacts',
-    path: '/emergency-contacts',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminExpensesRoute =
-  AuthenticatedAdminExpensesRouteImport.update({
-    id: '/expenses',
-    path: '/expenses',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminInvoicesRoute =
-  AuthenticatedAdminInvoicesRouteImport.update({
-    id: '/invoices',
-    path: '/invoices',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminMaintenanceRoute =
-  AuthenticatedAdminMaintenanceRouteImport.update({
-    id: '/maintenance',
-    path: '/maintenance',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminNoticeGroupsRoute =
-  AuthenticatedAdminNoticeGroupsRouteImport.update({
-    id: '/notice-groups',
-    path: '/notice-groups',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminNoticesRoute =
-  AuthenticatedAdminNoticesRouteImport.update({
-    id: '/notices',
-    path: '/notices',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminOwnersAssociationRoute =
-  AuthenticatedAdminOwnersAssociationRouteImport.update({
-    id: '/owners-association',
-    path: '/owners-association',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminPaymentsRoute =
-  AuthenticatedAdminPaymentsRouteImport.update({
-    id: '/payments',
-    path: '/payments',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminPayrollJournalsRoute =
-  AuthenticatedAdminPayrollJournalsRouteImport.update({
-    id: '/payroll-journals',
-    path: '/payroll-journals',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminPortalAccessRequestsRoute =
-  AuthenticatedAdminPortalAccessRequestsRouteImport.update({
-    id: '/portal-access-requests',
-    path: '/portal-access-requests',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminProfileChangeRequestsRoute =
-  AuthenticatedAdminProfileChangeRequestsRouteImport.update({
-    id: '/profile-change-requests',
-    path: '/profile-change-requests',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminPurchaseInvoicesRoute =
-  AuthenticatedAdminPurchaseInvoicesRouteImport.update({
-    id: '/purchase-invoices',
-    path: '/purchase-invoices',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminPurchasesRoute =
-  AuthenticatedAdminPurchasesRouteImport.update({
-    id: '/purchases',
-    path: '/purchases',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminReportsRoute =
-  AuthenticatedAdminReportsRouteImport.update({
-    id: '/reports',
-    path: '/reports',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminReportsHubRoute =
-  AuthenticatedAdminReportsHubRouteImport.update({
-    id: '/reports-hub',
-    path: '/reports-hub',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminResidentsRoute =
-  AuthenticatedAdminResidentsRouteImport.update({
-    id: '/residents',
-    path: '/residents',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminSalesRoute = AuthenticatedAdminSalesRouteImport.update({
-  id: '/sales',
-  path: '/sales',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminSettingsRoute =
-  AuthenticatedAdminSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminStatementsRoute =
-  AuthenticatedAdminStatementsRouteImport.update({
-    id: '/statements',
-    path: '/statements',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminTemplatesRoute =
-  AuthenticatedAdminTemplatesRouteImport.update({
-    id: '/templates',
-    path: '/templates',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
-  id: '/units',
-  path: '/units',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminVendorPaymentsRoute =
-  AuthenticatedAdminVendorPaymentsRouteImport.update({
-    id: '/vendor-payments',
-    path: '/vendor-payments',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminVendorsRoute =
-  AuthenticatedAdminVendorsRouteImport.update({
-    id: '/vendors',
-    path: '/vendors',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminVisitorsRoute =
-  AuthenticatedAdminVisitorsRouteImport.update({
-    id: '/visitors',
-    path: '/visitors',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedGateIndexRoute = AuthenticatedGateIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedGateRouteRoute,
-} as any)
-const AuthenticatedGateApprovedRoute =
-  AuthenticatedGateApprovedRouteImport.update({
-    id: '/approved',
-    path: '/approved',
-    getParentRoute: () => AuthenticatedGateRouteRoute,
-  } as any)
-const AuthenticatedGateCheckinRoute =
-  AuthenticatedGateCheckinRouteImport.update({
-    id: '/checkin',
-    path: '/checkin',
-    getParentRoute: () => AuthenticatedGateRouteRoute,
-  } as any)
-const AuthenticatedGateEmergencyRoute =
-  AuthenticatedGateEmergencyRouteImport.update({
-    id: '/emergency',
-    path: '/emergency',
-    getParentRoute: () => AuthenticatedGateRouteRoute,
-  } as any)
-const AuthenticatedGateIncidentsRoute =
-  AuthenticatedGateIncidentsRouteImport.update({
-    id: '/incidents',
-    path: '/incidents',
-    getParentRoute: () => AuthenticatedGateRouteRoute,
-  } as any)
-const AuthenticatedGateScanRoute = AuthenticatedGateScanRouteImport.update({
-  id: '/scan',
-  path: '/scan',
-  getParentRoute: () => AuthenticatedGateRouteRoute,
-} as any)
-const AuthenticatedGateSearchRoute = AuthenticatedGateSearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => AuthenticatedGateRouteRoute,
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPortalIndexRoute =
   AuthenticatedPortalIndexRouteImport.update({
@@ -427,45 +159,25 @@ const AuthenticatedPortalIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
-const AuthenticatedPortalAmenitiesRoute =
-  AuthenticatedPortalAmenitiesRouteImport.update({
-    id: '/amenities',
-    path: '/amenities',
-    getParentRoute: () => AuthenticatedPortalRouteRoute,
-  } as any)
-const AuthenticatedPortalAnnouncementsRoute =
-  AuthenticatedPortalAnnouncementsRouteImport.update({
-    id: '/announcements',
-    path: '/announcements',
-    getParentRoute: () => AuthenticatedPortalRouteRoute,
-  } as any)
-const AuthenticatedPortalCalculatorRoute =
-  AuthenticatedPortalCalculatorRouteImport.update({
-    id: '/calculator',
-    path: '/calculator',
-    getParentRoute: () => AuthenticatedPortalRouteRoute,
-  } as any)
-const AuthenticatedPortalInvoicesRoute =
-  AuthenticatedPortalInvoicesRouteImport.update({
-    id: '/invoices',
-    path: '/invoices',
-    getParentRoute: () => AuthenticatedPortalRouteRoute,
-  } as any)
-const AuthenticatedPortalMaintenanceRoute =
-  AuthenticatedPortalMaintenanceRouteImport.update({
-    id: '/maintenance',
-    path: '/maintenance',
-    getParentRoute: () => AuthenticatedPortalRouteRoute,
-  } as any)
-const AuthenticatedPortalMoreRoute = AuthenticatedPortalMoreRouteImport.update({
-  id: '/more',
-  path: '/more',
+const AuthenticatedGateIndexRoute = AuthenticatedGateIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedGateRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedPortalWorkRoute = AuthenticatedPortalWorkRouteImport.update({
+  id: '/work',
+  path: '/work',
   getParentRoute: () => AuthenticatedPortalRouteRoute,
 } as any)
-const AuthenticatedPortalOwnersAssociationRoute =
-  AuthenticatedPortalOwnersAssociationRouteImport.update({
-    id: '/owners-association',
-    path: '/owners-association',
+const AuthenticatedPortalVisitorsRoute =
+  AuthenticatedPortalVisitorsRouteImport.update({
+    id: '/visitors',
+    path: '/visitors',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
 const AuthenticatedPortalProfileRoute =
@@ -474,39 +186,309 @@ const AuthenticatedPortalProfileRoute =
     path: '/profile',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
-const AuthenticatedPortalVisitorsRoute =
-  AuthenticatedPortalVisitorsRouteImport.update({
-    id: '/visitors',
-    path: '/visitors',
+const AuthenticatedPortalOwnersAssociationRoute =
+  AuthenticatedPortalOwnersAssociationRouteImport.update({
+    id: '/owners-association',
+    path: '/owners-association',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
-const AuthenticatedPortalWorkRoute = AuthenticatedPortalWorkRouteImport.update({
-  id: '/work',
-  path: '/work',
+const AuthenticatedPortalMoreRoute = AuthenticatedPortalMoreRouteImport.update({
+  id: '/more',
+  path: '/more',
   getParentRoute: () => AuthenticatedPortalRouteRoute,
 } as any)
-const AuthenticatedAdminHrAttendanceRoute =
-  AuthenticatedAdminHrAttendanceRouteImport.update({
-    id: '/hr/attendance',
-    path: '/hr/attendance',
+const AuthenticatedPortalMaintenanceRoute =
+  AuthenticatedPortalMaintenanceRouteImport.update({
+    id: '/maintenance',
+    path: '/maintenance',
+    getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedPortalInvoicesRoute =
+  AuthenticatedPortalInvoicesRouteImport.update({
+    id: '/invoices',
+    path: '/invoices',
+    getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedPortalCalculatorRoute =
+  AuthenticatedPortalCalculatorRouteImport.update({
+    id: '/calculator',
+    path: '/calculator',
+    getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedPortalAnnouncementsRoute =
+  AuthenticatedPortalAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
+    getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedPortalAmenitiesRoute =
+  AuthenticatedPortalAmenitiesRouteImport.update({
+    id: '/amenities',
+    path: '/amenities',
+    getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedGateSearchRoute = AuthenticatedGateSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedGateRouteRoute,
+} as any)
+const AuthenticatedGateScanRoute = AuthenticatedGateScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AuthenticatedGateRouteRoute,
+} as any)
+const AuthenticatedGateIncidentsRoute =
+  AuthenticatedGateIncidentsRouteImport.update({
+    id: '/incidents',
+    path: '/incidents',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedGateEmergencyRoute =
+  AuthenticatedGateEmergencyRouteImport.update({
+    id: '/emergency',
+    path: '/emergency',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedGateCheckinRoute =
+  AuthenticatedGateCheckinRouteImport.update({
+    id: '/checkin',
+    path: '/checkin',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedGateApprovedRoute =
+  AuthenticatedGateApprovedRouteImport.update({
+    id: '/approved',
+    path: '/approved',
+    getParentRoute: () => AuthenticatedGateRouteRoute,
+  } as any)
+const AuthenticatedAdminVisitorsRoute =
+  AuthenticatedAdminVisitorsRouteImport.update({
+    id: '/visitors',
+    path: '/visitors',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
-const AuthenticatedAdminHrConfigRoute =
-  AuthenticatedAdminHrConfigRouteImport.update({
-    id: '/hr/config',
-    path: '/hr/config',
+const AuthenticatedAdminVendorsRoute =
+  AuthenticatedAdminVendorsRouteImport.update({
+    id: '/vendors',
+    path: '/vendors',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
-const AuthenticatedAdminHrEmployeesRoute =
-  AuthenticatedAdminHrEmployeesRouteImport.update({
-    id: '/hr/employees',
-    path: '/hr/employees',
+const AuthenticatedAdminVendorPaymentsRoute =
+  AuthenticatedAdminVendorPaymentsRouteImport.update({
+    id: '/vendor-payments',
+    path: '/vendor-payments',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
-const AuthenticatedAdminHrLeaveRoute =
-  AuthenticatedAdminHrLeaveRouteImport.update({
-    id: '/hr/leave',
-    path: '/hr/leave',
+const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
+  id: '/units',
+  path: '/units',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminTemplatesRoute =
+  AuthenticatedAdminTemplatesRouteImport.update({
+    id: '/templates',
+    path: '/templates',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminStatementsRoute =
+  AuthenticatedAdminStatementsRouteImport.update({
+    id: '/statements',
+    path: '/statements',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminSalesRoute = AuthenticatedAdminSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminResidentsRoute =
+  AuthenticatedAdminResidentsRouteImport.update({
+    id: '/residents',
+    path: '/residents',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminReportsHubRoute =
+  AuthenticatedAdminReportsHubRouteImport.update({
+    id: '/reports-hub',
+    path: '/reports-hub',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPurchasesRoute =
+  AuthenticatedAdminPurchasesRouteImport.update({
+    id: '/purchases',
+    path: '/purchases',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPurchaseInvoicesRoute =
+  AuthenticatedAdminPurchaseInvoicesRouteImport.update({
+    id: '/purchase-invoices',
+    path: '/purchase-invoices',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminProfileChangeRequestsRoute =
+  AuthenticatedAdminProfileChangeRequestsRouteImport.update({
+    id: '/profile-change-requests',
+    path: '/profile-change-requests',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPortalAccessRequestsRoute =
+  AuthenticatedAdminPortalAccessRequestsRouteImport.update({
+    id: '/portal-access-requests',
+    path: '/portal-access-requests',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPayrollJournalsRoute =
+  AuthenticatedAdminPayrollJournalsRouteImport.update({
+    id: '/payroll-journals',
+    path: '/payroll-journals',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPaymentsRoute =
+  AuthenticatedAdminPaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminOwnersAssociationRoute =
+  AuthenticatedAdminOwnersAssociationRouteImport.update({
+    id: '/owners-association',
+    path: '/owners-association',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminNoticesRoute =
+  AuthenticatedAdminNoticesRouteImport.update({
+    id: '/notices',
+    path: '/notices',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminNoticeGroupsRoute =
+  AuthenticatedAdminNoticeGroupsRouteImport.update({
+    id: '/notice-groups',
+    path: '/notice-groups',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminMaintenanceRoute =
+  AuthenticatedAdminMaintenanceRouteImport.update({
+    id: '/maintenance',
+    path: '/maintenance',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminInvoicesRoute =
+  AuthenticatedAdminInvoicesRouteImport.update({
+    id: '/invoices',
+    path: '/invoices',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminExpensesRoute =
+  AuthenticatedAdminExpensesRouteImport.update({
+    id: '/expenses',
+    path: '/expenses',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminEmergencyContactsRoute =
+  AuthenticatedAdminEmergencyContactsRouteImport.update({
+    id: '/emergency-contacts',
+    path: '/emergency-contacts',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminDocumentsRoute =
+  AuthenticatedAdminDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminCreditNotesRoute =
+  AuthenticatedAdminCreditNotesRouteImport.update({
+    id: '/credit-notes',
+    path: '/credit-notes',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminChartOfAccountsRoute =
+  AuthenticatedAdminChartOfAccountsRouteImport.update({
+    id: '/chart-of-accounts',
+    path: '/chart-of-accounts',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBulkEmailRoute =
+  AuthenticatedAdminBulkEmailRouteImport.update({
+    id: '/bulk-email',
+    path: '/bulk-email',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankTransactionsRoute =
+  AuthenticatedAdminBankTransactionsRouteImport.update({
+    id: '/bank-transactions',
+    path: '/bank-transactions',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankReconciliationRoute =
+  AuthenticatedAdminBankReconciliationRouteImport.update({
+    id: '/bank-reconciliation',
+    path: '/bank-reconciliation',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankBulkEntryRoute =
+  AuthenticatedAdminBankBulkEntryRouteImport.update({
+    id: '/bank-bulk-entry',
+    path: '/bank-bulk-entry',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBankAccountsRoute =
+  AuthenticatedAdminBankAccountsRouteImport.update({
+    id: '/bank-accounts',
+    path: '/bank-accounts',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminApprovalsRoute =
+  AuthenticatedAdminApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminAnnualFeesRoute =
+  AuthenticatedAdminAnnualFeesRouteImport.update({
+    id: '/annual-fees',
+    path: '/annual-fees',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminAmenitiesRoute =
+  AuthenticatedAdminAmenitiesRouteImport.update({
+    id: '/amenities',
+    path: '/amenities',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminHrPayslipsRoute =
+  AuthenticatedAdminHrPayslipsRouteImport.update({
+    id: '/hr/payslips',
+    path: '/hr/payslips',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminHrPayrollRoute =
@@ -515,10 +497,28 @@ const AuthenticatedAdminHrPayrollRoute =
     path: '/hr/payroll',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
-const AuthenticatedAdminHrPayslipsRoute =
-  AuthenticatedAdminHrPayslipsRouteImport.update({
-    id: '/hr/payslips',
-    path: '/hr/payslips',
+const AuthenticatedAdminHrLeaveRoute =
+  AuthenticatedAdminHrLeaveRouteImport.update({
+    id: '/hr/leave',
+    path: '/hr/leave',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrEmployeesRoute =
+  AuthenticatedAdminHrEmployeesRouteImport.update({
+    id: '/hr/employees',
+    path: '/hr/employees',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrConfigRoute =
+  AuthenticatedAdminHrConfigRouteImport.update({
+    id: '/hr/config',
+    path: '/hr/config',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHrAttendanceRoute =
+  AuthenticatedAdminHrAttendanceRouteImport.update({
+    id: '/hr/attendance',
+    path: '/hr/attendance',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 
@@ -999,32 +999,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -1034,11 +1013,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_authenticated/link-villa': {
+      id: '/_authenticated/link-villa'
+      path: '/link-villa'
+      fullPath: '/link-villa'
+      preLoaderRoute: typeof AuthenticatedLinkVillaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -1048,18 +1069,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+    '/_authenticated/portal': {
+      id: '/_authenticated/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof AuthenticatedPortalRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/gate': {
@@ -1069,348 +1083,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGateRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/link-villa': {
-      id: '/_authenticated/link-villa'
-      path: '/link-villa'
-      fullPath: '/link-villa'
-      preLoaderRoute: typeof AuthenticatedLinkVillaRouteImport
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/portal': {
-      id: '/_authenticated/portal'
-      path: '/portal'
-      fullPath: '/portal'
-      preLoaderRoute: typeof AuthenticatedPortalRouteRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/admin/': {
-      id: '/_authenticated/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/amenities': {
-      id: '/_authenticated/admin/amenities'
-      path: '/amenities'
-      fullPath: '/admin/amenities'
-      preLoaderRoute: typeof AuthenticatedAdminAmenitiesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/annual-fees': {
-      id: '/_authenticated/admin/annual-fees'
-      path: '/annual-fees'
-      fullPath: '/admin/annual-fees'
-      preLoaderRoute: typeof AuthenticatedAdminAnnualFeesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/approvals': {
-      id: '/_authenticated/admin/approvals'
-      path: '/approvals'
-      fullPath: '/admin/approvals'
-      preLoaderRoute: typeof AuthenticatedAdminApprovalsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/audit': {
-      id: '/_authenticated/admin/audit'
-      path: '/audit'
-      fullPath: '/admin/audit'
-      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/bank-accounts': {
-      id: '/_authenticated/admin/bank-accounts'
-      path: '/bank-accounts'
-      fullPath: '/admin/bank-accounts'
-      preLoaderRoute: typeof AuthenticatedAdminBankAccountsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/bank-bulk-entry': {
-      id: '/_authenticated/admin/bank-bulk-entry'
-      path: '/bank-bulk-entry'
-      fullPath: '/admin/bank-bulk-entry'
-      preLoaderRoute: typeof AuthenticatedAdminBankBulkEntryRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/bank-reconciliation': {
-      id: '/_authenticated/admin/bank-reconciliation'
-      path: '/bank-reconciliation'
-      fullPath: '/admin/bank-reconciliation'
-      preLoaderRoute: typeof AuthenticatedAdminBankReconciliationRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/bank-transactions': {
-      id: '/_authenticated/admin/bank-transactions'
-      path: '/bank-transactions'
-      fullPath: '/admin/bank-transactions'
-      preLoaderRoute: typeof AuthenticatedAdminBankTransactionsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/bulk-email': {
-      id: '/_authenticated/admin/bulk-email'
-      path: '/bulk-email'
-      fullPath: '/admin/bulk-email'
-      preLoaderRoute: typeof AuthenticatedAdminBulkEmailRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/chart-of-accounts': {
-      id: '/_authenticated/admin/chart-of-accounts'
-      path: '/chart-of-accounts'
-      fullPath: '/admin/chart-of-accounts'
-      preLoaderRoute: typeof AuthenticatedAdminChartOfAccountsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/credit-notes': {
-      id: '/_authenticated/admin/credit-notes'
-      path: '/credit-notes'
-      fullPath: '/admin/credit-notes'
-      preLoaderRoute: typeof AuthenticatedAdminCreditNotesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/documents': {
-      id: '/_authenticated/admin/documents'
-      path: '/documents'
-      fullPath: '/admin/documents'
-      preLoaderRoute: typeof AuthenticatedAdminDocumentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/emergency-contacts': {
-      id: '/_authenticated/admin/emergency-contacts'
-      path: '/emergency-contacts'
-      fullPath: '/admin/emergency-contacts'
-      preLoaderRoute: typeof AuthenticatedAdminEmergencyContactsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/expenses': {
-      id: '/_authenticated/admin/expenses'
-      path: '/expenses'
-      fullPath: '/admin/expenses'
-      preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/invoices': {
-      id: '/_authenticated/admin/invoices'
-      path: '/invoices'
-      fullPath: '/admin/invoices'
-      preLoaderRoute: typeof AuthenticatedAdminInvoicesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/maintenance': {
-      id: '/_authenticated/admin/maintenance'
-      path: '/maintenance'
-      fullPath: '/admin/maintenance'
-      preLoaderRoute: typeof AuthenticatedAdminMaintenanceRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/notice-groups': {
-      id: '/_authenticated/admin/notice-groups'
-      path: '/notice-groups'
-      fullPath: '/admin/notice-groups'
-      preLoaderRoute: typeof AuthenticatedAdminNoticeGroupsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/notices': {
-      id: '/_authenticated/admin/notices'
-      path: '/notices'
-      fullPath: '/admin/notices'
-      preLoaderRoute: typeof AuthenticatedAdminNoticesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/owners-association': {
-      id: '/_authenticated/admin/owners-association'
-      path: '/owners-association'
-      fullPath: '/admin/owners-association'
-      preLoaderRoute: typeof AuthenticatedAdminOwnersAssociationRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/payments': {
-      id: '/_authenticated/admin/payments'
-      path: '/payments'
-      fullPath: '/admin/payments'
-      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/payroll-journals': {
-      id: '/_authenticated/admin/payroll-journals'
-      path: '/payroll-journals'
-      fullPath: '/admin/payroll-journals'
-      preLoaderRoute: typeof AuthenticatedAdminPayrollJournalsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/portal-access-requests': {
-      id: '/_authenticated/admin/portal-access-requests'
-      path: '/portal-access-requests'
-      fullPath: '/admin/portal-access-requests'
-      preLoaderRoute: typeof AuthenticatedAdminPortalAccessRequestsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/profile-change-requests': {
-      id: '/_authenticated/admin/profile-change-requests'
-      path: '/profile-change-requests'
-      fullPath: '/admin/profile-change-requests'
-      preLoaderRoute: typeof AuthenticatedAdminProfileChangeRequestsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/purchase-invoices': {
-      id: '/_authenticated/admin/purchase-invoices'
-      path: '/purchase-invoices'
-      fullPath: '/admin/purchase-invoices'
-      preLoaderRoute: typeof AuthenticatedAdminPurchaseInvoicesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/purchases': {
-      id: '/_authenticated/admin/purchases'
-      path: '/purchases'
-      fullPath: '/admin/purchases'
-      preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/reports': {
-      id: '/_authenticated/admin/reports'
-      path: '/reports'
-      fullPath: '/admin/reports'
-      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/reports-hub': {
-      id: '/_authenticated/admin/reports-hub'
-      path: '/reports-hub'
-      fullPath: '/admin/reports-hub'
-      preLoaderRoute: typeof AuthenticatedAdminReportsHubRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/residents': {
-      id: '/_authenticated/admin/residents'
-      path: '/residents'
-      fullPath: '/admin/residents'
-      preLoaderRoute: typeof AuthenticatedAdminResidentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/sales': {
-      id: '/_authenticated/admin/sales'
-      path: '/sales'
-      fullPath: '/admin/sales'
-      preLoaderRoute: typeof AuthenticatedAdminSalesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/statements': {
-      id: '/_authenticated/admin/statements'
-      path: '/statements'
-      fullPath: '/admin/statements'
-      preLoaderRoute: typeof AuthenticatedAdminStatementsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/templates': {
-      id: '/_authenticated/admin/templates'
-      path: '/templates'
-      fullPath: '/admin/templates'
-      preLoaderRoute: typeof AuthenticatedAdminTemplatesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/units': {
-      id: '/_authenticated/admin/units'
-      path: '/units'
-      fullPath: '/admin/units'
-      preLoaderRoute: typeof AuthenticatedAdminUnitsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/vendor-payments': {
-      id: '/_authenticated/admin/vendor-payments'
-      path: '/vendor-payments'
-      fullPath: '/admin/vendor-payments'
-      preLoaderRoute: typeof AuthenticatedAdminVendorPaymentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/vendors': {
-      id: '/_authenticated/admin/vendors'
-      path: '/vendors'
-      fullPath: '/admin/vendors'
-      preLoaderRoute: typeof AuthenticatedAdminVendorsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/visitors': {
-      id: '/_authenticated/admin/visitors'
-      path: '/visitors'
-      fullPath: '/admin/visitors'
-      preLoaderRoute: typeof AuthenticatedAdminVisitorsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/gate/': {
-      id: '/_authenticated/gate/'
-      path: '/'
-      fullPath: '/gate/'
-      preLoaderRoute: typeof AuthenticatedGateIndexRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
-    }
-    '/_authenticated/gate/approved': {
-      id: '/_authenticated/gate/approved'
-      path: '/approved'
-      fullPath: '/gate/approved'
-      preLoaderRoute: typeof AuthenticatedGateApprovedRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
-    }
-    '/_authenticated/gate/checkin': {
-      id: '/_authenticated/gate/checkin'
-      path: '/checkin'
-      fullPath: '/gate/checkin'
-      preLoaderRoute: typeof AuthenticatedGateCheckinRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
-    }
-    '/_authenticated/gate/emergency': {
-      id: '/_authenticated/gate/emergency'
-      path: '/emergency'
-      fullPath: '/gate/emergency'
-      preLoaderRoute: typeof AuthenticatedGateEmergencyRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
-    }
-    '/_authenticated/gate/incidents': {
-      id: '/_authenticated/gate/incidents'
-      path: '/incidents'
-      fullPath: '/gate/incidents'
-      preLoaderRoute: typeof AuthenticatedGateIncidentsRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
-    }
-    '/_authenticated/gate/scan': {
-      id: '/_authenticated/gate/scan'
-      path: '/scan'
-      fullPath: '/gate/scan'
-      preLoaderRoute: typeof AuthenticatedGateScanRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
-    }
-    '/_authenticated/gate/search': {
-      id: '/_authenticated/gate/search'
-      path: '/search'
-      fullPath: '/gate/search'
-      preLoaderRoute: typeof AuthenticatedGateSearchRouteImport
-      parentRoute: typeof AuthenticatedGateRouteRoute
     }
     '/_authenticated/portal/': {
       id: '/_authenticated/portal/'
@@ -1419,60 +1097,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalIndexRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
-    '/_authenticated/portal/amenities': {
-      id: '/_authenticated/portal/amenities'
-      path: '/amenities'
-      fullPath: '/portal/amenities'
-      preLoaderRoute: typeof AuthenticatedPortalAmenitiesRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
+    '/_authenticated/gate/': {
+      id: '/_authenticated/gate/'
+      path: '/'
+      fullPath: '/gate/'
+      preLoaderRoute: typeof AuthenticatedGateIndexRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
     }
-    '/_authenticated/portal/announcements': {
-      id: '/_authenticated/portal/announcements'
-      path: '/announcements'
-      fullPath: '/portal/announcements'
-      preLoaderRoute: typeof AuthenticatedPortalAnnouncementsRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/portal/calculator': {
-      id: '/_authenticated/portal/calculator'
-      path: '/calculator'
-      fullPath: '/portal/calculator'
-      preLoaderRoute: typeof AuthenticatedPortalCalculatorRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
-    }
-    '/_authenticated/portal/invoices': {
-      id: '/_authenticated/portal/invoices'
-      path: '/invoices'
-      fullPath: '/portal/invoices'
-      preLoaderRoute: typeof AuthenticatedPortalInvoicesRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
-    }
-    '/_authenticated/portal/maintenance': {
-      id: '/_authenticated/portal/maintenance'
-      path: '/maintenance'
-      fullPath: '/portal/maintenance'
-      preLoaderRoute: typeof AuthenticatedPortalMaintenanceRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
-    }
-    '/_authenticated/portal/more': {
-      id: '/_authenticated/portal/more'
-      path: '/more'
-      fullPath: '/portal/more'
-      preLoaderRoute: typeof AuthenticatedPortalMoreRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
-    }
-    '/_authenticated/portal/owners-association': {
-      id: '/_authenticated/portal/owners-association'
-      path: '/owners-association'
-      fullPath: '/portal/owners-association'
-      preLoaderRoute: typeof AuthenticatedPortalOwnersAssociationRouteImport
-      parentRoute: typeof AuthenticatedPortalRouteRoute
-    }
-    '/_authenticated/portal/profile': {
-      id: '/_authenticated/portal/profile'
-      path: '/profile'
-      fullPath: '/portal/profile'
-      preLoaderRoute: typeof AuthenticatedPortalProfileRouteImport
+    '/_authenticated/portal/work': {
+      id: '/_authenticated/portal/work'
+      path: '/work'
+      fullPath: '/portal/work'
+      preLoaderRoute: typeof AuthenticatedPortalWorkRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
     '/_authenticated/portal/visitors': {
@@ -1482,39 +1125,375 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalVisitorsRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
-    '/_authenticated/portal/work': {
-      id: '/_authenticated/portal/work'
-      path: '/work'
-      fullPath: '/portal/work'
-      preLoaderRoute: typeof AuthenticatedPortalWorkRouteImport
+    '/_authenticated/portal/profile': {
+      id: '/_authenticated/portal/profile'
+      path: '/profile'
+      fullPath: '/portal/profile'
+      preLoaderRoute: typeof AuthenticatedPortalProfileRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
-    '/_authenticated/admin/hr/attendance': {
-      id: '/_authenticated/admin/hr/attendance'
-      path: '/hr/attendance'
-      fullPath: '/admin/hr/attendance'
-      preLoaderRoute: typeof AuthenticatedAdminHrAttendanceRouteImport
+    '/_authenticated/portal/owners-association': {
+      id: '/_authenticated/portal/owners-association'
+      path: '/owners-association'
+      fullPath: '/portal/owners-association'
+      preLoaderRoute: typeof AuthenticatedPortalOwnersAssociationRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/more': {
+      id: '/_authenticated/portal/more'
+      path: '/more'
+      fullPath: '/portal/more'
+      preLoaderRoute: typeof AuthenticatedPortalMoreRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/maintenance': {
+      id: '/_authenticated/portal/maintenance'
+      path: '/maintenance'
+      fullPath: '/portal/maintenance'
+      preLoaderRoute: typeof AuthenticatedPortalMaintenanceRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/invoices': {
+      id: '/_authenticated/portal/invoices'
+      path: '/invoices'
+      fullPath: '/portal/invoices'
+      preLoaderRoute: typeof AuthenticatedPortalInvoicesRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/calculator': {
+      id: '/_authenticated/portal/calculator'
+      path: '/calculator'
+      fullPath: '/portal/calculator'
+      preLoaderRoute: typeof AuthenticatedPortalCalculatorRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/announcements': {
+      id: '/_authenticated/portal/announcements'
+      path: '/announcements'
+      fullPath: '/portal/announcements'
+      preLoaderRoute: typeof AuthenticatedPortalAnnouncementsRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/amenities': {
+      id: '/_authenticated/portal/amenities'
+      path: '/amenities'
+      fullPath: '/portal/amenities'
+      preLoaderRoute: typeof AuthenticatedPortalAmenitiesRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/gate/search': {
+      id: '/_authenticated/gate/search'
+      path: '/search'
+      fullPath: '/gate/search'
+      preLoaderRoute: typeof AuthenticatedGateSearchRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/scan': {
+      id: '/_authenticated/gate/scan'
+      path: '/scan'
+      fullPath: '/gate/scan'
+      preLoaderRoute: typeof AuthenticatedGateScanRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/incidents': {
+      id: '/_authenticated/gate/incidents'
+      path: '/incidents'
+      fullPath: '/gate/incidents'
+      preLoaderRoute: typeof AuthenticatedGateIncidentsRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/emergency': {
+      id: '/_authenticated/gate/emergency'
+      path: '/emergency'
+      fullPath: '/gate/emergency'
+      preLoaderRoute: typeof AuthenticatedGateEmergencyRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/checkin': {
+      id: '/_authenticated/gate/checkin'
+      path: '/checkin'
+      fullPath: '/gate/checkin'
+      preLoaderRoute: typeof AuthenticatedGateCheckinRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/gate/approved': {
+      id: '/_authenticated/gate/approved'
+      path: '/approved'
+      fullPath: '/gate/approved'
+      preLoaderRoute: typeof AuthenticatedGateApprovedRouteImport
+      parentRoute: typeof AuthenticatedGateRouteRoute
+    }
+    '/_authenticated/admin/visitors': {
+      id: '/_authenticated/admin/visitors'
+      path: '/visitors'
+      fullPath: '/admin/visitors'
+      preLoaderRoute: typeof AuthenticatedAdminVisitorsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/hr/config': {
-      id: '/_authenticated/admin/hr/config'
-      path: '/hr/config'
-      fullPath: '/admin/hr/config'
-      preLoaderRoute: typeof AuthenticatedAdminHrConfigRouteImport
+    '/_authenticated/admin/vendors': {
+      id: '/_authenticated/admin/vendors'
+      path: '/vendors'
+      fullPath: '/admin/vendors'
+      preLoaderRoute: typeof AuthenticatedAdminVendorsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/hr/employees': {
-      id: '/_authenticated/admin/hr/employees'
-      path: '/hr/employees'
-      fullPath: '/admin/hr/employees'
-      preLoaderRoute: typeof AuthenticatedAdminHrEmployeesRouteImport
+    '/_authenticated/admin/vendor-payments': {
+      id: '/_authenticated/admin/vendor-payments'
+      path: '/vendor-payments'
+      fullPath: '/admin/vendor-payments'
+      preLoaderRoute: typeof AuthenticatedAdminVendorPaymentsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/hr/leave': {
-      id: '/_authenticated/admin/hr/leave'
-      path: '/hr/leave'
-      fullPath: '/admin/hr/leave'
-      preLoaderRoute: typeof AuthenticatedAdminHrLeaveRouteImport
+    '/_authenticated/admin/units': {
+      id: '/_authenticated/admin/units'
+      path: '/units'
+      fullPath: '/admin/units'
+      preLoaderRoute: typeof AuthenticatedAdminUnitsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/templates': {
+      id: '/_authenticated/admin/templates'
+      path: '/templates'
+      fullPath: '/admin/templates'
+      preLoaderRoute: typeof AuthenticatedAdminTemplatesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/statements': {
+      id: '/_authenticated/admin/statements'
+      path: '/statements'
+      fullPath: '/admin/statements'
+      preLoaderRoute: typeof AuthenticatedAdminStatementsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/sales': {
+      id: '/_authenticated/admin/sales'
+      path: '/sales'
+      fullPath: '/admin/sales'
+      preLoaderRoute: typeof AuthenticatedAdminSalesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/residents': {
+      id: '/_authenticated/admin/residents'
+      path: '/residents'
+      fullPath: '/admin/residents'
+      preLoaderRoute: typeof AuthenticatedAdminResidentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/reports-hub': {
+      id: '/_authenticated/admin/reports-hub'
+      path: '/reports-hub'
+      fullPath: '/admin/reports-hub'
+      preLoaderRoute: typeof AuthenticatedAdminReportsHubRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/purchases': {
+      id: '/_authenticated/admin/purchases'
+      path: '/purchases'
+      fullPath: '/admin/purchases'
+      preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/purchase-invoices': {
+      id: '/_authenticated/admin/purchase-invoices'
+      path: '/purchase-invoices'
+      fullPath: '/admin/purchase-invoices'
+      preLoaderRoute: typeof AuthenticatedAdminPurchaseInvoicesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/profile-change-requests': {
+      id: '/_authenticated/admin/profile-change-requests'
+      path: '/profile-change-requests'
+      fullPath: '/admin/profile-change-requests'
+      preLoaderRoute: typeof AuthenticatedAdminProfileChangeRequestsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/portal-access-requests': {
+      id: '/_authenticated/admin/portal-access-requests'
+      path: '/portal-access-requests'
+      fullPath: '/admin/portal-access-requests'
+      preLoaderRoute: typeof AuthenticatedAdminPortalAccessRequestsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/payroll-journals': {
+      id: '/_authenticated/admin/payroll-journals'
+      path: '/payroll-journals'
+      fullPath: '/admin/payroll-journals'
+      preLoaderRoute: typeof AuthenticatedAdminPayrollJournalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/payments': {
+      id: '/_authenticated/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/owners-association': {
+      id: '/_authenticated/admin/owners-association'
+      path: '/owners-association'
+      fullPath: '/admin/owners-association'
+      preLoaderRoute: typeof AuthenticatedAdminOwnersAssociationRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/notices': {
+      id: '/_authenticated/admin/notices'
+      path: '/notices'
+      fullPath: '/admin/notices'
+      preLoaderRoute: typeof AuthenticatedAdminNoticesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/notice-groups': {
+      id: '/_authenticated/admin/notice-groups'
+      path: '/notice-groups'
+      fullPath: '/admin/notice-groups'
+      preLoaderRoute: typeof AuthenticatedAdminNoticeGroupsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/maintenance': {
+      id: '/_authenticated/admin/maintenance'
+      path: '/maintenance'
+      fullPath: '/admin/maintenance'
+      preLoaderRoute: typeof AuthenticatedAdminMaintenanceRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/invoices': {
+      id: '/_authenticated/admin/invoices'
+      path: '/invoices'
+      fullPath: '/admin/invoices'
+      preLoaderRoute: typeof AuthenticatedAdminInvoicesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/expenses': {
+      id: '/_authenticated/admin/expenses'
+      path: '/expenses'
+      fullPath: '/admin/expenses'
+      preLoaderRoute: typeof AuthenticatedAdminExpensesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/emergency-contacts': {
+      id: '/_authenticated/admin/emergency-contacts'
+      path: '/emergency-contacts'
+      fullPath: '/admin/emergency-contacts'
+      preLoaderRoute: typeof AuthenticatedAdminEmergencyContactsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/documents': {
+      id: '/_authenticated/admin/documents'
+      path: '/documents'
+      fullPath: '/admin/documents'
+      preLoaderRoute: typeof AuthenticatedAdminDocumentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/credit-notes': {
+      id: '/_authenticated/admin/credit-notes'
+      path: '/credit-notes'
+      fullPath: '/admin/credit-notes'
+      preLoaderRoute: typeof AuthenticatedAdminCreditNotesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/chart-of-accounts': {
+      id: '/_authenticated/admin/chart-of-accounts'
+      path: '/chart-of-accounts'
+      fullPath: '/admin/chart-of-accounts'
+      preLoaderRoute: typeof AuthenticatedAdminChartOfAccountsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bulk-email': {
+      id: '/_authenticated/admin/bulk-email'
+      path: '/bulk-email'
+      fullPath: '/admin/bulk-email'
+      preLoaderRoute: typeof AuthenticatedAdminBulkEmailRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-transactions': {
+      id: '/_authenticated/admin/bank-transactions'
+      path: '/bank-transactions'
+      fullPath: '/admin/bank-transactions'
+      preLoaderRoute: typeof AuthenticatedAdminBankTransactionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-reconciliation': {
+      id: '/_authenticated/admin/bank-reconciliation'
+      path: '/bank-reconciliation'
+      fullPath: '/admin/bank-reconciliation'
+      preLoaderRoute: typeof AuthenticatedAdminBankReconciliationRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-bulk-entry': {
+      id: '/_authenticated/admin/bank-bulk-entry'
+      path: '/bank-bulk-entry'
+      fullPath: '/admin/bank-bulk-entry'
+      preLoaderRoute: typeof AuthenticatedAdminBankBulkEntryRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/bank-accounts': {
+      id: '/_authenticated/admin/bank-accounts'
+      path: '/bank-accounts'
+      fullPath: '/admin/bank-accounts'
+      preLoaderRoute: typeof AuthenticatedAdminBankAccountsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/approvals': {
+      id: '/_authenticated/admin/approvals'
+      path: '/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AuthenticatedAdminApprovalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/annual-fees': {
+      id: '/_authenticated/admin/annual-fees'
+      path: '/annual-fees'
+      fullPath: '/admin/annual-fees'
+      preLoaderRoute: typeof AuthenticatedAdminAnnualFeesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/amenities': {
+      id: '/_authenticated/admin/amenities'
+      path: '/amenities'
+      fullPath: '/admin/amenities'
+      preLoaderRoute: typeof AuthenticatedAdminAmenitiesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/hr/payslips': {
+      id: '/_authenticated/admin/hr/payslips'
+      path: '/hr/payslips'
+      fullPath: '/admin/hr/payslips'
+      preLoaderRoute: typeof AuthenticatedAdminHrPayslipsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/hr/payroll': {
@@ -1524,11 +1503,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHrPayrollRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/hr/payslips': {
-      id: '/_authenticated/admin/hr/payslips'
-      path: '/hr/payslips'
-      fullPath: '/admin/hr/payslips'
-      preLoaderRoute: typeof AuthenticatedAdminHrPayslipsRouteImport
+    '/_authenticated/admin/hr/leave': {
+      id: '/_authenticated/admin/hr/leave'
+      path: '/hr/leave'
+      fullPath: '/admin/hr/leave'
+      preLoaderRoute: typeof AuthenticatedAdminHrLeaveRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/employees': {
+      id: '/_authenticated/admin/hr/employees'
+      path: '/hr/employees'
+      fullPath: '/admin/hr/employees'
+      preLoaderRoute: typeof AuthenticatedAdminHrEmployeesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/config': {
+      id: '/_authenticated/admin/hr/config'
+      path: '/hr/config'
+      fullPath: '/admin/hr/config'
+      preLoaderRoute: typeof AuthenticatedAdminHrConfigRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hr/attendance': {
+      id: '/_authenticated/admin/hr/attendance'
+      path: '/hr/attendance'
+      fullPath: '/admin/hr/attendance'
+      preLoaderRoute: typeof AuthenticatedAdminHrAttendanceRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
   }
