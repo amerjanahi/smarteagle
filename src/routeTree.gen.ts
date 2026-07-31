@@ -27,6 +27,7 @@ import { Route as AuthenticatedGateIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedPortalWorkRouteImport } from './routes/_authenticated/portal/work'
 import { Route as AuthenticatedPortalVisitorsRouteImport } from './routes/_authenticated/portal/visitors'
+import { Route as AuthenticatedPortalSettingsRouteImport } from './routes/_authenticated/portal/settings'
 import { Route as AuthenticatedPortalProfileRouteImport } from './routes/_authenticated/portal/profile'
 import { Route as AuthenticatedPortalOwnersAssociationRouteImport } from './routes/_authenticated/portal/owners-association'
 import { Route as AuthenticatedPortalMoreRouteImport } from './routes/_authenticated/portal/more'
@@ -178,6 +179,12 @@ const AuthenticatedPortalVisitorsRoute =
   AuthenticatedPortalVisitorsRouteImport.update({
     id: '/visitors',
     path: '/visitors',
+    getParentRoute: () => AuthenticatedPortalRouteRoute,
+  } as any)
+const AuthenticatedPortalSettingsRoute =
+  AuthenticatedPortalSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => AuthenticatedPortalRouteRoute,
   } as any)
 const AuthenticatedPortalProfileRoute =
@@ -587,6 +594,7 @@ export interface FileRoutesByFullPath {
   '/portal/more': typeof AuthenticatedPortalMoreRoute
   '/portal/owners-association': typeof AuthenticatedPortalOwnersAssociationRoute
   '/portal/profile': typeof AuthenticatedPortalProfileRoute
+  '/portal/settings': typeof AuthenticatedPortalSettingsRoute
   '/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
   '/portal/work': typeof AuthenticatedPortalWorkRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -661,6 +669,7 @@ export interface FileRoutesByTo {
   '/portal/more': typeof AuthenticatedPortalMoreRoute
   '/portal/owners-association': typeof AuthenticatedPortalOwnersAssociationRoute
   '/portal/profile': typeof AuthenticatedPortalProfileRoute
+  '/portal/settings': typeof AuthenticatedPortalSettingsRoute
   '/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
   '/portal/work': typeof AuthenticatedPortalWorkRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -740,6 +749,7 @@ export interface FileRoutesById {
   '/_authenticated/portal/more': typeof AuthenticatedPortalMoreRoute
   '/_authenticated/portal/owners-association': typeof AuthenticatedPortalOwnersAssociationRoute
   '/_authenticated/portal/profile': typeof AuthenticatedPortalProfileRoute
+  '/_authenticated/portal/settings': typeof AuthenticatedPortalSettingsRoute
   '/_authenticated/portal/visitors': typeof AuthenticatedPortalVisitorsRoute
   '/_authenticated/portal/work': typeof AuthenticatedPortalWorkRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -819,6 +829,7 @@ export interface FileRouteTypes {
     | '/portal/more'
     | '/portal/owners-association'
     | '/portal/profile'
+    | '/portal/settings'
     | '/portal/visitors'
     | '/portal/work'
     | '/admin/'
@@ -893,6 +904,7 @@ export interface FileRouteTypes {
     | '/portal/more'
     | '/portal/owners-association'
     | '/portal/profile'
+    | '/portal/settings'
     | '/portal/visitors'
     | '/portal/work'
     | '/admin'
@@ -971,6 +983,7 @@ export interface FileRouteTypes {
     | '/_authenticated/portal/more'
     | '/_authenticated/portal/owners-association'
     | '/_authenticated/portal/profile'
+    | '/_authenticated/portal/settings'
     | '/_authenticated/portal/visitors'
     | '/_authenticated/portal/work'
     | '/_authenticated/admin/'
@@ -1123,6 +1136,13 @@ declare module '@tanstack/react-router' {
       path: '/visitors'
       fullPath: '/portal/visitors'
       preLoaderRoute: typeof AuthenticatedPortalVisitorsRouteImport
+      parentRoute: typeof AuthenticatedPortalRouteRoute
+    }
+    '/_authenticated/portal/settings': {
+      id: '/_authenticated/portal/settings'
+      path: '/settings'
+      fullPath: '/portal/settings'
+      preLoaderRoute: typeof AuthenticatedPortalSettingsRouteImport
       parentRoute: typeof AuthenticatedPortalRouteRoute
     }
     '/_authenticated/portal/profile': {
@@ -1677,6 +1697,7 @@ interface AuthenticatedPortalRouteRouteChildren {
   AuthenticatedPortalMoreRoute: typeof AuthenticatedPortalMoreRoute
   AuthenticatedPortalOwnersAssociationRoute: typeof AuthenticatedPortalOwnersAssociationRoute
   AuthenticatedPortalProfileRoute: typeof AuthenticatedPortalProfileRoute
+  AuthenticatedPortalSettingsRoute: typeof AuthenticatedPortalSettingsRoute
   AuthenticatedPortalVisitorsRoute: typeof AuthenticatedPortalVisitorsRoute
   AuthenticatedPortalWorkRoute: typeof AuthenticatedPortalWorkRoute
   AuthenticatedPortalIndexRoute: typeof AuthenticatedPortalIndexRoute
@@ -1694,6 +1715,7 @@ const AuthenticatedPortalRouteRouteChildren: AuthenticatedPortalRouteRouteChildr
     AuthenticatedPortalOwnersAssociationRoute:
       AuthenticatedPortalOwnersAssociationRoute,
     AuthenticatedPortalProfileRoute: AuthenticatedPortalProfileRoute,
+    AuthenticatedPortalSettingsRoute: AuthenticatedPortalSettingsRoute,
     AuthenticatedPortalVisitorsRoute: AuthenticatedPortalVisitorsRoute,
     AuthenticatedPortalWorkRoute: AuthenticatedPortalWorkRoute,
     AuthenticatedPortalIndexRoute: AuthenticatedPortalIndexRoute,
