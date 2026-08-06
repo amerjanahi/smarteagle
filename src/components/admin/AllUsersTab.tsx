@@ -24,6 +24,17 @@ const ROLE_OPTIONS = [
   "resident", "property_manager", "finance", "accountant", "hr", "operations", "security", "viewer",
 ] as const;
 
+const ROLE_LABELS: Record<(typeof ROLE_OPTIONS)[number], string> = {
+  resident: "Resident",
+  property_manager: "Property Manager",
+  finance: "Finance Manager",
+  accountant: "Accountant",
+  hr: "Human Resources",
+  operations: "Operations",
+  security: "Security",
+  viewer: "Viewer",
+};
+
 export function AllUsersTab() {
   const qc = useQueryClient();
   const listFn = useServerFn(listAllSignups);
