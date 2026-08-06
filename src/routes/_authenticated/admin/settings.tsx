@@ -88,9 +88,11 @@ function FinanceTab() {
     <TabsList>
       <TabsTrigger value="currency">Currency</TabsTrigger>
       <TabsTrigger value="tax">Tax &amp; Fees</TabsTrigger>
+      <TabsTrigger value="formats">Date, Time &amp; Numbers</TabsTrigger>
     </TabsList>
     <TabsContent value="currency"><CurrencyTab /></TabsContent>
     <TabsContent value="tax"><VatTab /></TabsContent>
+    <TabsContent value="formats"><DisplayFormatsTab /></TabsContent>
   </Tabs>;
 }
 
@@ -270,6 +272,59 @@ function VatTab() {
         <div className="sm:col-span-2"><Label>Tax invoice footer</Label><Textarea rows={3} value={form.tax_invoice_footer ?? ""} onChange={e => setForm({ ...form, tax_invoice_footer: e.target.value })} /></div>
       </div>
       <div className="flex justify-end"><Button onClick={() => save.mutate()} disabled={save.isPending}>Save</Button></div>
+    </div>
+  );
+}
+
+const DATE_FORMATS = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"] as const;
+const TIME_FORMATS = ["24h", "12h"] as const;
+const NUMBER_FORMATS = ["comma-dot", "dot-comma", "space-dot"] as const;
+
+function formatNumberPreview(value: number, format: string) {
+  const [group, decimal] = format === "dot-comma" ? [".", ","] : format === "space-dot" ? [" ", "."] : [",", "."];
+  const [whole, fraction] = value.toFixed(2).split(".");
+  return whole.replace(/\\B(?=(\\d{3})+(?!\\d))/g, group) + decimal + fraction;
+}
+
+function DisplayFormatsTab() {
+  const qc = useQueryClient();
+  const { data } = useSettings();
+  const [form, setForm] = useState<any>({});
+  useEffect(() => { if (data) setForm(data); }, [data]);
+
+  const dateFormat = DATE_FORMATS.includes(form.date_format) ? form.date_format : "DD/MM/YYYY";
+  const timeFormat = TIME_FORMATS.includes(form.time_format) ? form.time_format : "24h";
+  const numberFormat = NUMBER_FORMATS.includes(form.number_format) ? form.number_format : "comma-dot";
+  const previewDate = dateFormat === "MM/DD/YYYY" ? "08/06/2026" : dateFormat === "YYYY-MM-DD" ? "2026-08-06" : "06/08/2026";
+  const previewTime = timeFormat === "12h" ? "2:30 PM" : "14:30";
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (!form.id) throw new Error("Settings are still loading.");
+      const { error } = await (supabase.from("company_settings" as any).update({
+        date_format: dateFormat,
+        time_format: timeFormat,
+        number_format: numberFormat,
+      }).eq("id", form.id) as any);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Display formats saved");
+      qc.invalidateQueries({ queryKey: ["company-settings"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+      <p className="text-sm text-muted-foreground">Choose how dates, times, and financial numbers are shown across new screens. Existing stored data is not changed.</p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div><Label>Date format</Label><Select value={dateFormat} onValueChange={(value) => setForm({ ...form, date_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DATE_FORMATS.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+        <div><Label>Time format</Label><Select value={timeFormat} onValueChange={(value) => setForm({ ...form, time_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="24h">24-hour (14:30)</SelectItem><SelectItem value="12h">12-hour (2:30 PM)</SelectItem></SelectContent></Select></div>
+        <div><Label>Number format</Label><Select value={numberFormat} onValueChange={(value) => setForm({ ...form, number_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="comma-dot">1,234.56</SelectItem><SelectItem value="dot-comma">1.234,56</SelectItem><SelectItem value="space-dot">1 234.56</SelectItem></SelectContent></Select></div>
+      </div>
+      <div className="grid gap-3 rounded-lg bg-muted/50 p-3 text-sm sm:grid-cols-3"><div><span className="text-muted-foreground">Date preview</span><p className="font-medium">{previewDate}</p></div><div><span className="text-muted-foreground">Time preview</span><p className="font-medium">{previewTime}</p></div><div><span className="text-muted-foreground">Number preview</span><p className="font-medium">{formatNumberPreview(1234567.89, numberFormat)}</p></div></div>
+      <div className="flex justify-end"><Button onClick={() => save.mutate()} disabled={save.isPending}>Save formats</Button></div>
     </div>
   );
 }

@@ -64,3 +64,14 @@ test("account approval replaces legacy roles and admin routes validate roles bef
   assert.match(adminRoute, /beforeLoad: async \(\) =>/);
   assert.match(adminRoute, /!roleNames\.includes\("admin"\) && !roleNames\.includes\("property_manager"\)/);
 });
+
+test("display format choices are constrained and do not alter stored values", async () => {
+  const migration = await read(
+    "supabase/migrations/20260806090000_add_display_format_settings.sql",
+  );
+
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS date_format/);
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS time_format/);
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS number_format/);
+  assert.match(migration, /These change presentation only; stored/);
+});

@@ -553,11 +553,14 @@ export type Database = {
           cr_number: string | null
           created_at: string
           default_currency: string
+          date_format: string
           email: string | null
           id: string
           logo_url: string | null
+          number_format: string
           phone: string | null
           tax_invoice_footer: string | null
+          time_format: string
           updated_at: string
           vat_effective_date: string | null
           vat_number: string | null
@@ -570,11 +573,14 @@ export type Database = {
           cr_number?: string | null
           created_at?: string
           default_currency?: string
+          date_format?: string
           email?: string | null
           id?: string
           logo_url?: string | null
+          number_format?: string
           phone?: string | null
           tax_invoice_footer?: string | null
+          time_format?: string
           updated_at?: string
           vat_effective_date?: string | null
           vat_number?: string | null
@@ -587,11 +593,14 @@ export type Database = {
           cr_number?: string | null
           created_at?: string
           default_currency?: string
+          date_format?: string
           email?: string | null
           id?: string
           logo_url?: string | null
+          number_format?: string
           phone?: string | null
           tax_invoice_footer?: string | null
+          time_format?: string
           updated_at?: string
           vat_effective_date?: string | null
           vat_number?: string | null
