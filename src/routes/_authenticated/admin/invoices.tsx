@@ -390,9 +390,9 @@ function InvoicesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Full-width create dialog */}
+      {/* Full-page invoice workspace */}
       <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
-        <DialogContent className="max-w-[96vw] w-[1200px] max-h-[92vh] overflow-y-auto">
+        <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none border-0 p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Create invoice</DialogTitle>
           </DialogHeader>
