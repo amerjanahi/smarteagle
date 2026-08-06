@@ -55,7 +55,8 @@ function InvoicesPage() {
     period_end: "",
     due_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
     payment_terms: "Net 30",
-    discount_amount: 0,
+    discount_value: "",
+    discount_type: "amount" as "amount" | "percentage",
     notes: "",
   });
   const [lines, setLines] = useState<Line[]>([{ description: "Service charge", quantity: 1, unit_price: 0, tax_rate: 5, account_id: null }]);
@@ -116,14 +117,18 @@ function InvoicesPage() {
 
   const subtotal = useMemo(() => lines.reduce((s, l) => s + l.quantity * l.unit_price, 0), [lines]);
   const tax = useMemo(() => lines.reduce((s, l) => s + l.quantity * l.unit_price * (l.tax_rate / 100), 0), [lines]);
-  const total = Math.max(subtotal + tax - Number(form.discount_amount || 0), 0);
+  const discountInput = Math.max(Number(form.discount_value || 0), 0);
+  const calculatedDiscount = form.discount_type === "percentage"
+    ? (subtotal + tax) * Math.min(discountInput, 100) / 100
+    : discountInput;
+  const total = Math.max(subtotal + tax - calculatedDiscount, 0);
 
   function resetForm() {
     setForm({
       unit_id: "", customer_name: "", customer_email: "", customer_phone: "",
       description: "", period_start: "", period_end: "",
       due_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
-      payment_terms: "Net 30", discount_amount: 0, notes: "",
+      payment_terms: "Net 30", discount_value: "", discount_type: "amount", notes: "",
     });
     setLines([{ description: "Service charge", quantity: 1, unit_price: 0, tax_rate: 5, account_id: defaultAccountId }]);
     setAttachments([]);
@@ -147,7 +152,7 @@ function InvoicesPage() {
       period_start: form.period_start || null,
       period_end: form.period_end || null,
       due_date: form.due_date,
-      discount_amount: Number(form.discount_amount || 0),
+      discount_amount: calculatedDiscount,
       payment_terms: form.payment_terms || null,
       notes: form.notes || null,
       customer_name: form.customer_name || null,
@@ -509,16 +514,24 @@ function InvoicesPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <Label>Discount (flat)</Label>
-                      <Input type="number" step="0.01" value={form.discount_amount}
-                        onChange={(e) => setForm({ ...form, discount_amount: +e.target.value })} />
+                      <Label>Discount</Label>
+                      <div className="flex gap-2">
+                        <Input type="number" min="0" max={form.discount_type === "percentage" ? 100 : undefined} step="0.01" value={form.discount_value}
+                          placeholder="0"
+                          onChange={(e) => setForm({ ...form, discount_value: e.target.value })} />
+                        <Select value={form.discount_type} onValueChange={(value: "amount" | "percentage") => setForm({ ...form, discount_type: value })}>
+                          <SelectTrigger className="w-36 shrink-0"><SelectValue /></SelectTrigger>
+                          <SelectContent><SelectItem value="amount">Amount</SelectItem><SelectItem value="percentage">Percentage</SelectItem></SelectContent>
+                        </Select>
+                      </div>
+                      {form.discount_type === "percentage" && <p className="mt-1 text-xs text-muted-foreground">Calculated from the invoice subtotal and VAT.</p>}
                     </div>
                     <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">
                       <div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div>
                       <div className="flex justify-between"><span>VAT</span><span>{money(tax)}</span></div>
-                      <div className="flex justify-between text-muted-foreground"><span>Discount</span><span>− {money(form.discount_amount || 0)}</span></div>
+                      <div className="flex justify-between text-muted-foreground"><span>Discount{form.discount_type === "percentage" && discountInput ? ` (${discountInput}%)` : ""}</span><span>− {money(calculatedDiscount)}</span></div>
                       <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Total</span><span>{money(total)}</span></div>
                     </div>
                   </div>
