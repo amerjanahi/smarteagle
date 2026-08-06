@@ -45,12 +45,13 @@ const PERMS = [
 
 function SettingsPage() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <header>
         <h2 className="font-display text-2xl font-bold tracking-tight">Settings &amp; Administration</h2>
         <p className="text-sm text-muted-foreground">A secure workspace for organization, people, finance controls, permissions, and documents.</p>
       </header>
-      <Tabs defaultValue="organization" className="md:grid md:grid-cols-[240px_minmax(0,1fr)] md:items-start md:gap-6">
+      <hr className="border-border" />
+      <Tabs defaultValue="organization" className="md:grid md:grid-cols-[200px_minmax(0,1fr)] md:items-start md:gap-8">
         <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:sticky md:top-4 md:flex-col md:overflow-visible md:rounded-xl md:border md:bg-card md:p-2">
           <TabsTrigger value="organization" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><Building2 className="h-4 w-4" />Organization</TabsTrigger>
           <TabsTrigger value="people" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><UsersRound className="h-4 w-4" />People &amp; Access</TabsTrigger>
@@ -58,13 +59,13 @@ function SettingsPage() {
           <TabsTrigger value="security" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><ShieldCheck className="h-4 w-4" />Security &amp; Roles</TabsTrigger>
           <TabsTrigger value="templates" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><FileStack className="h-4 w-4" />Documents</TabsTrigger>
         </TabsList>
-        <TabsContent value="organization" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
-        <TabsContent value="people" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Users" description="Manage user access, type, status, and portal permissions in one place." /><UsersTab /></TabsContent>
-        <TabsContent value="finance" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
-        <TabsContent value="security" className="mt-4 min-w-0 md:mt-0"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
-        <TabsContent value="templates" className="mt-4 min-w-0 md:mt-0">
+        <TabsContent value="organization" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
+        <TabsContent value="people" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Users" description="Manage user access, type, status, and portal permissions in one place." /><UsersTab /></TabsContent>
+        <TabsContent value="finance" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
+        <TabsContent value="security" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
+        <TabsContent value="templates" className="mt-4 min-w-0 space-y-6 md:mt-0">
           <SectionHeading title="Document templates" description="Manage the controlled layouts used for operational and financial documents." />
-          <div className="rounded-md border p-4 text-sm">
+          <div className="rounded-xl border border-border bg-card p-4 text-sm">
             Manage document templates for Invoice, Receipt, Credit Note, Statement, Work Order, and Purchase Order.
             <div className="mt-3">
               <a href="/admin/templates" className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-primary-foreground hover:opacity-90">Open Document Templates →</a>
@@ -77,7 +78,7 @@ function SettingsPage() {
 }
 
 function SectionHeading({ title, description }: { title: string; description: string }) {
-  return <div className="mb-3"><h3 className="font-semibold">{title}</h3><p className="text-sm text-muted-foreground">{description}</p></div>;
+  return <div className="space-y-1"><h3 className="text-lg font-semibold">{title}</h3><p className="text-sm text-muted-foreground">{description}</p></div>;
 }
 
 function UsersTab() { return <AllUsersTab />; }
