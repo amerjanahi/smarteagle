@@ -554,6 +554,7 @@ export type Database = {
           created_at: string
           default_currency: string
           date_format: string
+          decimal_places: number
           email: string | null
           id: string
           logo_url: string | null
@@ -574,6 +575,7 @@ export type Database = {
           created_at?: string
           default_currency?: string
           date_format?: string
+          decimal_places?: number
           email?: string | null
           id?: string
           logo_url?: string | null
@@ -594,6 +596,7 @@ export type Database = {
           created_at?: string
           default_currency?: string
           date_format?: string
+          decimal_places?: number
           email?: string | null
           id?: string
           logo_url?: string | null

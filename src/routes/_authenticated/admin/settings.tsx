@@ -276,14 +276,21 @@ function VatTab() {
   );
 }
 
-const DATE_FORMATS = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"] as const;
-const TIME_FORMATS = ["24h", "12h"] as const;
-const NUMBER_FORMATS = ["comma-dot", "dot-comma", "space-dot"] as const;
+const DATE_FORMATS = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD", "DD-MM-YYYY", "MM-DD-YYYY", "DD.MM.YYYY", "YYYY/MM/DD"] as const;
+const TIME_FORMATS = ["24h", "12h", "24h-seconds", "12h-seconds"] as const;
+const NUMBER_FORMATS = ["comma-dot", "dot-comma", "space-dot", "space-comma", "apostrophe-dot", "none-dot"] as const;
+const DECIMAL_PLACES = [0, 1, 2, 3, 4] as const;
 
-function formatNumberPreview(value: number, format: string) {
-  const [group, decimal] = format === "dot-comma" ? [".", ","] : format === "space-dot" ? [" ", "."] : [",", "."];
-  const [whole, fraction] = value.toFixed(2).split(".");
-  return whole.replace(/\\B(?=(\\d{3})+(?!\\d))/g, group) + decimal + fraction;
+function formatNumberPreview(value: number, format: string, decimals: number) {
+  const [group, decimal] = format === "dot-comma" ? [".", ","]
+    : format === "space-dot" ? [" ", "."]
+      : format === "space-comma" ? [" ", ","]
+        : format === "apostrophe-dot" ? ["'", "."]
+          : format === "none-dot" ? ["", "."]
+            : [",", "."];
+  const [whole, fraction = ""] = value.toFixed(decimals).split(".");
+  const grouped = group ? whole.replace(/\\B(?=(\\d{3})+(?!\\d))/g, group) : whole;
+  return decimals > 0 ? grouped + decimal + fraction : grouped;
 }
 
 function DisplayFormatsTab() {
@@ -295,8 +302,12 @@ function DisplayFormatsTab() {
   const dateFormat = DATE_FORMATS.includes(form.date_format) ? form.date_format : "DD/MM/YYYY";
   const timeFormat = TIME_FORMATS.includes(form.time_format) ? form.time_format : "24h";
   const numberFormat = NUMBER_FORMATS.includes(form.number_format) ? form.number_format : "comma-dot";
-  const previewDate = dateFormat === "MM/DD/YYYY" ? "08/06/2026" : dateFormat === "YYYY-MM-DD" ? "2026-08-06" : "06/08/2026";
-  const previewTime = timeFormat === "12h" ? "2:30 PM" : "14:30";
+  const decimalPlaces = DECIMAL_PLACES.includes(Number(form.decimal_places) as (typeof DECIMAL_PLACES)[number]) ? Number(form.decimal_places) : 2;
+  const previewDate = ({
+    "DD/MM/YYYY": "06/08/2026", "MM/DD/YYYY": "08/06/2026", "YYYY-MM-DD": "2026-08-06",
+    "DD-MM-YYYY": "06-08-2026", "MM-DD-YYYY": "08-06-2026", "DD.MM.YYYY": "06.08.2026", "YYYY/MM/DD": "2026/08/06",
+  } as Record<string, string>)[dateFormat];
+  const previewTime = timeFormat === "12h" ? "2:30 PM" : timeFormat === "12h-seconds" ? "2:30:45 PM" : timeFormat === "24h-seconds" ? "14:30:45" : "14:30";
 
   const save = useMutation({
     mutationFn: async () => {
@@ -305,6 +316,7 @@ function DisplayFormatsTab() {
         date_format: dateFormat,
         time_format: timeFormat,
         number_format: numberFormat,
+        decimal_places: decimalPlaces,
       }).eq("id", form.id) as any);
       if (error) throw error;
     },
@@ -318,12 +330,13 @@ function DisplayFormatsTab() {
   return (
     <div className="rounded-xl border border-border bg-card p-4 space-y-4">
       <p className="text-sm text-muted-foreground">Choose how dates, times, and financial numbers are shown across new screens. Existing stored data is not changed.</p>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div><Label>Date format</Label><Select value={dateFormat} onValueChange={(value) => setForm({ ...form, date_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DATE_FORMATS.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
-        <div><Label>Time format</Label><Select value={timeFormat} onValueChange={(value) => setForm({ ...form, time_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="24h">24-hour (14:30)</SelectItem><SelectItem value="12h">12-hour (2:30 PM)</SelectItem></SelectContent></Select></div>
-        <div><Label>Number format</Label><Select value={numberFormat} onValueChange={(value) => setForm({ ...form, number_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="comma-dot">1,234.56</SelectItem><SelectItem value="dot-comma">1.234,56</SelectItem><SelectItem value="space-dot">1 234.56</SelectItem></SelectContent></Select></div>
+        <div><Label>Time format</Label><Select value={timeFormat} onValueChange={(value) => setForm({ ...form, time_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="24h">24-hour (14:30)</SelectItem><SelectItem value="12h">12-hour (2:30 PM)</SelectItem><SelectItem value="24h-seconds">24-hour with seconds (14:30:45)</SelectItem><SelectItem value="12h-seconds">12-hour with seconds (2:30:45 PM)</SelectItem></SelectContent></Select></div>
+        <div><Label>Number format</Label><Select value={numberFormat} onValueChange={(value) => setForm({ ...form, number_format: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="comma-dot">1,234.56</SelectItem><SelectItem value="dot-comma">1.234,56</SelectItem><SelectItem value="space-dot">1 234.56</SelectItem><SelectItem value="space-comma">1 234,56</SelectItem><SelectItem value="apostrophe-dot">1&apos;234.56</SelectItem><SelectItem value="none-dot">1234.56</SelectItem></SelectContent></Select></div>
+        <div><Label>Decimal places</Label><Select value={String(decimalPlaces)} onValueChange={(value) => setForm({ ...form, decimal_places: Number(value) })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DECIMAL_PLACES.map((value) => <SelectItem key={value} value={String(value)}>{value} {value === 1 ? "decimal" : "decimals"}</SelectItem>)}</SelectContent></Select></div>
       </div>
-      <div className="grid gap-3 rounded-lg bg-muted/50 p-3 text-sm sm:grid-cols-3"><div><span className="text-muted-foreground">Date preview</span><p className="font-medium">{previewDate}</p></div><div><span className="text-muted-foreground">Time preview</span><p className="font-medium">{previewTime}</p></div><div><span className="text-muted-foreground">Number preview</span><p className="font-medium">{formatNumberPreview(1234567.89, numberFormat)}</p></div></div>
+      <div className="grid gap-3 rounded-lg bg-muted/50 p-3 text-sm sm:grid-cols-3"><div><span className="text-muted-foreground">Date preview</span><p className="font-medium">{previewDate}</p></div><div><span className="text-muted-foreground">Time preview</span><p className="font-medium">{previewTime}</p></div><div><span className="text-muted-foreground">Number preview</span><p className="font-medium">{formatNumberPreview(1234567.89, numberFormat, decimalPlaces)}</p></div></div>
       <div className="flex justify-end"><Button onClick={() => save.mutate()} disabled={save.isPending}>Save formats</Button></div>
     </div>
   );
