@@ -220,7 +220,7 @@ export function AllUsersTab() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {ROLE_OPTIONS.map((r) => <SelectItem key={r} value={r} className="capitalize">{r.replaceAll("_", " ")}</SelectItem>)}
+                          {ROLE_OPTIONS.map((r) => <SelectItem key={r} value={r} className="capitalize">{ROLE_LABELS[r]}</SelectItem>)}
                           </SelectContent>
                         </Select>
                         <Button
