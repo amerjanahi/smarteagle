@@ -414,8 +414,8 @@ function InvoicesPage() {
   );
 
   return (
-    <div className="flex min-h-[calc(100dvh-8rem)] w-full flex-col">
-      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4 sm:flex sm:justify-between">
+    <div className="mx-auto flex min-h-[calc(100dvh-8rem)] w-full max-w-[1440px] flex-col">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-border bg-card px-4 py-4 shadow-sm sm:flex sm:justify-between sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <Button variant="ghost" size="icon" onClick={closeWorkspace} title="Back to invoices">
             <ArrowLeft className="h-4 w-4" />
@@ -430,13 +430,17 @@ function InvoicesPage() {
         <Button variant="outline" onClick={closeWorkspace}>Back to invoices</Button>
       </header>
 
-      <div className="flex-1 pt-4">
+      <div className="flex-1 pt-6">
         <div className="min-w-0">
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
             {/* LEFT — Customer + meta */}
-            <Card>
+            <Card className="h-fit rounded-2xl border-border shadow-sm xl:sticky xl:top-4">
 
-              <CardContent className="space-y-4 pt-6">
+              <CardContent className="space-y-5 p-5">
+                <div className="border-b border-border pb-4">
+                  <p className="text-sm font-semibold">Customer &amp; schedule</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Select the unit, confirm the invoice name, and set payment timing.</p>
+                </div>
                 <div>
                   <Label>Unit</Label>
                   <Select value={form.unit_id} onValueChange={onUnitChange}>
@@ -455,7 +459,7 @@ function InvoicesPage() {
                   <Input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} />
                   <p className="mt-1 text-xs text-muted-foreground">Prefilled from the selected unit. Editing this name affects this invoice only.</p>
                 </div>
-                <p className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">Email and phone are taken automatically from the selected unit&apos;s active resident and are not edited on the invoice.</p>
+                <p className="rounded-xl border border-border bg-muted/40 p-3 text-xs text-muted-foreground">Email and phone are taken automatically from the selected unit&apos;s active resident and are not edited on the invoice.</p>
                 <div>
                   <Label>Due date</Label>
                   <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
@@ -488,16 +492,22 @@ function InvoicesPage() {
 
             {/* RIGHT — Lines + totals + notes + attachments */}
             <div className="space-y-4">
-              <Card>
-                <CardContent className="space-y-3 pt-6">
+              <Card className="rounded-2xl border-border shadow-sm">
+                <CardContent className="space-y-6 p-5">
                   <div>
                     <Label>Description / Subject</Label>
                     <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="E.g. Q1 service charge" />
                   </div>
 
                   <div>
-                    <Label>Line items</Label>
-                    <div className="space-y-2">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <div><Label>Line items</Label><p className="mt-1 text-xs text-muted-foreground">Add the charges that make up this invoice.</p></div>
+                      <Button variant="outline" size="sm" onClick={() => setLines([...lines, { ...blankLine(), account_id: defaultAccountId }])}>
+                        <Plus className="mr-2 h-4 w-4" /> Add line
+                      </Button>
+                    </div>
+                    <div className="overflow-x-auto rounded-xl border border-border bg-muted/20 p-3">
+                    <div className="min-w-[720px] space-y-2">
                       <div className="grid grid-cols-12 gap-2 px-1 text-xs font-medium text-muted-foreground">
                         <span className="col-span-3">Description</span>
                         <span className="col-span-2">GL account</span>
@@ -531,14 +541,12 @@ function InvoicesPage() {
                           </Button>
                         </div>
                       ))}
-                      <Button variant="outline" size="sm" onClick={() => setLines([...lines, { ...blankLine(), account_id: defaultAccountId }])}>
-                        <Plus className="mr-2 h-4 w-4" /> Add line
-                      </Button>
+                    </div>
                     </div>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
+                  <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+                    <div className="rounded-xl border border-border p-4">
                       <Label>Discount</Label>
                       <div className="flex gap-2">
                         <Input type="number" min="0" max={form.discount_type === "percentage" ? 100 : undefined} step="0.01" value={form.discount_value}
@@ -551,7 +559,7 @@ function InvoicesPage() {
                       </div>
                       {form.discount_type === "percentage" && <p className="mt-1 text-xs text-muted-foreground">Calculated from the invoice subtotal and VAT.</p>}
                     </div>
-                    <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">
+                    <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm shadow-sm">
                       <div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div>
                       <div className="flex justify-between"><span>VAT</span><span>{money(tax)}</span></div>
                       <div className="flex justify-between text-muted-foreground"><span>Discount{form.discount_type === "percentage" && discountInput ? ` (${discountInput}%)` : ""}</span><span>− {money(calculatedDiscount)}</span></div>
@@ -559,6 +567,7 @@ function InvoicesPage() {
                     </div>
                   </div>
 
+                  <div className="grid gap-5 lg:grid-cols-2">
                   <div>
                     <Label>Notes</Label>
                     <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Terms, bank details, thank-you note…" />
@@ -588,6 +597,7 @@ function InvoicesPage() {
                       </ul>
                     )}
                   </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -616,7 +626,7 @@ function InvoicesPage() {
       </Dialog>
 
 
-      <div className="sticky bottom-0 -mx-4 mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap items-center justify-end gap-2 rounded-2xl border border-border bg-background/95 px-4 py-3 shadow-lg backdrop-blur">
         <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
         <Button variant="outline" onClick={() => setPreviewOpen(true)}>Preview Invoice</Button>
         <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
