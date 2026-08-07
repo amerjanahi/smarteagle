@@ -537,7 +537,7 @@ function InvoicesPage() {
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, quantity: +e.target.value } : x))} />
                           <Input type="number" step="0.01" value={l.unit_price}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, unit_price: +e.target.value } : x))} />
-                          <Input type="number" step="0.01" value={l.tax_rate}
+                          <Input type="number" step="1" value={l.tax_rate}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, tax_rate: +e.target.value } : x))} />
                           <Button variant="ghost" size="icon"
                             onClick={() => setLines(lines.length > 1 ? lines.filter((_, j) => j !== i) : lines)}>
