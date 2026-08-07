@@ -441,7 +441,8 @@ function InvoicesPage() {
                   <p className="text-sm font-semibold">Customer &amp; schedule</p>
                   <p className="mt-1 text-xs text-muted-foreground">Select the unit, confirm the invoice name, and set payment timing.</p>
                 </div>
-                <div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
                   <Label>Unit</Label>
                   <Select value={form.unit_id} onValueChange={onUnitChange}>
                     <SelectTrigger><SelectValue placeholder="Select unit" /></SelectTrigger>
@@ -453,16 +454,32 @@ function InvoicesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <div>
+                  </div>
+                  <div>
                   <Label>Invoice customer name</Label>
                   <Input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} />
-                  <p className="mt-1 text-xs text-muted-foreground">Prefilled from the selected unit. Editing this name affects this invoice only.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Invoice only.</p>
+                  </div>
                 </div>
                 <p className="rounded-xl border border-border bg-muted/40 p-3 text-xs text-muted-foreground">Email and phone are taken automatically from the selected unit&apos;s active resident and are not edited on the invoice.</p>
-                <div>
-                  <Label>Due date</Label>
-                  <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label>Due date</Label>
+                    <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Payment terms</Label>
+                    <Select value={form.payment_terms} onValueChange={(v) => setForm({ ...form, payment_terms: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Due on receipt">Due on receipt</SelectItem>
+                        <SelectItem value="Net 7">Net 7</SelectItem>
+                        <SelectItem value="Net 14">Net 14</SelectItem>
+                        <SelectItem value="Net 30">Net 30</SelectItem>
+                        <SelectItem value="Net 60">Net 60</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -473,19 +490,6 @@ function InvoicesPage() {
                     <Label>Service to</Label>
                     <Input type="date" value={form.period_end} onChange={(e) => setForm({ ...form, period_end: e.target.value })} />
                   </div>
-                </div>
-                <div>
-                  <Label>Payment terms</Label>
-                  <Select value={form.payment_terms} onValueChange={(v) => setForm({ ...form, payment_terms: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Due on receipt">Due on receipt</SelectItem>
-                      <SelectItem value="Net 7">Net 7</SelectItem>
-                      <SelectItem value="Net 14">Net 14</SelectItem>
-                      <SelectItem value="Net 30">Net 30</SelectItem>
-                      <SelectItem value="Net 60">Net 60</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </CardContent>
             </Card>
