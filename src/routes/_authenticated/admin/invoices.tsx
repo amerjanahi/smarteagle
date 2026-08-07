@@ -612,7 +612,13 @@ function InvoicesPage() {
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none border-0 p-4 sm:p-8">
-          <DialogHeader className="mx-auto w-full max-w-[794px]"><DialogTitle>Invoice preview</DialogTitle></DialogHeader>
+          <DialogHeader className="mx-auto flex w-full max-w-[794px] flex-row items-center justify-between gap-3 pr-10">
+            <DialogTitle>Invoice preview</DialogTitle>
+            <Button variant="outline" size="sm" onClick={() => { window.location.href = "/admin/templates"; }}>
+              <FileText className="mr-2 h-4 w-4" />
+              Edit invoice template
+            </Button>
+          </DialogHeader>
           <div className="mx-auto w-full max-w-[794px] pb-8">
             <InvoicePreview
               form={form}
