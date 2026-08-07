@@ -591,8 +591,26 @@ function InvoicesPage() {
               </Card>
             </div>
           </div>
+        </div>
 
+        <div className={`${showPreview ? "block" : "hidden"} lg:block`}>
+          <div className="lg:sticky lg:top-4">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Live preview</p>
+            <InvoicePreview
+              form={form}
+              unitLabel={previewUnitLabel}
+              lines={lines}
+              attachments={attachments}
+              subtotal={subtotal}
+              tax={tax}
+              discount={calculatedDiscount}
+              total={total}
+              money={money}
+            />
+          </div>
+        </div>
       </div>
+
 
       <div className="sticky bottom-0 -mx-4 mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
