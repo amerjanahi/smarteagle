@@ -128,10 +128,27 @@ export const createInvoice = createServerFn({ method: "POST" })
     customer_email?: string | null;
     customer_phone?: string | null;
     attachments?: { name: string; url: string }[];
+    reminder_policy?: "standard" | "custom" | "none";
+    reminder_rule_ids?: string[];
     line_items: LineItemInput[];
   }) => d)
   .handler(async ({ context, data }) => {
     await assertSalesManager(context.supabase, context.userId);
+    const reminderPolicy = data.reminder_policy ?? "standard";
+    const reminderRuleIds = [...new Set(data.reminder_rule_ids ?? [])];
+    if (reminderPolicy === "custom" && reminderRuleIds.length === 0) {
+      throw new Error("Choose at least one reminder rule, or select no reminders.");
+    }
+    if (reminderPolicy === "custom") {
+      const { data: reminderRules, error: reminderRulesError } = await (context.supabase.from("invoice_reminder_rules" as any) as any)
+        .select("id")
+        .in("id", reminderRuleIds)
+        .eq("enabled", true);
+      if (reminderRulesError) throw new Error(reminderRulesError.message);
+      if ((reminderRules ?? []).length !== reminderRuleIds.length) {
+        throw new Error("One or more selected reminder rules are unavailable. Please refresh and try again.");
+      }
+    }
     const accountIds = [...new Set(data.line_items.map((line) => line.account_id).filter(Boolean))] as string[];
     if (accountIds.length) {
       const { data: accounts, error: accountsError } = await context.supabase
@@ -153,29 +170,40 @@ export const createInvoice = createServerFn({ method: "POST" })
     });
     const discount = Number(data.discount_amount ?? 0);
     const amount = +Math.max(subtotal + tax - discount, 0).toFixed(2);
-    const { data: inv, error } = await context.supabase
+    const invoicePayload = {
+      unit_id: data.unit_id,
+      description: data.description,
+      period_start: data.period_start,
+      period_end: data.period_end,
+      due_date: data.due_date,
+      amount,
+      subtotal: +subtotal.toFixed(2),
+      tax_amount: +tax.toFixed(2),
+      discount_amount: discount,
+      payment_terms: data.payment_terms,
+      notes: data.notes,
+      customer_name: data.customer_name,
+      customer_email: data.customer_email,
+      customer_phone: data.customer_phone,
+      attachments: data.attachments ?? [],
+      reminder_policy: reminderPolicy,
+      reminder_rule_ids: reminderPolicy === "custom" ? reminderRuleIds : [],
+      currency: data.currency ?? (await context.supabase.from("company_settings").select("default_currency").maybeSingle()).data?.default_currency ?? "AED",
+      status: "unpaid",
+      invoice_number: "",
+    };
+    let { data: inv, error } = await context.supabase
       .from("invoices")
-      .insert({
-        unit_id: data.unit_id,
-        description: data.description,
-        period_start: data.period_start,
-        period_end: data.period_end,
-        due_date: data.due_date,
-        amount,
-        subtotal: +subtotal.toFixed(2),
-        tax_amount: +tax.toFixed(2),
-        discount_amount: discount,
-        payment_terms: data.payment_terms,
-        notes: data.notes,
-        customer_name: data.customer_name,
-        customer_email: data.customer_email,
-        customer_phone: data.customer_phone,
-        attachments: data.attachments ?? [],
-        currency: data.currency ?? (await context.supabase.from("company_settings").select("default_currency").maybeSingle()).data?.default_currency ?? "AED",
-        status: "unpaid",
-        invoice_number: "",
-      } as any)
+      .insert(invoicePayload as any)
       .select("id").single();
+    // Keep invoice creation available while a new application version is deployed
+    // before the companion reminder-policy database migration.
+    if (error?.message?.includes("reminder_policy") && error.message.includes("invoices")) {
+      const { reminder_policy: _policy, reminder_rule_ids: _rules, ...legacyInvoicePayload } = invoicePayload;
+      const retry = await context.supabase.from("invoices").insert(legacyInvoicePayload as any).select("id").single();
+      inv = retry.data;
+      error = retry.error;
+    }
     if (error) throw new Error(error.message);
     if (items.length) {
       const lineItems = items.map((li) => ({ ...li, invoice_id: inv.id }));

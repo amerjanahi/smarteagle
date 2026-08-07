@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, CheckCircle2, Clock3, Mail, MessageCircle, Save } from "lucide-react";
+import { Bell, CheckCircle2, Clock3, Mail, MessageCircle, Plus, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +73,25 @@ export function InvoiceReminderSettings() {
     onSuccess: () => { toast.success("Reminder rule saved"); qc.invalidateQueries({ queryKey: ["invoice-reminder-rules"] }); },
     onError: (error: Error) => toast.error(error.message),
   });
+  const addRule = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await (supabase.from("invoice_reminder_rules" as any) as any)
+        .insert({
+          name: "New reminder rule", trigger_kind: "before_due", offset_days: 3, channels: ["email"],
+          email_subject_template: "Reminder: invoice {{invoice_number}}", email_body_template: "Hello {{customer_name}}, invoice {{invoice_number}} is due on {{due_date}}.",
+          whatsapp_template: "Reminder: invoice {{invoice_number}} is due on {{due_date}}.", language: "en", send_time: "09:00", enabled: true,
+        })
+        .select("*").single();
+      if (error) throw error;
+      return data as Rule;
+    },
+    onSuccess: (rule) => {
+      toast.success("New reminder rule added");
+      setSelectedId(rule.id);
+      qc.invalidateQueries({ queryKey: ["invoice-reminder-rules"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
 
   const toggleChannel = (channel: string) => {
     if (!draft) return;
@@ -91,7 +110,7 @@ export function InvoiceReminderSettings() {
 
       <div className="grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
         <Card><CardContent className="space-y-2 p-3">
-          <p className="px-1 text-sm font-semibold">Reminder cycle</p>
+          <div className="flex items-center justify-between gap-2 px-1"><p className="text-sm font-semibold">Reminder cycle</p><Button size="sm" variant="outline" onClick={() => addRule.mutate()} disabled={addRule.isPending}><Plus className="mr-1.5 h-4 w-4" />Add rule</Button></div>
           {(rules.data ?? []).map((rule) => (
             <button key={rule.id} onClick={() => setSelectedId(rule.id)} className={`w-full rounded-lg border p-3 text-left transition ${selected?.id === rule.id ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted"}`}>
               <div className="flex items-center justify-between gap-2"><span className="font-medium">{rule.name}</span><Badge variant={rule.enabled ? "default" : "secondary"}>{rule.enabled ? "On" : "Off"}</Badge></div>
@@ -102,7 +121,7 @@ export function InvoiceReminderSettings() {
         </CardContent></Card>
 
         {draft && <Card><CardContent className="space-y-5 p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><h4 className="font-semibold">{draft.name}</h4><p className="text-sm text-muted-foreground">Controls the schedule and message format for this reminder.</p></div><div className="flex items-center gap-2 text-sm"><span>Enabled</span><Switch checked={draft.enabled} onCheckedChange={(enabled) => setDraft({ ...draft, enabled })} /></div></div>
+          <div className="flex flex-wrap items-center justify-between gap-3"><div className="min-w-[220px] flex-1"><Label>Rule name</Label><Input className="mt-1 font-semibold" value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} /><p className="mt-1 text-sm text-muted-foreground">Controls the schedule and message format for this reminder.</p></div><div className="flex items-center gap-2 text-sm"><span>Enabled</span><Switch checked={draft.enabled} onCheckedChange={(enabled) => setDraft({ ...draft, enabled })} /></div></div>
           <div className="grid gap-3 sm:grid-cols-3">
             <div><Label>Trigger</Label><Select value={draft.trigger_kind} onValueChange={(trigger_kind) => setDraft({ ...draft, trigger_kind })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Object.entries(triggerLabel).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent></Select></div>
             <div><Label>Days</Label><Input type="number" min="0" max="365" disabled={draft.trigger_kind === "on_issue" || draft.trigger_kind === "on_due"} value={draft.offset_days} onChange={(event) => setDraft({ ...draft, offset_days: event.target.value })} /></div>

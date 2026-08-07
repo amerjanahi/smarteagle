@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
 import { useCurrency } from "@/hooks/use-currency";
 import { InvoicePreview } from "@/components/admin/InvoicePreview";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/invoices")({
   head: () => ({ meta: [{ title: "Invoices — Hayy Admin" }] }),
@@ -43,6 +44,18 @@ function InvoicesPage() {
   const invoices = useQuery({ queryKey: ["invoices"], queryFn: () => fetchInvoices() });
   const units = useQuery({ queryKey: ["units-sales"], queryFn: () => fetchUnits() });
   const accounts = useQuery({ queryKey: ["invoice-gl-accounts"], queryFn: () => fetchAccounts() });
+  const reminderRules = useQuery({
+    queryKey: ["invoice-reminder-rules", "create-invoice"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("invoice_reminder_rules" as any) as any)
+        .select("id, name, trigger_kind, offset_days, enabled")
+        .eq("enabled", true)
+        .order("trigger_kind")
+        .order("offset_days");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
   const defaultAccountId = accounts.data?.find((account: any) => account.code === "4100")?.id ?? accounts.data?.[0]?.id ?? null;
 
   const [open, setOpen] = useState(false);
@@ -60,8 +73,10 @@ function InvoicesPage() {
     payment_terms: "Net 30",
     discount_value: "",
     discount_type: "amount" as "amount" | "percentage",
+    reminder_policy: "standard" as "standard" | "custom" | "none",
     notes: "",
   });
+  const [selectedReminderRuleIds, setSelectedReminderRuleIds] = useState<string[]>([]);
   const [lines, setLines] = useState<Line[]>([{ description: "Service charge", quantity: 1, unit_price: 0, tax_rate: 5, account_id: null }]);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [attachName, setAttachName] = useState("");
@@ -137,7 +152,9 @@ function InvoicesPage() {
       description: "", period_start: "", period_end: "",
       due_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
       payment_terms: "Net 30", discount_value: "", discount_type: "amount", notes: "",
+      reminder_policy: "standard",
     });
+    setSelectedReminderRuleIds([]);
     setLines([{ description: "Service charge", quantity: 1, unit_price: 0, tax_rate: 5, account_id: defaultAccountId }]);
     setAttachments([]);
   }
@@ -174,6 +191,8 @@ function InvoicesPage() {
       customer_email: form.customer_email || null,
       customer_phone: form.customer_phone || null,
       attachments,
+      reminder_policy: form.reminder_policy,
+      reminder_rule_ids: selectedReminderRuleIds,
       line_items: lines,
     } }),
     onSuccess: () => {
@@ -481,6 +500,35 @@ function InvoicesPage() {
                     </Select>
                   </div>
                 </div>
+                <div className="rounded-xl border border-border bg-muted/20 p-3">
+                  <Label>Reminder plan</Label>
+                  <Select value={form.reminder_policy} onValueChange={(reminder_policy: "standard" | "custom" | "none") => {
+                    setForm({ ...form, reminder_policy });
+                    if (reminder_policy !== "custom") setSelectedReminderRuleIds([]);
+                  }}>
+                    <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="standard">Use the standard reminder cycle</SelectItem>
+                      <SelectItem value="custom">Choose specific reminder rules</SelectItem>
+                      <SelectItem value="none">No automatic reminders</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.reminder_policy === "standard" && <p className="mt-2 text-xs text-muted-foreground">Uses every enabled rule from Settings → Reminders.</p>}
+                  {form.reminder_policy === "none" && <p className="mt-2 text-xs text-muted-foreground">This invoice will not create a reminder queue.</p>}
+                  {form.reminder_policy === "custom" && <div className="mt-3 space-y-2">
+                    <p className="text-xs text-muted-foreground">Choose one or more rules for this invoice only.</p>
+                    {reminderRules.isLoading && <p className="text-xs text-muted-foreground">Loading available rules…</p>}
+                    <div className="space-y-1.5">
+                      {(reminderRules.data ?? []).map((rule: any) => {
+                        const selected = selectedReminderRuleIds.includes(rule.id);
+                        return <button key={rule.id} type="button" onClick={() => setSelectedReminderRuleIds((ids) => selected ? ids.filter((id) => id !== rule.id) : [...ids, rule.id])} className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition ${selected ? "border-primary bg-primary/5" : "hover:bg-muted"}`}>
+                          <span>{rule.name}</span><span className="text-xs text-muted-foreground">{rule.trigger_kind === "before_due" ? `${rule.offset_days}d before` : rule.trigger_kind === "after_due" ? `${rule.offset_days}d after` : rule.trigger_kind === "on_due" ? "Due date" : "On issue"}</span>
+                        </button>;
+                      })}
+                    </div>
+                    {!reminderRules.isLoading && !(reminderRules.data ?? []).length && <p className="text-xs text-destructive">No enabled reminder rules are available. Add one in Settings → Reminders.</p>}
+                  </div>}
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <Label>Service from</Label>
@@ -639,7 +687,7 @@ function InvoicesPage() {
       <div className="sticky bottom-4 z-10 mt-6 flex flex-wrap items-center justify-end gap-2 rounded-2xl border border-border bg-background/95 px-4 py-3 shadow-lg backdrop-blur">
         <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
         <Button variant="outline" onClick={() => setPreviewOpen(true)}>Preview Invoice</Button>
-        <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
+        <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending || (form.reminder_policy === "custom" && selectedReminderRuleIds.length === 0)}>
           {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
         </Button>
       </div>
