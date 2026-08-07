@@ -28,11 +28,28 @@ export const listInvoices = createServerFn({ method: "GET" })
     await assertSalesManager(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("invoices")
-      .select("*, units(unit_number, building, residents(full_name, email, is_active)), invoice_line_items(*), payment_allocations(*)")
+      // The list screen only needs summary data. Loading every line item and
+      // allocation for hundreds of invoices made the first visit unnecessarily
+      // heavy; the full record is fetched only when a row is opened.
+      .select("id, invoice_number, unit_id, customer_name, customer_email, due_date, currency, amount, amount_paid, credit_applied, status, created_at, units(unit_number, building, residents(full_name, email, is_active))")
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) throw new Error(error.message);
     return data ?? [];
+  });
+
+export const getInvoiceDetail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ context, data }) => {
+    await assertSalesManager(context.supabase, context.userId);
+    const { data: invoice, error } = await context.supabase
+      .from("invoices")
+      .select("id, invoice_number, unit_id, customer_name, customer_email, due_date, currency, amount, amount_paid, credit_applied, status, description, notes, units(unit_number, building, residents(full_name, email, is_active)), invoice_line_items(id, description, quantity, unit_price, tax_rate, line_total)")
+      .eq("id", data.id)
+      .single();
+    if (error) throw new Error(error.message);
+    return invoice;
   });
 
 export const listPayments = createServerFn({ method: "GET" })

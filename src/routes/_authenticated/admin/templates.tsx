@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { listTemplates, saveTemplate, deleteTemplate, duplicateTemplate } from "@/lib/sales.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Save, Copy, Star } from "lucide-react";
 import { toast } from "sonner";
-import { Designer } from "@/components/admin/template-designer/Designer";
 import { defaultDoc } from "@/components/admin/template-designer/factory";
 import { renderDocHtml } from "@/components/admin/template-designer/renderHtml";
 import type { CanvasDoc, TplType } from "@/components/admin/template-designer/types";
+
+const Designer = lazy(() => import("@/components/admin/template-designer/Designer").then(({ Designer }) => ({ default: Designer })));
 
 export const Route = createFileRoute("/_authenticated/admin/templates")({
   head: () => ({ meta: [{ title: "Document Templates — Hayy Admin" }] }),
@@ -221,14 +222,16 @@ function TemplatesPage() {
             </CardContent>
           </Card>
 
-          <Designer
-            value={canvasDoc}
-            type={editing.template_type}
-            logoUrl={editing.logo_url}
-            onChange={setCanvas}
-            onPreview={() => openPreview(false)}
-            onPrint={() => openPreview(true)}
-          />
+          <Suspense fallback={<div className="rounded-xl border bg-muted/20 p-8 text-center text-sm text-muted-foreground">Loading template editor…</div>}>
+            <Designer
+              value={canvasDoc}
+              type={editing.template_type}
+              logoUrl={editing.logo_url}
+              onChange={setCanvas}
+              onPreview={() => openPreview(false)}
+              onPrint={() => openPreview(true)}
+            />
+          </Suspense>
         </div>
       )}
     </div>

@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useRef, useState } from "react";
-import { listInvoices, listUnits, listInvoiceAccounts, createInvoice, voidInvoice, generateDocumentPdf, issueCreditNote, recordPayment } from "@/lib/sales.functions";
+import { lazy, Suspense, useMemo, useRef, useState } from "react";
+import { listInvoices, getInvoiceDetail, listUnits, listInvoiceAccounts, createInvoice, voidInvoice, generateDocumentPdf, issueCreditNote, recordPayment } from "@/lib/sales.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +16,9 @@ import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
 import { useCurrency } from "@/hooks/use-currency";
-import { InvoicePreview } from "@/components/admin/InvoicePreview";
 import { supabase } from "@/integrations/supabase/client";
+
+const InvoicePreview = lazy(() => import("@/components/admin/InvoicePreview").then(({ InvoicePreview }) => ({ default: InvoicePreview })));
 
 export const Route = createFileRoute("/_authenticated/admin/invoices")({
   head: () => ({ meta: [{ title: "Invoices — Hayy Admin" }] }),
@@ -33,6 +34,7 @@ function InvoicesPage() {
   const { format: money } = useCurrency();
   const qc = useQueryClient();
   const fetchInvoices = useServerFn(listInvoices);
+  const fetchInvoiceDetail = useServerFn(getInvoiceDetail);
   const fetchUnits = useServerFn(listUnits);
   const fetchAccounts = useServerFn(listInvoiceAccounts);
   const create = useServerFn(createInvoice);
@@ -41,7 +43,7 @@ function InvoicesPage() {
   const record = useServerFn(recordPayment);
   const issueCredit = useServerFn(issueCreditNote);
 
-  const invoices = useQuery({ queryKey: ["invoices"], queryFn: () => fetchInvoices() });
+  const invoices = useQuery({ queryKey: ["invoices"], queryFn: () => fetchInvoices(), staleTime: 30_000 });
   const units = useQuery({ queryKey: ["units-sales"], queryFn: () => fetchUnits() });
   const accounts = useQuery({ queryKey: ["invoice-gl-accounts"], queryFn: () => fetchAccounts() });
   const reminderRules = useQuery({
@@ -82,6 +84,12 @@ function InvoicesPage() {
   const [attachName, setAttachName] = useState("");
   const [attachUrl, setAttachUrl] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const invoiceDetail = useQuery({
+    queryKey: ["invoice-detail", selectedInvoice?.id],
+    enabled: Boolean(selectedInvoice?.id),
+    queryFn: () => fetchInvoiceDetail({ data: { id: selectedInvoice.id } }),
+  });
+  const selectedInvoiceView = invoiceDetail.data ?? selectedInvoice;
   const [paymentInvoice, setPaymentInvoice] = useState<any>(null);
   const [paymentAmount, setPaymentAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "bank_transfer" | "cash" | "cheque" | "mock">("bank_transfer");
@@ -370,36 +378,36 @@ function InvoicesPage() {
 
       <Dialog open={!!selectedInvoice} onOpenChange={(show) => !show && setSelectedInvoice(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
-          <DialogHeader><DialogTitle>Invoice {selectedInvoice?.invoice_number}</DialogTitle></DialogHeader>
-          {selectedInvoice && <div className="space-y-5">
+          <DialogHeader><DialogTitle>Invoice {selectedInvoiceView?.invoice_number}</DialogTitle></DialogHeader>
+          {selectedInvoiceView && <div className="space-y-5">
             <div className="grid gap-3 rounded-lg bg-muted/40 p-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
-              <div><p className="text-xs text-muted-foreground">Customer</p><p className="font-medium">{selectedInvoice.customer_name || selectedInvoice.units?.residents?.[0]?.full_name || "—"}</p></div>
-              <div><p className="text-xs text-muted-foreground">Unit</p><p className="font-medium">{selectedInvoice.units?.building} · {selectedInvoice.units?.unit_number}</p></div>
-              <div><p className="text-xs text-muted-foreground">Due date</p><p className="font-medium">{new Date(selectedInvoice.due_date).toLocaleDateString()}</p></div>
-              <div><p className="text-xs text-muted-foreground">Status</p><Badge className="capitalize">{selectedInvoice.status}</Badge></div>
+              <div><p className="text-xs text-muted-foreground">Customer</p><p className="font-medium">{selectedInvoiceView.customer_name || selectedInvoiceView.units?.residents?.[0]?.full_name || "—"}</p></div>
+              <div><p className="text-xs text-muted-foreground">Unit</p><p className="font-medium">{selectedInvoiceView.units?.building} · {selectedInvoiceView.units?.unit_number}</p></div>
+              <div><p className="text-xs text-muted-foreground">Due date</p><p className="font-medium">{new Date(selectedInvoiceView.due_date).toLocaleDateString()}</p></div>
+              <div><p className="text-xs text-muted-foreground">Status</p><Badge className="capitalize">{selectedInvoiceView.status}</Badge></div>
             </div>
             <div className="overflow-x-auto rounded-lg border">
               <Table>
                 <TableHeader><TableRow><TableHead>Description</TableHead><TableHead className="text-right">Qty</TableHead><TableHead className="text-right">Rate</TableHead><TableHead className="text-right">VAT</TableHead><TableHead className="text-right">Total</TableHead></TableRow></TableHeader>
                 <TableBody>
-                  {(selectedInvoice.invoice_line_items ?? []).map((line: any) => <TableRow key={line.id}><TableCell>{line.description}</TableCell><TableCell className="text-right">{line.quantity}</TableCell><TableCell className="text-right">{money(line.unit_price)}</TableCell><TableCell className="text-right">{line.tax_rate}%</TableCell><TableCell className="text-right">{money(line.line_total)}</TableCell></TableRow>)}
-                  {!selectedInvoice.invoice_line_items?.length && <TableRow><TableCell colSpan={5}>{selectedInvoice.description || "Invoice total"}</TableCell></TableRow>}
+                  {(selectedInvoiceView.invoice_line_items ?? []).map((line: any) => <TableRow key={line.id}><TableCell>{line.description}</TableCell><TableCell className="text-right">{line.quantity}</TableCell><TableCell className="text-right">{money(line.unit_price)}</TableCell><TableCell className="text-right">{line.tax_rate}%</TableCell><TableCell className="text-right">{money(line.line_total)}</TableCell></TableRow>)}
+                  {!selectedInvoiceView.invoice_line_items?.length && <TableRow><TableCell colSpan={5}>{invoiceDetail.isLoading ? "Loading invoice details…" : selectedInvoiceView.description || "Invoice total"}</TableCell></TableRow>}
                 </TableBody>
               </Table>
             </div>
             <div className="ml-auto grid max-w-sm grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              <span className="text-muted-foreground">Invoice total</span><span className="text-right font-medium">{money(selectedInvoice.amount)}</span>
-              <span className="text-muted-foreground">Cash paid</span><span className="text-right">{money(selectedInvoice.amount_paid)}</span>
-              <span className="text-muted-foreground">Credits applied</span><span className="text-right">{money(selectedInvoice.credit_applied || 0)}</span>
-              <span className="border-t pt-2 font-semibold">Balance due</span><span className="border-t pt-2 text-right font-semibold">{money(invoiceBalance(selectedInvoice))}</span>
+              <span className="text-muted-foreground">Invoice total</span><span className="text-right font-medium">{money(selectedInvoiceView.amount)}</span>
+              <span className="text-muted-foreground">Cash paid</span><span className="text-right">{money(selectedInvoiceView.amount_paid)}</span>
+              <span className="text-muted-foreground">Credits applied</span><span className="text-right">{money(selectedInvoiceView.credit_applied || 0)}</span>
+              <span className="border-t pt-2 font-semibold">Balance due</span><span className="border-t pt-2 text-right font-semibold">{money(invoiceBalance(selectedInvoiceView))}</span>
             </div>
-            {selectedInvoice.notes && <div className="rounded-lg border p-3 text-sm"><p className="text-xs font-medium text-muted-foreground">Notes</p><p className="whitespace-pre-wrap">{selectedInvoice.notes}</p></div>}
+            {selectedInvoiceView.notes && <div className="rounded-lg border p-3 text-sm"><p className="text-xs font-medium text-muted-foreground">Notes</p><p className="whitespace-pre-wrap">{selectedInvoiceView.notes}</p></div>}
             <div className="flex flex-wrap gap-2">
-              {invoiceBalance(selectedInvoice) > 0 && selectedInvoice.status !== "cancelled" && <>
-                <Button onClick={() => startPayment(selectedInvoice)}><CreditCard className="mr-2 h-4 w-4" />Record payment</Button>
-                <Button variant="outline" onClick={() => startCredit(selectedInvoice)}><ReceiptText className="mr-2 h-4 w-4" />Add credit note</Button>
+              {invoiceBalance(selectedInvoiceView) > 0 && selectedInvoiceView.status !== "cancelled" && <>
+                <Button onClick={() => startPayment(selectedInvoiceView)}><CreditCard className="mr-2 h-4 w-4" />Record payment</Button>
+                <Button variant="outline" onClick={() => startCredit(selectedInvoiceView)}><ReceiptText className="mr-2 h-4 w-4" />Add credit note</Button>
               </>}
-              <Button variant="outline" onClick={() => handlePdf(selectedInvoice.id)}><Download className="mr-2 h-4 w-4" />Download PDF</Button>
+              <Button variant="outline" onClick={() => handlePdf(selectedInvoiceView.id)}><Download className="mr-2 h-4 w-4" />Download PDF</Button>
             </div>
           </div>}
         </DialogContent>
@@ -668,17 +676,19 @@ function InvoicesPage() {
             </Button>
           </DialogHeader>
           <div className="mx-auto w-full max-w-[794px] pb-8">
-            <InvoicePreview
-              form={form}
-              unitLabel={previewUnitLabel}
-              lines={lines}
-              attachments={attachments}
-              subtotal={subtotal}
-              tax={tax}
-              discount={calculatedDiscount}
-              total={total}
-              money={money}
-            />
+            <Suspense fallback={<div className="rounded-xl border bg-muted/30 p-8 text-center text-sm text-muted-foreground">Preparing invoice preview…</div>}>
+              <InvoicePreview
+                form={form}
+                unitLabel={previewUnitLabel}
+                lines={lines}
+                attachments={attachments}
+                subtotal={subtotal}
+                tax={tax}
+                discount={calculatedDiscount}
+                total={total}
+                money={money}
+              />
+            </Suspense>
           </div>
         </DialogContent>
       </Dialog>
