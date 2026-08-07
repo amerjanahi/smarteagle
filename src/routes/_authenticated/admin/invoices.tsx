@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye, CreditCard, ReceiptText } from "lucide-react";
+import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye, CreditCard, ReceiptText, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
 import { useCurrency } from "@/hooks/use-currency";
@@ -134,6 +134,12 @@ function InvoicesPage() {
     setAttachments([]);
   }
 
+  function closeWorkspace() {
+    setOpen(false);
+    resetForm();
+  }
+
+
   function onUnitChange(unitId: string) {
     const u: any = units.data?.find((x: any) => x.id === unitId);
     const r = u?.residents?.find((x: any) => x.is_active) ?? u?.residents?.[0];
@@ -252,8 +258,9 @@ function InvoicesPage() {
     URL.revokeObjectURL(url);
   }
 
-  return (
+  if (!open) return (
     <div className="space-y-4">
+
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl font-bold tracking-tight">Invoices</h2>
@@ -394,13 +401,28 @@ function InvoicesPage() {
           <DialogFooter><Button variant="outline" onClick={() => setCreditInvoice(null)}>Cancel</Button><Button onClick={saveQuickCredit} disabled={!creditAmount || !creditReason.trim() || (creditInvoice && creditAmount > invoiceBalance(creditInvoice))}>Create and apply</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
 
-      {/* Full-page invoice workspace */}
-      <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
-        <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none border-0 p-4 sm:p-6">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Create invoice</DialogTitle>
-          </DialogHeader>
+  return (
+    <div className="flex min-h-[calc(100dvh-8rem)] w-full flex-col">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4 sm:flex sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={closeWorkspace} title="Back to invoices">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="min-w-0">
+            <h2 className="flex items-center gap-2 truncate font-display text-2xl font-bold tracking-tight">
+              <FileText className="h-5 w-5 shrink-0" /> Create invoice
+            </h2>
+            <p className="text-sm text-muted-foreground">Customer details, line items and totals — all on one page.</p>
+          </div>
+        </div>
+        <Button variant="outline" onClick={closeWorkspace}>Back to invoices</Button>
+      </header>
+
+      <div className="flex-1 pt-6">
+
 
           <div className="grid gap-6 lg:grid-cols-3">
             {/* LEFT — Customer + meta */}
@@ -570,14 +592,15 @@ function InvoicesPage() {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
-              {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      </div>
+
+      <div className="sticky bottom-0 -mx-4 mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+        <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
+        <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
+          {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
+        </Button>
+      </div>
     </div>
   );
+
 }
