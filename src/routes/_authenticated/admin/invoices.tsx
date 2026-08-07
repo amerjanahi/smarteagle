@@ -134,6 +134,12 @@ function InvoicesPage() {
     setAttachments([]);
   }
 
+  function closeWorkspace() {
+    setOpen(false);
+    resetForm();
+  }
+
+
   function onUnitChange(unitId: string) {
     const u: any = units.data?.find((x: any) => x.id === unitId);
     const r = u?.residents?.find((x: any) => x.is_active) ?? u?.residents?.[0];
