@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Plus, Megaphone, Pencil, Trash2, Eye, Send, FileText } from "lucide-react";
+import { Plus, Megaphone, Pencil, Trash2, Eye, Send, FileText, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -43,6 +43,7 @@ function NoticesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [preview, setPreview] = useState<Notice | null>(null);
+  const [viewersNotice, setViewersNotice] = useState<Notice | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Notice | null>(null);
   const [tab, setTab] = useState<"all" | "published" | "draft">("all");
   const [form, setForm] = useState<Form>(EMPTY);
@@ -64,6 +65,24 @@ function NoticesPage() {
       return (data ?? []) as any[];
     },
   });
+  const { data: viewReceipts = [], isLoading: loadingViewReceipts } = useQuery({
+    queryKey: ["notice-view-receipts", viewersNotice?.id],
+    enabled: !!viewersNotice,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_notice_viewers" as any, { p_notice_id: viewersNotice!.id } as any);
+      if (error) throw error;
+      return (data ?? []) as { user_id: string; full_name: string | null; email: string | null; viewed_at: string }[];
+    },
+  });
+  const { data: viewCounts = [] } = useQuery({
+    queryKey: ["notice-view-counts"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("notice_views" as any) as any).select("notice_id");
+      if (error) throw error;
+      return (data ?? []) as { notice_id: string }[];
+    },
+  });
+  const viewsFor = (noticeId: string) => viewCounts.filter((view) => view.notice_id === noticeId).length;
 
   const save = useMutation({
     mutationFn: async ({ publish }: { publish: boolean }) => {
@@ -174,7 +193,7 @@ function NoticesPage() {
                 <TableHead>Status</TableHead>
                 <TableHead>Channel</TableHead>
                 <TableHead>Audience</TableHead>
-                <TableHead>Recipients</TableHead>
+                <TableHead>Recipients / viewed</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Modified</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -199,12 +218,13 @@ function NoticesPage() {
                   </TableCell>
                   <TableCell><Badge variant="outline">{n.channel}</Badge></TableCell>
                   <TableCell>{n.audience === "all" ? "All" : (n.notice_groups?.name ?? "Group")}</TableCell>
-                  <TableCell>{n.status === "published" ? n.recipient_count : "—"}</TableCell>
+                  <TableCell>{n.status === "published" ? <span>{n.recipient_count} / {viewsFor(n.id)} viewed</span> : "—"}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{new Date(n.created_at).toLocaleDateString()}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{new Date(n.updated_at).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       <Button size="sm" variant="ghost" onClick={() => setPreview(n)}><Eye className="h-4 w-4" /></Button>
+                      {n.status === "published" && <Button size="sm" variant="ghost" onClick={() => setViewersNotice(n)} title="View read receipts"><Users className="h-4 w-4" /></Button>}
                       <Button size="sm" variant="ghost" onClick={() => openEdit(n)}><Pencil className="h-4 w-4" /></Button>
                       <Button size="sm" variant="ghost" onClick={() => togglePublish.mutate(n)} title={n.status === "published" ? "Unpublish" : "Publish"}>
                         {n.status === "published" ? <FileText className="h-4 w-4" /> : <Send className="h-4 w-4" />}
@@ -320,6 +340,20 @@ function NoticesPage() {
               </DevicePreview>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!viewersNotice} onOpenChange={(o) => !o && setViewersNotice(null)}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader><DialogTitle>Viewed by — {viewersNotice?.subject}</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Read receipts are visible to Top Admin only. Residents cannot see who else viewed this notice.</p>
+          <div className="max-h-[50vh] overflow-y-auto rounded-lg border">
+            {loadingViewReceipts ? <p className="p-4 text-sm text-muted-foreground">Loading view receipts…</p> : viewReceipts.length ? (
+              <Table><TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Viewed</TableHead></TableRow></TableHeader><TableBody>
+                {viewReceipts.map((receipt) => <TableRow key={receipt.user_id}><TableCell>{receipt.full_name || "Unnamed user"}</TableCell><TableCell>{receipt.email || "—"}</TableCell><TableCell className="text-xs text-muted-foreground">{new Date(receipt.viewed_at).toLocaleString()}</TableCell></TableRow>)}
+              </TableBody></Table>
+            ) : <p className="p-4 text-sm text-muted-foreground">No one has viewed this notice yet.</p>}
+          </div>
         </DialogContent>
       </Dialog>
 
