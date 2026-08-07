@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { CanvasDoc, CanvasElement, TplType } from "./types";
 import { pageSize, PT_TO_PX } from "./types";
-import { CanvasPage } from "./CanvasPage";
+import { CanvasPage, renderElement } from "./CanvasPage";
 import { newElement, newId } from "./factory";
 import { MERGE_FIELDS, resolveMergeTokens } from "./mergeFields";
 import { useHistory } from "./useHistory";
@@ -187,10 +187,10 @@ export function Designer({ value, type, logoUrl, onChange, onPreview, onPrint }:
           </SelectContent>
         </Select>
         <Separator orientation="vertical" className="h-6" />
-        <Button size="sm" variant="ghost" onClick={() => setZoom((z) => Math.max(0.4, z - 0.1))}><ZoomOut className="h-4 w-4" /></Button>
+        <Button size="sm" variant="ghost" title="Zoom out" onClick={() => setZoom((z) => Math.max(0.4, z - 0.1))}><ZoomOut className="h-4 w-4" /></Button>
         <span className="text-xs w-12 text-center">{Math.round(zoom * 100)}%</span>
-        <Button size="sm" variant="ghost" onClick={() => setZoom((z) => Math.min(2, z + 0.1))}><ZoomIn className="h-4 w-4" /></Button>
-        <Button size="sm" variant="ghost" onClick={() => setZoom(1)}><RotateCcw className="h-4 w-4" /></Button>
+        <Button size="sm" variant="ghost" title="Zoom in" onClick={() => setZoom((z) => Math.min(2, z + 0.1))}><ZoomIn className="h-4 w-4" /></Button>
+        <Button size="sm" variant="ghost" title="Reset zoom" onClick={() => setZoom(1)}><RotateCcw className="h-4 w-4" /></Button>
         <div className="ml-auto flex gap-2">
           <Button size="sm" variant="outline" onClick={onPreview}><Eye className="h-4 w-4 mr-1" />Preview</Button>
           <Button size="sm" variant="outline" onClick={onPrint}><Printer className="h-4 w-4 mr-1" />Print / PDF</Button>
@@ -281,8 +281,7 @@ export function Designer({ value, type, logoUrl, onChange, onPreview, onPrint }:
                     ) : (
                       <div style={{ pointerEvents: "none", width: "100%", height: "100%" }}>
                         <div style={{ position: "absolute", inset: 0 }}>
-                          {/* content preview */}
-                          <CanvasPage doc={{ ...doc, elements: [{ ...el, x: 0, y: 0 }] }} type={type} mode="editor" logoUrl={logoUrl} />
+                          {renderElement({ ...el, x: 0, y: 0 }, type, "editor", logoUrl)}
                         </div>
                       </div>
                     )}
@@ -308,7 +307,17 @@ export function Designer({ value, type, logoUrl, onChange, onPreview, onPrint }:
 
         {/* Right inspector */}
         <div className="w-72 border-l bg-background p-3 overflow-y-auto">
-          {!selected && <p className="text-sm text-muted-foreground">Select an element to edit its properties.</p>}
+          {!selected && (
+            <div className="space-y-3 rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">Template properties</p>
+              <p>Select an element on the page to change its text, position, size, colours, or layout.</p>
+              <ul className="space-y-1 text-xs">
+                <li>Drag to move an element.</li>
+                <li>Double-click text to edit it directly.</li>
+                <li>Use arrow keys for precise movement; hold Shift for larger steps.</li>
+              </ul>
+            </div>
+          )}
           {selected && (
             <Inspector
               el={selected}
