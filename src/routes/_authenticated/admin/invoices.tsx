@@ -122,6 +122,11 @@ function InvoicesPage() {
     ? (subtotal + tax) * Math.min(discountInput, 100) / 100
     : discountInput;
   const total = Math.max(subtotal + tax - calculatedDiscount, 0);
+  const previewUnitLabel = useMemo(() => {
+    const unit: any = units.data?.find((u: any) => u.id === form.unit_id);
+    return unit ? `${unit.building} • ${unit.unit_number}` : "";
+  }, [units.data, form.unit_id]);
+
 
   function resetForm() {
     setForm({
