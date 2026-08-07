@@ -156,6 +156,7 @@ function InvoicesPage() {
       unit_id: unitId,
       customer_name: r?.full_name ?? f.customer_name,
       customer_email: r?.email ?? f.customer_email,
+      customer_phone: r?.phone ?? f.customer_phone,
     }));
   }
 
@@ -437,9 +438,9 @@ function InvoicesPage() {
 
       <div className="grid flex-1 gap-6 pt-4 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div className="min-w-0">
-          <div className="grid gap-6 xl:grid-cols-3">
+          <div className="grid gap-6 xl:grid-cols-2">
             {/* LEFT — Customer + meta */}
-            <Card className="xl:col-span-1">
+            <Card>
 
               <CardContent className="space-y-4 pt-6">
                 <div>
@@ -456,19 +457,11 @@ function InvoicesPage() {
                   </Select>
                 </div>
                 <div>
-                  <Label>Customer name</Label>
+                  <Label>Invoice customer name</Label>
                   <Input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} />
+                  <p className="mt-1 text-xs text-muted-foreground">Prefilled from the selected unit. Editing this name affects this invoice only.</p>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label>Email</Label>
-                    <Input type="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} />
-                  </div>
-                  <div>
-                    <Label>Phone</Label>
-                    <Input value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} placeholder="+9715..." />
-                  </div>
-                </div>
+                <p className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">Email and phone are taken automatically from the selected unit&apos;s active resident and are not edited on the invoice.</p>
                 <div>
                   <Label>Due date</Label>
                   <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
@@ -500,7 +493,7 @@ function InvoicesPage() {
             </Card>
 
             {/* RIGHT — Lines + totals + notes + attachments */}
-            <div className="space-y-4 xl:col-span-2">
+            <div className="space-y-4">
               <Card>
                 <CardContent className="space-y-3 pt-6">
                   <div>
