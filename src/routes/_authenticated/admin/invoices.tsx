@@ -597,9 +597,9 @@ function InvoicesPage() {
       </div>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-h-[95vh] overflow-y-auto sm:max-w-5xl">
-          <DialogHeader><DialogTitle>Invoice preview</DialogTitle></DialogHeader>
-          <div className="mx-auto max-w-4xl">
+        <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none border-0 p-4 sm:p-8">
+          <DialogHeader className="mx-auto w-full max-w-[794px]"><DialogTitle>Invoice preview</DialogTitle></DialogHeader>
+          <div className="mx-auto w-full max-w-[794px] pb-8">
             <InvoicePreview
               form={form}
               unitLabel={previewUnitLabel}

@@ -69,24 +69,24 @@ export function InvoicePreview({
   const periodTo = formatDate(form.period_end);
 
   return (
-    <div className="mx-auto w-full max-w-[520px] overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-soft)]">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-border bg-muted/30 p-5">
+    <div className="mx-auto min-h-[1123px] w-full max-w-[794px] overflow-hidden rounded-none border border-border bg-card shadow-[var(--shadow-soft)]">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-slate-950 bg-slate-950 p-8 text-white">
         <div className="flex min-w-0 items-center gap-3">
           {company.logoUrl ? (
             <img src={company.logoUrl} alt={`${company.name} logo`} className="h-10 w-10 shrink-0 rounded-md object-contain" />
           ) : null}
           <div className="min-w-0">
-            <p className="truncate font-display text-base font-bold">{company.name}</p>
-            <p className="text-xs text-muted-foreground">Tax invoice</p>
+            <p className="truncate font-display text-lg font-bold">{company.name}</p>
+            <p className="text-xs text-white/70">Tax invoice</p>
           </div>
         </div>
         <div className="shrink-0 text-right">
-          <p className="font-display text-lg font-bold tracking-tight">INVOICE</p>
-          <p className="text-xs text-muted-foreground">No. assigned on save</p>
+          <p className="font-display text-2xl font-bold tracking-tight">INVOICE</p>
+          <p className="text-xs text-white/70">No. assigned on save</p>
         </div>
       </div>
 
-      <div className="space-y-5 p-5 text-sm">
+      <div className="space-y-7 p-8 text-sm">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="min-w-0">
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Billed to</p>
@@ -125,8 +125,8 @@ export function InvoicePreview({
         </div>
 
         <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-xs">
-            <thead className="bg-muted/40 text-muted-foreground">
+          <table className="w-full text-sm">
+            <thead className="bg-primary text-primary-foreground">
               <tr>
                 <th className="px-2 py-2 text-left font-medium">Description</th>
                 <th className="px-2 py-2 text-right font-medium">Qty</th>
