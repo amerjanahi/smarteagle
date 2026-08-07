@@ -492,7 +492,7 @@ function InvoicesPage() {
             </Card>
 
             {/* RIGHT — Lines + totals + notes + attachments */}
-            <div className="space-y-4 lg:col-span-2">
+            <div className="space-y-4 xl:col-span-2">
               <Card>
                 <CardContent className="space-y-3 pt-6">
                   <div>
