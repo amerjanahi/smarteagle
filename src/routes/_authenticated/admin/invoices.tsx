@@ -570,14 +570,16 @@ function InvoicesPage() {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
-              {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      </div>
+
+      <div className="sticky bottom-0 -mx-4 mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+        <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
+        <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
+          {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
+        </Button>
+      </div>
+    </div>
+
     </div>
   );
 }
