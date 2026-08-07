@@ -46,7 +46,7 @@ function InvoicesPage() {
   const defaultAccountId = accounts.data?.find((account: any) => account.code === "4100")?.id ?? accounts.data?.[0]?.id ?? null;
 
   const [open, setOpen] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [form, setForm] = useState({
     unit_id: "",
@@ -430,13 +430,7 @@ function InvoicesPage() {
         <Button variant="outline" onClick={closeWorkspace}>Back to invoices</Button>
       </header>
 
-      <div className="flex items-center justify-end pt-4 lg:hidden">
-        <Button variant="outline" size="sm" onClick={() => setShowPreview((v) => !v)}>
-          {showPreview ? "Hide preview" : "Show preview"}
-        </Button>
-      </div>
-
-      <div className="grid flex-1 gap-6 pt-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+      <div className="flex-1 pt-4">
         <div className="min-w-0">
           <div className="grid gap-6 xl:grid-cols-2">
             {/* LEFT — Customer + meta */}
@@ -600,9 +594,12 @@ function InvoicesPage() {
           </div>
         </div>
 
-        <div className={`${showPreview ? "block" : "hidden"} lg:block`}>
-          <div className="lg:sticky lg:top-4">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Live preview</p>
+      </div>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-h-[95vh] overflow-y-auto sm:max-w-5xl">
+          <DialogHeader><DialogTitle>Invoice preview</DialogTitle></DialogHeader>
+          <div className="mx-auto max-w-4xl">
             <InvoicePreview
               form={form}
               unitLabel={previewUnitLabel}
@@ -615,12 +612,13 @@ function InvoicesPage() {
               money={money}
             />
           </div>
-        </div>
-      </div>
+        </DialogContent>
+      </Dialog>
 
 
       <div className="sticky bottom-0 -mx-4 mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
+        <Button variant="outline" onClick={() => setPreviewOpen(true)}>Preview Invoice</Button>
         <Button onClick={() => createMut.mutate()} disabled={!form.unit_id || createMut.isPending}>
           {createMut.isPending ? "Creating…" : `Create invoice (${money(total)})`}
         </Button>
