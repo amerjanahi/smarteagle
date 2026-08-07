@@ -552,9 +552,9 @@ export type Database = {
           company_name: string
           cr_number: string | null
           created_at: string
-          default_currency: string
           date_format: string
           decimal_places: number
+          default_currency: string
           email: string | null
           id: string
           logo_url: string | null
@@ -573,9 +573,9 @@ export type Database = {
           company_name?: string
           cr_number?: string | null
           created_at?: string
-          default_currency?: string
           date_format?: string
           decimal_places?: number
+          default_currency?: string
           email?: string | null
           id?: string
           logo_url?: string | null
@@ -594,9 +594,9 @@ export type Database = {
           company_name?: string
           cr_number?: string | null
           created_at?: string
-          default_currency?: string
           date_format?: string
           decimal_places?: number
+          default_currency?: string
           email?: string | null
           id?: string
           logo_url?: string | null
