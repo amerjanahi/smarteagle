@@ -394,13 +394,28 @@ function InvoicesPage() {
           <DialogFooter><Button variant="outline" onClick={() => setCreditInvoice(null)}>Cancel</Button><Button onClick={saveQuickCredit} disabled={!creditAmount || !creditReason.trim() || (creditInvoice && creditAmount > invoiceBalance(creditInvoice))}>Create and apply</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
 
-      {/* Full-page invoice workspace */}
-      <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
-        <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none border-0 p-4 sm:p-6">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Create invoice</DialogTitle>
-          </DialogHeader>
+  return (
+    <div className="flex min-h-[calc(100dvh-8rem)] w-full flex-col">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4 sm:flex sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={closeWorkspace} title="Back to invoices">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="min-w-0">
+            <h2 className="flex items-center gap-2 truncate font-display text-2xl font-bold tracking-tight">
+              <FileText className="h-5 w-5 shrink-0" /> Create invoice
+            </h2>
+            <p className="text-sm text-muted-foreground">Customer details, line items and totals — all on one page.</p>
+          </div>
+        </div>
+        <Button variant="outline" onClick={closeWorkspace}>Back to invoices</Button>
+      </header>
+
+      <div className="flex-1 pt-6">
+
 
           <div className="grid gap-6 lg:grid-cols-3">
             {/* LEFT — Customer + meta */}
