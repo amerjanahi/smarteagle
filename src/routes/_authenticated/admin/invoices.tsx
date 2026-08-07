@@ -594,7 +594,6 @@ function InvoicesPage() {
         </Button>
       </div>
     </div>
-
-    </div>
   );
+
 }
