@@ -441,7 +441,7 @@ function InvoicesPage() {
                   <p className="text-sm font-semibold">Customer &amp; schedule</p>
                   <p className="mt-1 text-xs text-muted-foreground">Select the unit, confirm the invoice name, and set payment timing.</p>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-4">
                   <div>
                   <Label>Unit</Label>
                   <Select value={form.unit_id} onValueChange={onUnitChange}>
