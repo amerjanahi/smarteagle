@@ -16,6 +16,7 @@ import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
 import { useCurrency } from "@/hooks/use-currency";
+import { InvoicePreview } from "@/components/admin/InvoicePreview";
 
 export const Route = createFileRoute("/_authenticated/admin/invoices")({
   head: () => ({ meta: [{ title: "Invoices — Hayy Admin" }] }),
