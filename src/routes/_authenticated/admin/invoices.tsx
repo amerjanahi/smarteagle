@@ -16,6 +16,7 @@ import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
 import { useCurrency } from "@/hooks/use-currency";
+import { InvoicePreview } from "@/components/admin/InvoicePreview";
 
 export const Route = createFileRoute("/_authenticated/admin/invoices")({
   head: () => ({ meta: [{ title: "Invoices — Hayy Admin" }] }),
@@ -45,6 +46,8 @@ function InvoicesPage() {
   const defaultAccountId = accounts.data?.find((account: any) => account.code === "4100")?.id ?? accounts.data?.[0]?.id ?? null;
 
   const [open, setOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
   const [form, setForm] = useState({
     unit_id: "",
     customer_name: "",
@@ -122,6 +125,11 @@ function InvoicesPage() {
     ? (subtotal + tax) * Math.min(discountInput, 100) / 100
     : discountInput;
   const total = Math.max(subtotal + tax - calculatedDiscount, 0);
+  const previewUnitLabel = useMemo(() => {
+    const unit: any = units.data?.find((u: any) => u.id === form.unit_id);
+    return unit ? `${unit.building} • ${unit.unit_number}` : "";
+  }, [units.data, form.unit_id]);
+
 
   function resetForm() {
     setForm({
@@ -421,12 +429,18 @@ function InvoicesPage() {
         <Button variant="outline" onClick={closeWorkspace}>Back to invoices</Button>
       </header>
 
-      <div className="flex-1 pt-6">
+      <div className="flex items-center justify-end pt-4 lg:hidden">
+        <Button variant="outline" size="sm" onClick={() => setShowPreview((v) => !v)}>
+          {showPreview ? "Hide preview" : "Show preview"}
+        </Button>
+      </div>
 
-
-          <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid flex-1 gap-6 pt-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="min-w-0">
+          <div className="grid gap-6 xl:grid-cols-3">
             {/* LEFT — Customer + meta */}
-            <Card className="lg:col-span-1">
+            <Card className="xl:col-span-1">
+
               <CardContent className="space-y-4 pt-6">
                 <div>
                   <Label>Unit</Label>
@@ -486,7 +500,7 @@ function InvoicesPage() {
             </Card>
 
             {/* RIGHT — Lines + totals + notes + attachments */}
-            <div className="space-y-4 lg:col-span-2">
+            <div className="space-y-4 xl:col-span-2">
               <Card>
                 <CardContent className="space-y-3 pt-6">
                   <div>
@@ -591,8 +605,26 @@ function InvoicesPage() {
               </Card>
             </div>
           </div>
+        </div>
 
+        <div className={`${showPreview ? "block" : "hidden"} lg:block`}>
+          <div className="lg:sticky lg:top-4">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Live preview</p>
+            <InvoicePreview
+              form={form}
+              unitLabel={previewUnitLabel}
+              lines={lines}
+              attachments={attachments}
+              subtotal={subtotal}
+              tax={tax}
+              discount={calculatedDiscount}
+              total={total}
+              money={money}
+            />
+          </div>
+        </div>
       </div>
+
 
       <div className="sticky bottom-0 -mx-4 mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <Button variant="outline" onClick={closeWorkspace}>Cancel</Button>
