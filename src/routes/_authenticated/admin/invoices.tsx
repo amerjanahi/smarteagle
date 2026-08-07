@@ -421,12 +421,18 @@ function InvoicesPage() {
         <Button variant="outline" onClick={closeWorkspace}>Back to invoices</Button>
       </header>
 
-      <div className="flex-1 pt-6">
+      <div className="flex items-center justify-end pt-4 lg:hidden">
+        <Button variant="outline" size="sm" onClick={() => setShowPreview((v) => !v)}>
+          {showPreview ? "Hide preview" : "Show preview"}
+        </Button>
+      </div>
 
-
-          <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid flex-1 gap-6 pt-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="min-w-0">
+          <div className="grid gap-6 xl:grid-cols-3">
             {/* LEFT — Customer + meta */}
-            <Card className="lg:col-span-1">
+            <Card className="xl:col-span-1">
+
               <CardContent className="space-y-4 pt-6">
                 <div>
                   <Label>Unit</Label>
