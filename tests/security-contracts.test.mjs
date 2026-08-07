@@ -88,3 +88,14 @@ test("generated finance PDFs are archived in a restricted document folder", asyn
   assert.match(migration, /name LIKE 'system\/finance\/%'/);
   assert.match(migration, /public\.can_manage_sales\(auth\.uid\(\)\)/);
 });
+
+test("invoice reminder cycle schedules new invoices and stops settled ones", async () => {
+  const migration = await read(
+    "supabase/migrations/20260807100000_invoice_reminder_cycle.sql",
+  );
+
+  assert.match(migration, /CREATE TRIGGER invoices_schedule_reminders[\s\S]*AFTER INSERT ON public\.invoices/);
+  assert.match(migration, /CREATE TRIGGER invoices_stop_reminders_when_settled[\s\S]*AFTER UPDATE OF status ON public\.invoices/);
+  assert.match(migration, /NEW\.status IN \('paid', 'cancelled'\)/);
+  assert.match(migration, /public\.is_top_admin\(auth\.uid\(\)\)/);
+});

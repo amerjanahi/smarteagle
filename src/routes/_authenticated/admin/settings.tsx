@@ -13,7 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AllUsersTab } from "@/components/admin/AllUsersTab";
-import { Building2, CircleDollarSign, FileStack, ShieldCheck, UsersRound } from "lucide-react";
+import { InvoiceReminderSettings } from "@/components/admin/InvoiceReminderSettings";
+import { Bell, Building2, CircleDollarSign, FileStack, ShieldCheck, UsersRound } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({ meta: [{ title: "Settings — Hayy Admin" }] }),
@@ -56,12 +57,14 @@ function SettingsPage() {
           <TabsTrigger value="organization" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><Building2 className="h-4 w-4" />Organization</TabsTrigger>
           <TabsTrigger value="people" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><UsersRound className="h-4 w-4" />People &amp; Access</TabsTrigger>
           <TabsTrigger value="finance" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><CircleDollarSign className="h-4 w-4" />Finance</TabsTrigger>
+          <TabsTrigger value="reminders" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><Bell className="h-4 w-4" />Reminders</TabsTrigger>
           <TabsTrigger value="security" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><ShieldCheck className="h-4 w-4" />Security &amp; Roles</TabsTrigger>
           <TabsTrigger value="templates" className="w-max shrink-0 gap-2 md:w-full md:justify-start md:px-3 md:py-2.5"><FileStack className="h-4 w-4" />Documents</TabsTrigger>
         </TabsList>
         <TabsContent value="organization" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Organization profile" description="Legal identity and contact details used throughout the platform." /><CompanyTab /></TabsContent>
         <TabsContent value="people" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Users" description="Manage user access, type, status, and portal permissions in one place." /><UsersTab /></TabsContent>
         <TabsContent value="finance" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Finance configuration" description="Control currency, tax, service-fee, and invoice defaults." /><FinanceTab /></TabsContent>
+        <TabsContent value="reminders" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Automatic reminders" description="Set the invoice reminder cycle, approved message content, channels, and delivery queue." /><InvoiceReminderSettings /></TabsContent>
         <TabsContent value="security" className="mt-4 min-w-0 space-y-6 md:mt-0"><SectionHeading title="Security & roles" description="Apply least-privilege access by module and action." /><RolesTab /></TabsContent>
         <TabsContent value="templates" className="mt-4 min-w-0 space-y-6 md:mt-0">
           <SectionHeading title="Document templates" description="Manage the controlled layouts used for operational and financial documents." />
