@@ -512,20 +512,20 @@ function InvoicesPage() {
                     </div>
                     <div className="overflow-x-auto rounded-xl border border-border bg-muted/20 p-3">
                     <div className="min-w-[720px] space-y-2">
-                      <div className="grid grid-cols-12 gap-2 px-1 text-xs font-medium text-muted-foreground">
-                        <span className="col-span-3">Description</span>
-                        <span className="col-span-2">GL account</span>
-                        <span className="col-span-2">Qty</span>
-                        <span className="col-span-2">Unit price</span>
-                        <span className="col-span-2">VAT %</span>
-                        <span className="col-span-1" />
+                      <div className="grid grid-cols-[minmax(240px,1.7fr)_minmax(110px,0.6fr)_72px_100px_72px_40px] gap-2 px-1 text-xs font-medium text-muted-foreground">
+                        <span>Description</span>
+                        <span>GL account</span>
+                        <span>Qty</span>
+                        <span>Unit price</span>
+                        <span>VAT %</span>
+                        <span />
                       </div>
                       {lines.map((l, i) => (
-                        <div key={i} className="grid grid-cols-12 gap-2">
-                          <Input className="col-span-3" placeholder="Description" value={l.description}
+                        <div key={i} className="grid grid-cols-[minmax(240px,1.7fr)_minmax(110px,0.6fr)_72px_100px_72px_40px] gap-2">
+                          <Input placeholder="Description" value={l.description}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, description: e.target.value } : x))} />
                           <Select value={l.account_id ?? "unmapped"} onValueChange={(value) => setLines(lines.map((x, j) => j === i ? { ...x, account_id: value === "unmapped" ? null : value } : x))}>
-                            <SelectTrigger className="col-span-2"><SelectValue placeholder="GL account" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder="GL account" /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="unmapped">Unmapped</SelectItem>
                               {accounts.data?.map((account: any) => (
@@ -533,13 +533,13 @@ function InvoicesPage() {
                               ))}
                             </SelectContent>
                           </Select>
-                          <Input className="col-span-2" type="number" step="1" value={l.quantity}
+                          <Input type="number" step="1" value={l.quantity}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, quantity: +e.target.value } : x))} />
-                          <Input className="col-span-2" type="number" step="0.01" value={l.unit_price}
+                          <Input type="number" step="0.01" value={l.unit_price}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, unit_price: +e.target.value } : x))} />
-                          <Input className="col-span-2" type="number" step="0.01" value={l.tax_rate}
+                          <Input type="number" step="0.01" value={l.tax_rate}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, tax_rate: +e.target.value } : x))} />
-                          <Button variant="ghost" size="icon" className="col-span-1"
+                          <Button variant="ghost" size="icon"
                             onClick={() => setLines(lines.length > 1 ? lines.filter((_, j) => j !== i) : lines)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
