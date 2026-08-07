@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye, CreditCard, ReceiptText } from "lucide-react";
+import { Plus, Trash2, Download, Ban, Mail, MessageCircle, Upload, FileText, Eye, CreditCard, ReceiptText, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBase64Pdf } from "@/lib/pdf-download";
 import { useCurrency } from "@/hooks/use-currency";
