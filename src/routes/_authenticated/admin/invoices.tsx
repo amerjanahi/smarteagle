@@ -45,6 +45,8 @@ function InvoicesPage() {
   const defaultAccountId = accounts.data?.find((account: any) => account.code === "4100")?.id ?? accounts.data?.[0]?.id ?? null;
 
   const [open, setOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
   const [form, setForm] = useState({
     unit_id: "",
     customer_name: "",
