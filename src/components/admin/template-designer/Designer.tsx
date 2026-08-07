@@ -10,13 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
   Type, Hash, ImageIcon, Square, Minus, Table, Calculator, CreditCard, Image as LogoIcon,
   Undo2, Redo2, Copy, Trash2, ChevronsUp, ChevronsDown, Grid3x3, Ruler, Eye, Printer, ZoomIn, ZoomOut,
-  RotateCcw,
+  RotateCcw, Upload, Loader2,
 } from "lucide-react";
 
 type Props = {
@@ -379,6 +381,7 @@ function Inspector({ el, type, onChange, onDelete, onDuplicate, onLayerUp, onLay
         <div>
           <Label className="text-xs">Image URL</Label>
           <Input value={el.src ?? ""} onChange={(e) => onChange({ src: e.target.value })} placeholder="https://…" />
+          <TemplateImageUpload onUploaded={(src) => onChange({ src })} />
         </div>
       )}
 
@@ -473,6 +476,69 @@ function Inspector({ el, type, onChange, onDelete, onDuplicate, onLayerUp, onLay
           }}>Add row</Button>
         </div>
       )}
+    </div>
+  );
+}
+
+function TemplateImageUpload({ onUploaded }: { onUploaded: (src: string) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const upload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be 5 MB or smaller.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+      const path = `template-assets/${crypto.randomUUID()}-${safeName}`;
+      const { error } = await supabase.storage.from("notice-images").upload(path, file);
+      if (error) throw error;
+      const { data, error: signError } = await supabase.storage.from("notice-images").createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (signError || !data?.signedUrl) throw signError ?? new Error("Could not prepare the image.");
+      onUploaded(data.signedUrl);
+      toast.success("Image added to the template.");
+    } catch (error: any) {
+      toast.error(error.message ?? "Could not upload the image.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div
+      className="mt-2 rounded-lg border border-dashed border-border bg-muted/30 p-3 text-center transition-colors hover:border-primary/60 hover:bg-primary/5"
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files?.[0];
+        if (file) void upload(file);
+      }}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void upload(file);
+          event.currentTarget.value = "";
+        }}
+      />
+      <Upload className="mx-auto h-4 w-4 text-muted-foreground" />
+      <p className="mt-1 text-xs text-muted-foreground">Drag an image here, or choose one from your device.</p>
+      <Button type="button" size="sm" variant="outline" className="mt-2" disabled={uploading} onClick={() => inputRef.current?.click()}>
+        {uploading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Upload className="mr-1 h-3.5 w-3.5" />}
+        {uploading ? "Uploading…" : "Choose image"}
+      </Button>
+      <p className="mt-1 text-[10px] text-muted-foreground">PNG, JPG, WebP, or SVG · maximum 5 MB</p>
     </div>
   );
 }
