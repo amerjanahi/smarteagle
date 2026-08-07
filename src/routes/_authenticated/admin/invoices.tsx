@@ -252,8 +252,9 @@ function InvoicesPage() {
     URL.revokeObjectURL(url);
   }
 
-  return (
+  if (!open) return (
     <div className="space-y-4">
+
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl font-bold tracking-tight">Invoices</h2>
