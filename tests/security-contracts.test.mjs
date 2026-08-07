@@ -75,3 +75,16 @@ test("display format choices are constrained and do not alter stored values", as
   assert.match(migration, /ADD COLUMN IF NOT EXISTS number_format/);
   assert.match(migration, /These change presentation only; stored/);
 });
+
+test("generated finance PDFs are archived in a restricted document folder", async () => {
+  const sales = await read("src/lib/sales.functions.ts");
+  const migration = await read(
+    "supabase/migrations/20260807090000_archive_generated_finance_documents.sql",
+  );
+
+  assert.match(sales, /await saveGeneratedDocument\(/);
+  assert.match(sales, /folder: "Finance \/ Sales"/);
+  assert.match(sales, /system-generated/);
+  assert.match(migration, /name LIKE 'system\/finance\/%'/);
+  assert.match(migration, /public\.can_manage_sales\(auth\.uid\(\)\)/);
+});

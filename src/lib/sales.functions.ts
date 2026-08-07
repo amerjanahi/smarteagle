@@ -530,7 +530,9 @@ export const generateDocumentPdf = createServerFn({ method: "POST" })
     }
 
     const bytes = await generatePdf(data.kind, docData, (template as any) ?? null);
-    return { base64: Buffer.from(bytes).toString("base64"), filename: filenameFor(data.kind, docData) };
+    const filename = filenameFor(data.kind, docData);
+    await saveGeneratedDocument(context.supabase, context.userId, data, docData, bytes, filename);
+    return { base64: Buffer.from(bytes).toString("base64"), filename };
   });
 
 function filenameFor(kind: DocKind, d: any): string {
@@ -538,4 +540,73 @@ function filenameFor(kind: DocKind, d: any): string {
   if (kind === "receipt") return `${d?.receipt_number ?? "receipt"}.pdf`;
   if (kind === "credit_note") return `${d?.credit_note_number ?? "credit-note"}.pdf`;
   return `statement-${d?.unit?.unit_number ?? "customer"}.pdf`;
+}
+
+async function saveGeneratedDocument(
+  supabase: any,
+  userId: string,
+  request: { kind: DocKind; id: string; unit_id?: string; from?: string; to?: string },
+  docData: any,
+  bytes: Uint8Array,
+  filename: string,
+) {
+  const category = {
+    invoice: "Invoices",
+    credit_note: "Credit Notes",
+    receipt: "Receipts",
+    statement: "Statements",
+  }[request.kind];
+  const systemKey = request.kind === "statement"
+    ? `system:statement:${request.unit_id}:${request.from ?? "all"}:${request.to ?? "all"}`
+    : `system:${request.kind}:${request.id}`;
+  const unitId = request.kind === "statement"
+    ? request.unit_id
+    : request.kind === "receipt"
+      ? docData?.payment_allocations?.[0]?.invoices?.unit_id ?? null
+      : docData?.unit_id ?? null;
+  const invoiceId = request.kind === "invoice"
+    ? request.id
+    : request.kind === "receipt"
+      ? docData?.payment_allocations?.[0]?.invoice_id ?? null
+      : docData?.invoice_id ?? null;
+  const documentDate = request.kind === "receipt"
+    ? docData?.paid_at
+    : request.kind === "credit_note"
+      ? docData?.issued_at
+      : request.kind === "invoice"
+        ? docData?.issued_at ?? docData?.created_at
+        : new Date().toISOString();
+  const path = `system/finance/${request.kind}/${request.id}${request.kind === "statement" ? `-${request.from ?? "all"}-${request.to ?? "all"}` : ""}.pdf`;
+
+  const { error: uploadError } = await supabase.storage.from("documents").upload(path, bytes, {
+    contentType: "application/pdf",
+    upsert: true,
+  });
+  if (uploadError) throw new Error(`Could not archive the generated document: ${uploadError.message}`);
+
+  const { data: existing, error: findError } = await supabase
+    .from("documents")
+    .select("id")
+    .contains("tags", ["system-generated", systemKey])
+    .maybeSingle();
+  if (findError) throw new Error(`Could not organize the generated document: ${findError.message}`);
+
+  const payload = {
+    title: filename.replace(/\.pdf$/i, ""),
+    description: `System-generated ${category.slice(0, -1).toLowerCase()}.`,
+    file_url: path,
+    folder: "Finance / Sales",
+    category,
+    tags: ["system-generated", "finance", request.kind, systemKey],
+    document_date: documentDate ? new Date(documentDate).toISOString().slice(0, 10) : null,
+    access_level: "staff",
+    archived: false,
+    unit_id: unitId ?? null,
+    invoice_id: invoiceId ?? null,
+    uploaded_by: userId,
+  };
+  const { error: saveError } = existing?.id
+    ? await supabase.from("documents").update(payload).eq("id", existing.id)
+    : await supabase.from("documents").insert(payload);
+  if (saveError) throw new Error(`Could not organize the generated document: ${saveError.message}`);
 }
