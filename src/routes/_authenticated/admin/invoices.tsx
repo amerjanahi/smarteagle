@@ -533,7 +533,7 @@ function InvoicesPage() {
                               ))}
                             </SelectContent>
                           </Select>
-                          <Input className="col-span-2" type="number" step="0.001" value={l.quantity}
+                          <Input className="col-span-2" type="number" step="1" value={l.quantity}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, quantity: +e.target.value } : x))} />
                           <Input className="col-span-2" type="number" step="0.01" value={l.unit_price}
                             onChange={(e) => setLines(lines.map((x, j) => j === i ? { ...x, unit_price: +e.target.value } : x))} />
@@ -553,7 +553,7 @@ function InvoicesPage() {
                     <div className="rounded-xl border border-border p-4">
                       <Label>Discount</Label>
                       <div className="flex gap-2">
-                        <Input type="number" min="0" max={form.discount_type === "percentage" ? 100 : undefined} step="0.01" value={form.discount_value}
+                        <Input type="number" min="0" max={form.discount_type === "percentage" ? 100 : undefined} step="1" value={form.discount_value}
                           placeholder="0"
                           onChange={(e) => setForm({ ...form, discount_value: e.target.value })} />
                         <Select value={form.discount_type} onValueChange={(value: "amount" | "percentage") => setForm({ ...form, discount_type: value })}>
